@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapist Registration | JMCY Wellness Network</title>
+    <style>
+        :root { 
+            --primary: #1a365d; 
+            --secondary: #2c5282; 
+            --accent: #2f855a; 
+            --dark: #1a202c; 
+            --light: #f7fafc; 
+            --border: #e2e8f0;
+            --focus-ring: rgba(44, 82, 130, 0.15);
+            --text-muted: #718096;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            color: var(--dark); 
+            background: radial-gradient(circle at top right, #f0f4f8, var(--light));
+            line-height: 1.6; 
+        }
+
+        /* ==========================================================================
+           HEADER NAVIGATION
+           ========================================================================== */
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 10%; 
+            border-bottom: 1px solid var(--border); 
+            background: #ffffff; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: var(--primary); 
+            letter-spacing: 1.5px; 
+            text-decoration: none; 
+        }
+        .nav-link { 
+            color: var(--secondary); 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* ==========================================================================
+           LANGUAGE CONTAINER CONTROL BAR
+           ========================================================================== */
+        .lang-container { 
+            max-width: 720px; 
+            margin: 30px auto 0 auto; 
+            display: flex; 
+            justify-content: flex-end; 
+            padding: 0 20px; 
+        }
+        .lang-btn { 
+            background: #ffffff; 
+            border: 1px solid var(--border); 
+            padding: 8px 16px; 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border-radius: 20px; 
+            color: var(--text-muted); 
+            transition: all 0.2s ease; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .lang-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+        .lang-btn.active { 
+            background-color: var(--secondary); 
+            color: #ffffff; 
+            border-color: var(--secondary); 
+        }
+
+        /* ==========================================================================
+           FORM CONTENT WRAPPER ARCHITECTURE
+           ========================================================================== */
+        .form-wrapper { 
+            max-width: 720px; 
+            width: 90%;
+            margin: 15px auto 80px auto; 
+            background: #ffffff; 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 45px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); 
+        }
+        
+        .form-header h1 { 
+            margin: 0 0 10px 0; 
+            color: var(--primary); 
+            font-size: 1.95rem; 
+            font-weight: 700; 
+            letter-spacing: -0.5px;
+        }
+        .form-header p { 
+            color: var(--text-muted); 
+            font-size: 1rem; 
+            margin: 0 0 35px 0; 
+            line-height: 1.5;
+        }
+
+        /* Modular Section Inner Cards */
+        .form-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-section-title { 
+            font-size: 1.15rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin: 0 0 20px 0; 
+            padding-bottom: 10px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: var(--primary); 
+            font-size: 0.88rem; 
+        }
+
+        .form-row { 
+            display: flex; 
+            gap: 20px; 
+        }
+        .form-row .form-group { 
+            flex: 1; 
+        }
+        
+        /* Input Field Styling & Layout Rules */
+        .input-icon-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-wrapper svg.prefix-icon {
+            position: absolute;
+            left: 14px;
+            width: 18px;
+            height: 18px;
+            color: #a0aec0;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .form-control { 
+            width: 100%; 
+            padding: 12px 16px 12px 42px; 
+            border: 1px solid #cbd5e0; 
+            border-radius: 6px; 
+            font-size: 0.95rem; 
+            color: var(--dark); 
+            background-color: #ffffff; 
+            transition: all 0.15s ease-in-out; 
+        }
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+        .form-control:focus { 
+            outline: none; 
+            border-color: var(--secondary); 
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+        .form-control:focus ~ svg.prefix-icon {
+            color: var(--secondary);
+        }
+
+        /* Dropdown/Date Specific Padding Adjustments override */
+        input[type="date"].form-control {
+            padding-left: 42px;
+        }
+
+        textarea.form-control { 
+            resize: vertical; 
+            min-height: 110px; 
+            font-family: inherit; 
+            padding-left: 16px;
+        }
+        
+        /* Password Eye Icon Layout Trigger rules */
+        .password-wrapper .form-control { 
+            padding-right: 48px; 
+        }
+        .toggle-password-btn { 
+            position: absolute; 
+            right: 4px; 
+            background: none; 
+            border: none; 
+            color: #a0aec0; 
+            cursor: pointer; 
+            padding: 10px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .toggle-password-btn:hover {
+            color: var(--secondary);
+        }
+        .toggle-password-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .hint-text { 
+            font-size: 0.8rem; 
+            color: #e53e3e; 
+            margin-top: 6px; 
+            display: block; 
+            font-weight: 500; 
+        }
+
+        /* ==========================================================================
+           SPECIALTIES OPTIONS GRID SYSTEM
+           ========================================================================== */
+        .specialties-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .specialty-card {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .specialty-card:hover {
+            border-color: var(--secondary);
+            background-color: #f7fafc;
+        }
+
+        .specialty-card input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkbox-custom {
+            height: 18px;
+            width: 18px;
+            background-color: #ffffff;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.15s ease;
+        }
+
+        .specialty-card input:checked ~ .checkbox-custom {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .specialty-card input:checked ~ .specialty-label {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .checkbox-custom:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 5px;
+            top: 1px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .specialty-card input:checked ~ .checkbox-custom:after {
+            display: block;
+        }
+
+        .specialty-label {
+            font-size: 0.92rem;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+        
+        /* ==========================================================================
+           CAMERA/MEDIA FILE CAPTURE DROPZONE CONTROLS
+           ========================================================================== */
+        .camera-input { display: none; }
+        
+        .file-dummy { 
+            border: 2px dashed #cbd5e0; 
+            padding: 24px; 
+            text-align: center; 
+            background: var(--light); 
+            border-radius: 6px; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease-in-out; 
+        }
+        .file-dummy:hover { 
+            border-color: var(--secondary); 
+            background: #edf2f7; 
+        }
+        .file-dummy svg {
+            width: 28px;
+            height: 28px;
+            color: #718096;
+            transition: color 0.2s;
+        }
+        .file-dummy:hover svg {
+            color: var(--secondary);
+        }
+        
+        /* Capture Done Verification Mutation State Classes */
+        .file-dummy.capture-success { 
+            border-color: var(--accent); 
+            background: #f0fff4; 
+        }
+        .file-dummy.capture-success svg {
+            color: var(--accent);
+        }
+
+        /* ==========================================================================
+           SUBMIT ENGINE BUTTON & FOOTER
+           ========================================================================== */
+        .submit-btn { 
+            background-color: var(--accent); 
+            color: white; 
+            width: 100%; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 6px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: background-color 0.15s ease, transform 0.1s ease; 
+            margin-top: 10px; 
+            box-shadow: 0 4px 6px -1px rgba(47, 133, 90, 0.15);
+        }
+        .submit-btn:hover { background-color: #226040; }
+        .submit-btn:active { transform: scale(0.995); }
+
+        footer { 
+            background: #1a202c; 
+            color: #a0aec0; 
+            text-align: center; 
+            padding: 30px 20px; 
+            font-size: 13px; 
+            letter-spacing: 0.3px;
+            border-top: 1px solid #2d3748; 
+        }
+
+        /* ==========================================================================
+           RESPONSIVE VIEW INTERACTIVE ADAPTATIONS
+           ========================================================================== */
+        @media (max-width: 768px) { 
+            header { padding: 15px 5%; } 
+            .lang-container { margin-top: 20px; justify-content: center; padding: 0; } 
+            .form-wrapper { margin: 15px auto 60px auto; padding: 25px 20px; } 
+            .form-card { padding: 18px; }
+            .form-row { flex-direction: column; gap: 0; } 
+        }
+
+        @media (max-width: 480px) {
+            .specialties-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Core Header Bar -->
+    <header>
+        <a href="index.html" class="logo">JMCY WELLNESS</a>
+        <a href="login.html" class="nav-link" id="nav-login">Already have an account? Login</a>
+    </header>
+
+    <!-- Language Control System Block -->
+    <div class="lang-container">
+        <button class="lang-btn active" id="btn-en" onclick="setFormLang('en')">English</button>
+        <button class="lang-btn" id="btn-tl" onclick="setFormLang('tl')" style="margin-left: 8px;">Tagalog</button>
+    </div>
+
+    <!-- Centralized Container Form -->
+    <main class="form-wrapper">
+        <div class="form-header">
+            <h1 id="f-title">Professional Network Application</h1>
+            <p id="f-desc">Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.</p>
+        </div>
+
+        <form onsubmit="handleFormSubmit(event)">
+            
+            <!-- SECTION 1: Account Access Configurations Card Box -->
+            <div class="form-card">
+                <div class="form-section-title" id="sec-account">Account Setup Credentials</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label id="lbl-username" for="username">Username</label>
+                        <div class="input-icon-wrapper">
+                            <input type="text" id="username" class="form-control" required placeholder="e.g., juandelacruz2026">
+                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-password" for="password">Password</label>
+                        <div class="input-icon-wrapper password-wrapper">
+                            <input type="password" id="password" class="form-control" required placeholder="••••••••" minlength="8">
+                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <button type="button" class="toggle-password-btn" id="btn-toggle-pwd" onclick="togglePasswordVisibility()" aria-label="Toggle password view">
+                                <svg id="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Personal Identity Card Box -->
+            <div class="form-card">
+                <div class="form-section-title" id="sec-identity">Security & Identity Verification</div>
+
+                <div class="form-group">
+                    <label id="lbl-name" for="fullName">Full Legal Name</label>
+                    <div class="input-icon-wrapper">
+                        <input type="text" id="fullName" class="form-control" required placeholder="Juan Dela Cruz">
+                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.418.835 2.83 2H5.17c.412-1.165 1.524-2 2.83-2z"></path></svg>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label id="lbl-birth" for="birthdate">Date of Birth</label>
+                        <div class="input-icon-wrapper">
+                            <input type="date" id="birthdate" class="form-control" required>
+                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 3V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-age" for="age">Age</label>
+                        <div class="input-icon-wrapper">
+                            <input type="number" id="age" class="form-control" required placeholder="28" min="18" max="70">
+                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="lbl-address" for="homeAddress">Complete Home Address</label>
+                    <div class="input-icon-wrapper">
+                        <input type="text" id="homeAddress" class="form-control" required placeholder="House No., Street, Barangay, City, Province">
+                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="lbl-phone" for="phoneNum">Mobile Phone Number</label>
+                    <div class="input-icon-wrapper">
+                        <input type="tel" id="phoneNum" class="form-control" required placeholder="0917XXXXXXX" pattern="^(09)\\d{9}$">
+                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                    </div>
+                    <span id="hint-phone" class="hint-text">Note: This must be your active GCash and WhatsApp number.</span>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Professional Experience Card Box -->
+            <div class="form-card">
+                <div class="form-section-title" id="sec-professional">Professional Profiling & Operations</div>
+
+                <div class="form-group">
+                    <label id="lbl-zone" for="coverage">Preferred Service Locations / Coverage Zones</label>
+                    <div class="input-icon-wrapper">
+                        <input type="text" id="coverage" class="form-control" required placeholder="e.g., Makati, Pasig, Quezon City">
+                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                </div>
+
+                <!-- UPDATE MODALITIES INPUT SYSTEM -->
+                <div class="form-group">
+                    <label id="lbl-skills">Massage Therapy Modalities & Specialties *</label>
+                    <div class="specialties-grid">
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Swedish Massage" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Swedish Massage</span>
+                        </label>
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Deep Tissue" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Deep Tissue</span>
+                        </label>
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Shiatsu" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Shiatsu</span>
+                        </label>
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Thai Massage" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Thai Massage</span>
+                        </label>
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Reflexology" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Reflexology / Foot</span>
+                        </label>
+                        <label class="specialty-card">
+                            <input type="checkbox" name="specialties" value="Aromatherapy" onchange="validateSpecialties()">
+                            <span class="checkbox-custom"></span>
+                            <span class="specialty-label">Aromatherapy</span>
+                        </label>
+                    </div>
+                    <input type="text" id="specialties-validate" required style="opacity: 0; height: 0; width: 0; position: absolute;">
+                    <span id="hint-skills" class="hint-text" style="display: none; margin-top: 8px;">Please select at least one modality specialty.</span>
+                </div>
+            </div>
+
+            <!-- SECTION 4: Media Clearances Verification Card Box -->
+            <div class="form-card">
+                <div class="form-section-title" id="sec-documents">Required Clearances & Verification</div>
+
+                <!-- 1. Front ID Card Capture -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label id="lbl-id-front" style="margin-bottom: 10px;">1. Government ID (Front Side) *</label>
+                    <label for="capture-id-front" class="file-dummy" id="box-id-front">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span id="txt-id-front" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Front ]</span>
+                    </label>
+                    <input type="file" id="capture-id-front" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-front', 'txt-id-front', 'Front ID Captured! ✓')">
+                </div>
+
+                <!-- 2. Back ID Card Capture -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label id="lbl-id-back" style="margin-bottom: 10px;">2. Government ID (Back Side) *</label>
+                    <label for="capture-id-back" class="file-dummy" id="box-id-back">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span id="txt-id-back" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Back ]</span>
+                    </label>
+                    <input type="file" id="capture-id-back" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-back', 'txt-id-back', 'Back ID Captured! ✓')">
+                </div>
+
+                <!-- 3. Selfie with ID Identification Capture -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label id="lbl-id-selfie" style="margin-bottom: 10px;">3. Selfie Holding Government ID *</label>
+                    <label for="capture-id-selfie" class="file-dummy" id="box-id-selfie">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span id="txt-id-selfie" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Front Camera for Selfie ]</span>
+                    </label>
+                    <input type="file" id="capture-id-selfie" class="camera-input" accept="image/*" capture="user" required onchange="handleCaptureFeedback(this, 'box-id-selfie', 'txt-id-selfie', 'Selfie Captured! ✓')">
+                </div>
+
+                <!-- 4. Certificate Validation File -->
+                <div class="form-group">
+                    <label id="lbl-cert" style="margin-bottom: 10px;">4. Massage Therapy Certificate / Training License *</label>
+                    <label for="capture-cert" class="file-dummy" id="box-cert">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span id="txt-cert" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Capture Therapy Certificate ]</span>
+                    </label>
+                    <input type="file" id="capture-cert" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-cert', 'txt-cert', 'Certificate Captured! ✓')">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="btn-submit">Submit Registration Details</button>
+        </form>
+    </main>
+
+    <!-- Operational Footer -->
+    <footer>
+        &copy; 2026 JMCY Wellness Network. All Rights Reserved.
+    </footer>
+
+    <!-- Localization & Validation Mechanics Engine Script -->
+    <script>
+        let currentLang = 'en';
+
+        const formContent = {
+            en: {
+                title: "Professional Network Application",
+                desc: "Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.",
+                secAccount: "Account Setup Credentials",
+                username: "Username",
+                password: "Password",
+                secIdentity: "Security & Identity Verification",
+                name: "Full Legal Name", birth: "Date of Birth", age: "Age", address: "Complete Home Address", phone: "Mobile Phone Number",
+                hintPhone: "Note: This must be your active GCash and WhatsApp number.",
+                secProfessional: "Professional Profiling & Operations", zone: "Preferred Service Locations / Coverage Zones", skills: "Massage Therapy Modalities & Specialties *",
+                secDocuments: "Required Clearances & Verification",
+                lblIdFront: "1. Government ID (Front Side) *", txtIdFront: "[ Tap to Open Camera & Capture ID Front ]",
+                lblIdBack: "2. Government ID (Back Side) *", txtIdBack: "[ Tap to Open Camera & Capture ID Back ]",
+                lblIdSelfie: "3. Selfie Holding Government ID *", txtIdSelfie: "[ Tap to Open Front Camera for Selfie ]",
+                lblCert: "4. Massage Therapy Certificate / Training License *", txtCert: "[ Tap to Capture Therapy Certificate ]",
+                submit: "Submit Registration Details", navLogin: "Already have an account? Login"
+            },
+            tl: {
+                title: "Aplikasyon para sa Network",
+                desc: "Kumpletuhin ang iyong pagpaparehistro upang magawa ang iyong profile. Ang mga detalye ng Account ay gagamitin mo upang buksan ang iyong dashboard.",
+                secAccount: "Impormasyon ng Account (Credentials)",
+                username: "Username",
+                password: "Password",
+                secIdentity: "Seguridad at Pagpapatunay ng Pagkakakilanlan",
+                name: "Buong Pangalan (Legal Name)", birth: "Araw ng Kapanganakan", age: "Edad", address: "Kumpletong Tirahan (Home Address)", phone: "Numero ng Mobile Phone",
+                hintPhone: "Paunawa: Dapat ito ang iyong aktibong GCash at WhatsApp number.",
+                secProfessional: "Propesyonal na Profile at Operasyon", zone: "Mga Lugar na Nais Mong Coveran (Coverage Zones)", skills: "Mga Uri ng Massage na Iyong Dalubhasa (Specialties) *",
+                secDocuments: "Mga Kinakailangang Clearance at Pagpapatunay",
+                lblIdFront: "1. Government ID (Harap na Bahagi) *", txtIdFront: "[ I-tap para Buksan ang Kamera para sa Harap ng ID ]",
+                lblIdBack: "2. Government ID (Likod na Bahagi) *", txtIdBack: "[ I-tap para Buksan ang Kamera para sa Likod ng ID ]",
+                lblIdSelfie: "3. Selfie na Hawak ang Government ID *", txtIdSelfie: "[ I-tap para Buksan ang Kamera para sa Selfie ]",
+                lblCert: "4. Massage Therapy Certificate o Lisensya sa Pagsasanay *", txtCert: "[ I-tap para Kuhanan ng Larawan ang Sertipiko ]",
+                submit: "Ipadala ang Aplikasyon", navLogin: "May account na? Mag-login dito"
+            }
+        };
+
+        function validateSpecialties() {
+            const checkboxes = document.querySelectorAll('input[name="specialties"]:checked');
+            const validatorInput = document.getElementById('specialties-validate');
+            const validationHint = document.getElementById('hint-skills');
+            
+            if (checkboxes.length > 0) {
+                validatorInput.value = "valid";
+                validationHint.style.display = "none";
+            } else {
+                validatorInput.value = "";
+                if(validationHint) validationHint.style.display = "block";
+            }
+        }
+
+        function getSelectedSpecialties() {
+            const checkboxes = document.querySelectorAll('input[name="specialties"]:checked');
+            let selected = [];
+            checkboxes.forEach((cb) => {
+                selected.push(cb.value);
+            });
+            return selected.join(", ");
+        }
+
+        function handleCaptureFeedback(inputElement, boxId, textElementId, successMessage) {
+            if (inputElement.files && inputElement.files.length > 0) {
+                const box = document.getElementById(boxId);
+                const textSpan = document.getElementById(textElementId);
+                box.classList.add('capture-success');
+                textSpan.style.color = "var(--accent)";
+                textSpan.innerText = successMessage;
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const pwdField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (pwdField.type === "password") {
+                pwdField.type = "text";
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
+            } else {
+                pwdField.type = "password";
+                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+            }
+        }
+
+        function setFormLang(lang) {
+            currentLang = lang;
+            document.getElementById('btn-en').classList.remove('active');
+            document.getElementById('btn-tl').classList.remove('active');
+            document.getElementById('btn-' + lang).classList.add('active');
+            
+            document.getElementById('f-title').innerText = formContent[lang].title;
+            document.getElementById('f-desc').innerText = formContent[lang].desc;
+            document.getElementById('sec-account').innerText = formContent[lang].secAccount;
+            document.getElementById('lbl-username').innerText = formContent[lang].username;
+            document.getElementById('lbl-password').innerText = formContent[lang].password;
+            document.getElementById('sec-identity').innerText = formContent[lang].secIdentity;
+            document.getElementById('sec-professional').innerText = formContent[lang].secProfessional;
+            document.getElementById('sec-documents').innerText = formContent[lang].secDocuments;
+            document.getElementById('lbl-name').innerText = formContent[lang].name;
+            document.getElementById('lbl-birth').innerText = formContent[lang].birth;
+            document.getElementById('lbl-age').innerText = formContent[lang].age;
+            document.getElementById('lbl-address').innerText = formContent[lang].address;
+            document.getElementById('lbl-phone').innerText = formContent[lang].phone;
+            document.getElementById('hint-phone').innerText = formContent[lang].hintPhone;
+            document.getElementById('lbl-zone').innerText = formContent[lang].zone;
+            document.getElementById('lbl-skills').innerText = formContent[lang].skills;
+            
+            document.getElementById('lbl-id-front').innerText = formContent[lang].lblIdFront;
+            if(!document.getElementById('capture-id-front').files.length) {
+                document.getElementById('txt-id-front').innerText = formContent[lang].txtIdFront;
+            }
+            document.getElementById('lbl-id-back').innerText = formContent[lang].lblIdBack;
+            if(!document.getElementById('capture-id-back').files.length) {
+                document.getElementById('txt-id-back').innerText = formContent[lang].txtIdBack;
+            }
+            document.getElementById('lbl-id-selfie').innerText = formContent[lang].lblIdSelfie;
+            if(!document.getElementById('capture-id-selfie').files.length) {
+                document.getElementById('txt-id-selfie').innerText = formContent[lang].txtIdSelfie;
+            }
+            document.getElementById('lbl-cert').innerText = formContent[lang].lblCert;
+            if(!document.getElementById('capture-cert').files.length) {
+                document.getElementById('txt-cert').innerText = formContent[lang].txtCert;
+            }
+            
+            document.getElementById('btn-submit').innerText = formContent[lang].submit;
+            document.getElementById('nav-login').innerText = formContent[lang].navLogin;
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Check validation explicitly for checked elements
+            validateSpecialties();
+            if (!document.getElementById('specialties-validate').value) {
+                return false;
+            }
+
+            localStorage.setItem("jmcy_user", document.getElementById('username').value);
+            localStorage.setItem("jmcy_name", document.getElementById('fullName').value);
+            localStorage.setItem("jmcy_specialties", getSelectedSpecialties());
+            
+            alert("Account created successfully! Let's log in to view your validation dashboard tracking queue.");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the JMCY Wellness Network | Professional Massage Therapists</title>
+    <style>
+        :root { 
+            --primary: #1a365d; 
+            --secondary: #2c5282; 
+            --accent: #2f855a; 
+            --dark: #2d3748; 
+            --light: #f7fafc; 
+            --border: #e2e8f0;
+            --text-muted: #718096;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            color: var(--dark); 
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        /* ==========================================================================
+           DESKTOP STRUCTURE & NAVIGATION
+           ========================================================================== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10%;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+            position: relative;
+            z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-decoration: none; }
+        
+        /* Layout Actions Configuration */
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        
+        /* Desktop Secondary Navigation Link Styling */
+        .nav-link { 
+            text-decoration: none; 
+            color: var(--dark); 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            transition: color 0.2s; 
+        }
+        .nav-link:hover { color: var(--secondary); }
+
+        /* Hamburger Toggle Button Styling */
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 5px; flex-direction: column; gap: 5px; z-index: 110; }
+        .hamburger span { display: block; width: 25px; height: 3px; background-color: var(--primary); border-radius: 3px; transition: all 0.3s ease-in-out; }
+
+        /* Sliding Hero Engine */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 400px; 
+            overflow: hidden;
+            background-color: #111;
+        }
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide.active { opacity: 1; }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(26, 54, 93, 0.95), rgba(42, 67, 101, 0.5));
+            z-index: 1;
+        }
+        .hero-content { 
+            position: relative;
+            z-index: 2;
+            color: white; 
+            padding: 0 10%; 
+            max-width: 800px;
+            margin-right: auto;
+        }
+        .hero-content h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
+        .hero-content p { font-size: 1.1rem; margin: 0 0 30px 0; opacity: 0.9; font-weight: 300; max-width: 600px; }
+
+        /* Unified Button Component */
+        .cta-btn { 
+            background-color: var(--accent); 
+            color: white; 
+            padding: 12px 32px; 
+            border: none; border-radius: 4px; 
+            font-size: 0.95rem; font-weight: 600; 
+            text-decoration: none; display: inline-block; 
+            transition: background-color 0.2s, transform 0.2s; 
+            letter-spacing: 0.5px;
+        }
+        .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
+
+        /* Structural Page Sections */
+        section { padding: 80px 10%; }
+        section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 40px; font-weight: 700; }
+        .bg-light { background-color: var(--light); }
+
+        /* Translation Toggle Controls */
+        .lang-control-wrapper { max-width: 800px; margin: 0 auto 30px auto; display: flex; justify-content: flex-end; }
+        .lang-toggle-btn { background: #ffffff; border: 1px solid var(--border); padding: 8px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--secondary); transition: all 0.2s; }
+        .lang-toggle-btn:hover { border-color: var(--secondary); background: var(--light); }
+        .lang-toggle-btn.active { background-color: var(--secondary); color: white; border-color: var(--secondary); }
+
+        /* Advantages Grid Layout */
+        .grid { display: flex; justify-content: center; gap: 30px; }
+        .card { 
+            flex: 1; max-width: 340px; background: #ffffff; padding: 40px 30px; 
+            border-radius: 6px; border: 1px solid var(--border);
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
+        .card h3 { color: var(--secondary); margin-top: 0; font-size: 1.25rem; margin-bottom: 15px; }
+        .card p { color: #4a5568; font-size: 0.95rem; margin: 0; }
+
+        /* About Us Split Block */
+        .about-split { display: flex; align-items: center; gap: 60px; }
+        .about-text { flex: 1; }
+        .about-text h2 { text-align: left; margin-bottom: 25px; }
+        .about-text p { color: #4a5568; font-size: 1.05rem; margin-bottom: 20px; }
+        .about-image { flex: 1; height: 350px; background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center; border-radius: 8px; border: 1px solid var(--border); }
+
+        /* Recruitment Steps Pipeline */
+        .steps-container { display: flex; justify-content: space-between; gap: 20px; }
+        .step-node { flex: 1; text-align: center; position: relative; }
+        .step-number { width: 50px; height: 50px; background-color: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-weight: 700; font-size: 1.2rem; }
+        .step-node h4 { font-size: 1.15rem; color: var(--primary); margin: 0 0 10px 0; }
+        .step-node p { color: #4a5568; font-size: 0.9rem; margin: 0; padding: 0 10px; }
+
+        /* Structured FAQ Elements */
+        .faq-max { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; cursor: pointer; }
+        .faq-question { font-size: 1.15rem; font-weight: 600; color: var(--primary); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: #4a5568; font-size: 0.95rem; margin-top: 0; }
+        .faq-item.open .faq-answer { max-height: 250px; margin-top: 10px; }
+        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); }
+        .faq-item.open .faq-icon::after { content: '−'; }
+
+        /* Legal Terms Block Layout */
+        .terms-box { max-width: 800px; margin: 0 auto; background: white; border: 1px solid var(--border); border-left: 4px solid var(--primary); padding: 30px; border-radius: 4px; }
+        .terms-box h3 { margin-top: 0; color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; }
+        .terms-box p { color: #4a5568; font-size: 0.95rem; margin-bottom: 12px; }
+        .terms-box ul { margin: 0; padding-left: 20px; color: #4a5568; font-size: 0.95rem; }
+        .terms-box li { margin-bottom: 8px; }
+
+        footer { background: #1a202c; color: #a0aec0; text-align: center; padding: 40px 20px; font-size: 14px; border-top: 1px solid #2d3748; }
+
+        /* ==========================================================================
+           MOBILE VIEW INTERACTION INHERITANCE (Under 768px Width)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            header { padding: 15px 5%; flex-direction: row; justify-content: space-between; text-align: left; gap: 0; }
+            .logo { font-size: 20px; }
+            
+            /* Hamburger Visible */
+            .hamburger { display: flex; }
+            
+            /* Transforming Actions into Mobile Sliding Menu Container */
+            .nav-actions { 
+                position: fixed; 
+                top: 0; 
+                right: -100%; 
+                width: 75%; 
+                height: 100vh; 
+                background: #ffffff; 
+                flex-direction: column; 
+                align-items: flex-start; 
+                justify-content: flex-start; 
+                padding: 100px 40px 40px 40px; 
+                box-sizing: border-box; 
+                gap: 25px; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1); 
+                transition: right 0.3s ease-in-out; 
+                z-index: 105; 
+            }
+            .nav-link { font-size: 1.15rem; width: 100%; padding: 5px 0; display: block; }
+            .cta-btn { width: 100%; box-sizing: border-box; text-align: center; }
+            
+            /* Mobile Drawer Toggle Execution States */
+            .nav-actions.open { right: 0; }
+            .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+            .hamburger.open span:nth-child(2) { opacity: 0; }
+            .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+            section { padding: 50px 5%; }
+            section h2 { font-size: 1.65rem; margin-bottom: 30px; }
+            
+            .hero-slider { height: 320px; }
+            .slide::before { background: linear-gradient(to bottom, rgba(26, 54, 93, 0.95), rgba(42, 67, 101, 0.8)); }
+            .hero-content { padding: 0 5%; text-align: center; }
+            .hero-content h1 { font-size: 1.6rem; }
+            .hero-content p { font-size: 0.95rem; }
+
+            .grid, .about-split, .steps-container { flex-direction: column; gap: 30px; }
+            .card, .step-node { max-width: 100%; width: 100%; box-sizing: border-box; }
+            
+            .about-text h2 { text-align: center; }
+            .about-image { display: none; }
+            .terms-box { padding: 20px; }
+            .lang-control-wrapper { justify-content: center; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" class="logo">JMCY WELLNESS</a>
+        
+        <!-- Interactive Mobile Hamburger Trigger -->
+        <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menu Action Content -->
+        <div class="nav-actions" id="nav-actions-container">
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="apply.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Apply Now</a>
+        </div>
+    </header>
+
+    <!-- Sliding Banner Component -->
+    <section class="hero-slider" style="padding: 0;">
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
+            <div class="hero-content">
+                <h1>Maximize Your Revenue as a Licensed Massage Therapist</h1>
+                <p>Join the JMCY Wellness Network. We instantly route premium client bookings directly to certified mobile massage professionals across major areas.</p>
+                <a href="apply.html" class="cta-btn">Submit Application</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80');">
+            <div class="hero-content">
+                <h1>Flexible Scheduling. Total Control.</h1>
+                <p>Manage your own hours and choose your localized coverage zones. Our smart backend logic routes appointments dynamically to match your availability.</p>
+                <a href="apply.html" class="cta-btn">Begin Registration</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-us">
+        <div class="about-split">
+            <div class="about-text">
+                <h2>About the JMCY Network</h2>
+                <p>JMCY Wellness functions as a premier technical intermediary framework designed to support independent, highly trained massage therapists throughout the Philippines.</p>
+                <p>We do not operate as a traditional spa house. Instead, we run a sophisticated routing ecosystem that bridges the structural gap between consumer demand platforms and localized, certified wellness professionals looking to manage independent client rosters.</p>
+            </div>
+            <div class="about-image"></div>
+        </div>
+    </section>
+
+    <!-- Advantages Grid -->
+    <section class="benefits bg-light">
+        <h2>The Core Network Advantages</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Optimized Commissions</h3>
+                <p>Retain up to 85% of your gross booking value. Our transparent fee structure ensures you maximize take-home earnings with zero hidden costs.</p>
+            </div>
+            <div class="card">
+                <h3>Automated Dispatch</h3>
+                <p>Eliminate manual bidding. Our centralized logistics system instantly assigns localized, pre-paid therapeutic bookings straight to your portal.</p>
+            </div>
+            <div class="card">
+                <h3>Expedited Payouts</h3>
+                <p>Gain access to rapid, secure financial distributions. Funds are transferred instantly to your verified digital wallet upon service verification.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Onboarding Pipeline Steps -->
+    <section class="steps">
+        <h2>Onboarding Pipeline</h2>
+        <div class="steps-container">
+            <div class="step-node">
+                <div class="step-number">1</div>
+                <h4>Online Registration</h4>
+                <p>Submit your professional credentials, target locations, and primary skill qualifications via our secure portal form.</p>
+            </div>
+            <div class="step-node">
+                <div class="step-number">2</div>
+                <h4>Verification Review</h4>
+                <p>Our internal operations panel evaluates your background checks, practical competencies, and government identification profiles.</p>
+            </div>
+            <div class="step-node">
+                <div class="step-number">3</div>
+                <h4>Live Dispatch Activation</h4>
+                <p>Gain verified system access credentials. Receive and accept active on-demand consumer bookings seamlessly on your personal dashboard device.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frequently Asked Questions Accordion with Translation Engine -->
+    <section class="faq bg-light">
+        <h2 id="faq-title">Frequently Asked Questions</h2>
+        
+        <!-- Language Switcher Bar -->
+        <div class="lang-control-wrapper">
+            <button class="lang-toggle-btn active" id="lang-en" onclick="changeLanguage('en')">English</button>
+            <button class="lang-toggle-btn" id="lang-tl" onclick="changeLanguage('tl')" style="margin-left: 8px;">Tagalog</button>
+        </div>
+
+        <div class="faq-max">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q1">How do freelancers receive a client booking? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a1">When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q2">What is required to return to active status and receive new bookings after a session? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a2">Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, instantly triggers your digital wallet checkout payout routing sequence, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q3">What are the core requirements to join the platform? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a3">Applicants must present a valid government-issued ID, a recent clean NBI clearance record, and valid proof of massage therapy training or certification.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q4">How does the payout mechanism distribute earnings? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a4">Transactions are routed securely using enterprise payment gateways. Payout splits are executed automatically, delivering your base rate to your linked GCash or Maya wallet directly after client checkout validation.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms and Conditions Summary Block -->
+    <section class="terms">
+        <h2 id="terms-title">Platform Operations & Commission Policy</h2>
+        <div class="terms-box">
+            <h3 id="terms-subtitle">Revenue Split Framework</h3>
+            <p id="terms-p1">By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:</p>
+            <ul id="terms-list">
+                <li><strong>Commission Parameters:</strong> JMCY retains a fixed platform operational fee percentage on each successful customer appointment booked through our matching systems (e.g., a standard 15% system fee split, leaving 85% gross income to the provider).</li>
+                <li><strong>System Maintenances:</strong> This percentage covers technological infrastructure maintenance, secure escrow protection layer handling, local digital payment aggregator integrations (GCash/Maya processing charges), and centralized system administrative overhead.</li>
+                <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your net earnings portion is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 JMCY Wellness Network. Compliance & Intermediary Technical Framework. All Rights Reserved.
+    </footer>
+
+    <!-- Functional Component Scripts -->
+    <script>
+        // Responsive Hamburger Engine Variables
+        const hamburgerBtn = document.getElementById('hamburger-toggle');
+        const navActions = document.getElementById('nav-actions-container');
+
+        // Click Handler for Open/Close Actions
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('open');
+            navActions.classList.toggle('open');
+        });
+
+        // Auto-Hide Drawer Logic on Windows Scroll Events
+        window.addEventListener('scroll', () => {
+            // Check if the mobile navigation drawer context configuration is open
+            if (navActions.classList.contains('open')) {
+                hamburgerBtn.classList.remove('open');
+                navActions.classList.remove('open');
+            }
+        });
+
+        // Hero Image Carousel Logic
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        // Interactive Accordion Controller for FAQ Component
+        function toggleFaq(element) {
+            const listItems = document.querySelectorAll('.faq-item');
+            listItems.forEach(item => {
+                if(item !== element) item.classList.remove('open');
+            });
+            element.classList.toggle('open');
+        }
+
+        // Translation Localization Data Object
+        const translations = {
+            en: {
+                faqTitle: "Frequently Asked Questions",
+                q1: "How do freelancers receive a client booking? <span class='faq-icon'></span>",
+                a1: "When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.",
+                q2: "What is required to return to active status and receive new bookings after a session? <span class='faq-icon'></span>",
+                a2: "Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, instantly triggers your digital wallet checkout payout routing sequence, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.",
+                q3: "What are the core requirements to join the platform? <span class='faq-icon'></span>",
+                a3: "Applicants must present a valid government-issued ID, a recent clean NBI clearance record, and valid proof of massage therapy training or certification.",
+                q4: "How does the payout mechanism distribute earnings? <span class='faq-icon'></span>",
+                a4: "Transactions are routed securely using enterprise payment gateways. Payout splits are executed automatically, delivering your base rate to your linked GCash or Maya wallet directly after client checkout validation.",
+                termsTitle: "Platform Operations & Commission Policy",
+                termsSubtitle: "Revenue Split Framework",
+                termsP1: "By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:",
+                termsList: `
+                    <li><strong>Commission Parameters:</strong> JMCY retains a fixed platform operational fee percentage on each successful customer appointment booked through our matching systems (e.g., a standard 15% system fee split, leaving 85% gross income to the provider).</li>
+                    <li><strong>System Maintenances:</strong> This percentage covers technological infrastructure maintenance, secure escrow protection layer handling, local digital payment aggregator integrations (GCash/Maya processing charges), and centralized system administrative overhead.</li>
+                    <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your net earnings portion is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+                `
+            },
+            tl: {
+                faqTitle: "Mga Madalas Itanong (FAQs)",
+                q1: "Paano nakakatanggap ang mga freelancer ng booking mula sa kliyente? <span class='faq-icon'></span>",
+                a1: "Kapag nag-book ang isang customer sa aming mga channel, titingnan ng algorithm ng JMCY kung sinong mga therapist ang malapit sa lugar. Ang mga mapipiling professional ay makakatanggap agad ng push notification alert sa kanilang network web dashboard na naglalaman ng petsa, oras, at lokasyon ng booking.",
+                q2: "Ano ang kailangang gawin para maging 'Active' muli at makatanggap ng bagong booking pagkatapos ng massage session? <span class='faq-icon'></span>",
+                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click ang button na 'Mark Service as Completed'. Ito ang magsasara sa kasalukuyang booking, magpapadala ng iyong bayad sa iyong digital wallet, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking sa iyong lugar.",
+                q3: "Ano ang mga pangunahing kinakailangan para sumali sa platform? <span class='faq-icon'></span>",
+                a3: "Ang mga aplikante ay kailangang magsumite ng balidong government-issued ID, pinakabagong NBI clearance, at sertipiko o patunay ng pagsasanay sa massage therapy.",
+                q4: "Paano ipinapadala ang kita o payout sa mga therapist? <span class='faq-icon'></span>",
+                a4: "Ang mga bayad ay ligtas na pinoproseso gamit ang mga kilalang payment gateway. Awtomatikong hinahati ang kita, at direktang ipinapadala ang iyong share sa iyong naka-link na GCash o Maya wallet pagkatapos makumpirma ang pagtatapos ng serbisyo.",
+                termsTitle: "Operasyon ng Platform & Patakaran sa Komisyon",
+                termsSubtitle: "Kasunduan sa Paghahati ng Kita",
+                termsP1: "Sa pagpaparehistro sa JMCY Freelance Network, ang mga independent contractor ay sumasang-ayon sa aming patakaran sa transaksyon:",
+                termsList: `
+                    <li><strong>Kaltas o Komisyon:</strong> Ang JMCY ay may nakalaang fixed operational fee o porsyento sa bawat matagumpay na appointment na na-book sa aming system (halimbawa, 15% system fee para sa platform, at buong 85% ng kabuuang bayad ay mapupunta sa therapist).</li>
+                    <li><strong>Pagpapanatili ng System:</strong> Ang porsyentong ito ay ginagamit para sa pagpapanatili ng app/website, pangangalaga sa seguridad ng mga transaksyon, processing fees ng mga digital wallet (GCash/Maya), at iba pang gastusin sa operasyon.</li>
+                    <li><strong>Prinsipyo ng Transparency:</strong> Makikita mo nang malinaw ang buong breakdown at ang eksaktong halaga na kikitain mo sa iyong dashboard bago mo tanggapin ang anumang papasok na booking.</li>
+                `
+            }
+        };
+
+        // UI Language Switch Engine Logic
+        function changeLanguage(lang) {
+            // Update Active Buttons styles
+            document.getElementById('lang-en').classList.remove('active');
+            document.getElementById('lang-tl').classList.remove('active');
+            document.getElementById('lang-' + lang).classList.add('active');
+
+            // Inject Content Mutations
+            document.getElementById('faq-title').innerText = translations[lang].faqTitle;
+            document.getElementById('q1').innerHTML = translations[lang].q1;
+            document.getElementById('a1').innerHTML = translations[lang].a1;
+            document.getElementById('q2').innerHTML = translations[lang].q2;
+            document.getElementById('a2').innerHTML = translations[lang].a2;
+            document.getElementById('q3').innerHTML = translations[lang].q3;
+            document.getElementById('a3').innerHTML = translations[lang].a3;
+            document.getElementById('q4').innerHTML = translations[lang].q4;
+            document.getElementById('a4').innerHTML = translations[lang].a4;
+            
+            document.getElementById('terms-title').innerText = translations[lang].termsTitle;
+            document.getElementById('terms-subtitle').innerText = translations[lang].termsSubtitle;
+            document.getElementById('terms-p1').innerText = translations[lang].termsP1;
+            document.getElementById('terms-list').innerHTML = translations[lang].termsList;
+
+            // Collapse all open accordion tabs to prevent layout bugs during mutation
+            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+        }
+    </script>
+
+</body>
+</html>
