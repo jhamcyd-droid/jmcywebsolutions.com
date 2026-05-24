@@ -79,7 +79,6 @@
             flex: 1;
             position: relative;
             background-color: var(--primary);
-            /* Replace the URL below with your actual index image path */
             background-image: linear-gradient(rgba(26, 54, 93, 0.85), rgba(26, 54, 93, 0.85)), url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80');
             background-size: cover;
             background-position: center;
@@ -320,7 +319,7 @@
         .specialties-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin-top: 8px;
         }
 
@@ -330,10 +329,11 @@
             background: #ffffff;
             border: 1px solid #cbd5e0;
             border-radius: 6px;
-            padding: 12px 14px;
+            padding: 10px 8px; /* Slightly tighter padding for small phone widths */
             cursor: pointer;
             user-select: none;
             transition: all 0.15s ease-in-out;
+            position: relative;
         }
 
         .specialty-card:hover {
@@ -350,12 +350,12 @@
         }
 
         .checkbox-custom {
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             background-color: #ffffff;
             border: 2px solid #cbd5e0;
             border-radius: 4px;
-            margin-right: 12px;
+            margin-right: 8px;
             position: relative;
             flex-shrink: 0;
             transition: all 0.15s ease;
@@ -375,10 +375,10 @@
             content: "";
             position: absolute;
             display: none;
-            left: 5px;
-            top: 1px;
+            left: 4px;
+            top: 0px;
             width: 4px;
-            height: 9px;
+            height: 8px;
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
@@ -389,10 +389,13 @@
         }
 
         .specialty-label {
-            font-size: 0.92rem;
+            font-size: 0.85rem; /* Adjusted for safety against text-wrapping on compact mobile layers */
             color: #4a5568;
             font-weight: 500;
             transition: color 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         /* ==========================================================================
@@ -428,7 +431,6 @@
             color: var(--secondary);
         }
         
-        /* Capture Done Verification Mutation State Classes */
         .file-dummy.capture-success { 
             border-color: var(--accent); 
             background: #f0fff4; 
@@ -500,25 +502,18 @@
             .form-row { flex-direction: column; gap: 0; } 
         }
 
-        @media (max-width: 480px) {
-            .specialties-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        /* REMOVED: The old media block that forced single column on smaller screens */
     </style>
 </head>
 <body>
 
-    <!-- Top Core Header Bar -->
     <header>
         <a href="index.html" class="logo">JMCY WELLNESS</a>
         <a href="login.html" class="nav-link" id="nav-login">Already have an account? Login</a>
     </header>
 
-    <!-- Main Split Page Architecture Container -->
     <div class="page-container">
         
-        <!-- Left Banner Image Panel Layout -->
         <section class="image-side">
             <div class="image-side-content">
                 <div class="feature-badge" id="badge-text">JMCY Professional Network</div>
@@ -527,11 +522,9 @@
             </div>
         </section>
 
-        <!-- Right Working Form Field Interface -->
         <main class="form-side">
             <div class="form-wrapper">
                 
-                <!-- Language Control System Block -->
                 <div class="lang-container">
                     <button class="lang-btn active" id="btn-en" onclick="setFormLang('en')">English</button>
                     <button class="lang-btn" id="btn-tl" onclick="setFormLang('tl')" style="margin-left: 8px;">Tagalog</button>
@@ -544,7 +537,6 @@
 
                 <form onsubmit="handleFormSubmit(event)">
                     
-                    <!-- SECTION 1: Account Access Configurations Card Box -->
                     <div class="form-card">
                         <div class="form-section-title" id="sec-account">Account Setup Credentials</div>
 
@@ -569,109 +561,105 @@
                         </div>
                     </div>
 
-                    <!-- SECTION 2: Personal Identity Card Box -->
                     <div class="form-card">
                         <div class="form-section-title" id="sec-identity">Security & Identity Verification</div>
 
                         <div class="form-group">
-                    <label id="lbl-name" for="fullName">Full Legal Name</label>
-                    <div class="input-icon-wrapper">
-                        <input type="text" id="fullName" class="form-control" required placeholder="Juan Dela Cruz">
-                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.418.835 2.83 2H5.17c.412-1.165 1.524-2 2.83-2z"></path></svg>
-                    </div>
-                </div>
+                            <label id="lbl-name" for="fullName">Full Legal Name</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" id="fullName" class="form-control" required placeholder="Juan Dela Cruz">
+                                <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.418.835 2.83 2H5.17c.412-1.165 1.524-2 2.83-2z"></path></svg>
+                            </div>
+                        </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label id="lbl-birth" for="birthdate">Date of Birth</label>
-                        <div class="input-icon-wrapper">
-                            <input type="date" id="birthdate" class="form-control" required>
-                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 3V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label id="lbl-birth" for="birthdate">Date of Birth</label>
+                                <div class="input-icon-wrapper">
+                                    <input type="date" id="birthdate" class="form-control" required>
+                                    <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 3V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="lbl-age" for="age">Age</label>
+                                <div class="input-icon-wrapper">
+                                    <input type="number" id="age" class="form-control" required placeholder="28" min="18" max="70">
+                                    <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label id="lbl-address" for="homeAddress">Complete Home Address</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" id="homeAddress" class="form-control" required placeholder="House No., Street, Barangay, City, Province">
+                                <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label id="lbl-phone" for="phoneNum">Mobile Phone Number</label>
+                            <div class="input-icon-wrapper">
+                                <input type="tel" id="phoneNum" class="form-control" required placeholder="0917XXXXXXX" pattern="^(09)\\d{9}$">
+                                <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            </div>
+                            <span id="hint-phone" class="hint-text">Note: This must be your active GCash and WhatsApp number.</span>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label id="lbl-age" for="age">Age</label>
-                        <div class="input-icon-wrapper">
-                            <input type="number" id="age" class="form-control" required placeholder="28" min="18" max="70">
-                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label id="lbl-address" for="homeAddress">Complete Home Address</label>
-                    <div class="input-icon-wrapper">
-                        <input type="text" id="homeAddress" class="form-control" required placeholder="House No., Street, Barangay, City, Province">
-                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label id="lbl-phone" for="phoneNum">Mobile Phone Number</label>
-                    <div class="input-icon-wrapper">
-                        <input type="tel" id="phoneNum" class="form-control" required placeholder="0917XXXXXXX" pattern="^(09)\\d{9}$">
-                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                    </div>
-                    <span id="hint-phone" class="hint-text">Note: This must be your active GCash and WhatsApp number.</span>
-                </div>
-                    </div>
-
-                    <!-- SECTION 3: Professional Experience Card Box -->
                     <div class="form-card">
                         <div class="form-section-title" id="sec-professional">Professional Profiling & Operations</div>
 
                         <div class="form-group">
-                    <label id="lbl-zone" for="coverage">Preferred Service Locations / Coverage Zones</label>
-                    <div class="input-icon-wrapper">
-                        <input type="text" id="coverage" class="form-control" required placeholder="e.g., Makati, Pasig, Quezon City">
-                        <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                </div>
+                            <label id="lbl-zone" for="coverage">Preferred Service Locations / Coverage Zones</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" id="coverage" class="form-control" required placeholder="e.g., Makati, Pasig, Quezon City">
+                                <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label id="lbl-skills">Massage Therapy Modalities & Specialties *</label>
-                    <div class="specialties-grid">
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Swedish Massage" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Swedish Massage</span>
-                        </label>
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Deep Tissue" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Deep Tissue</span>
-                        </label>
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Shiatsu" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Shiatsu</span>
-                        </label>
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Thai Massage" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Thai Massage</span>
-                        </label>
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Reflexology" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Reflexology / Foot</span>
-                        </label>
-                        <label class="specialty-card">
-                            <input type="checkbox" name="specialties" value="Aromatherapy" onchange="validateSpecialties()">
-                            <span class="checkbox-custom"></span>
-                            <span class="specialty-label">Aromatherapy</span>
-                        </label>
-                    </div>
-                    <input type="text" id="specialties-validate" required style="opacity: 0; height: 0; width: 0; position: absolute;">
-                    <span id="hint-skills" class="hint-text" style="display: none; margin-top: 8px;">Please select at least one modality specialty.</span>
-                </div>
+                        <div class="form-group">
+                            <label id="lbl-skills">Massage Therapy Modalities & Specialties *</label>
+                            <div class="specialties-grid">
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Swedish Massage" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-swedish">Swedish Massage</span>
+                                </label>
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Deep Tissue" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-deep">Deep Tissue</span>
+                                </label>
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Shiatsu" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-shiatsu">Shiatsu</span>
+                                </label>
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Thai Massage" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-thai">Thai Massage</span>
+                                </label>
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Reflexology" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-reflex">Reflexology / Foot</span>
+                                </label>
+                                <label class="specialty-card">
+                                    <input type="checkbox" name="specialties" value="Aromatherapy" onchange="validateSpecialties()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="specialty-label" id="spec-aroma">Aromatherapy</span>
+                                </label>
+                            </div>
+                            <input type="text" id="specialties-validate" required style="opacity: 0; height: 0; width: 0; position: absolute;">
+                            <span id="hint-skills" class="hint-text" style="display: none; margin-top: 8px;">Please select at least one modality specialty.</span>
+                        </div>
                     </div>
 
-                    <!-- SECTION 4: Media Clearances Verification Card Box -->
                     <div class="form-card">
                         <div class="form-section-title" id="sec-documents">Required Clearances & Verification</div>
 
-                        <!-- 1. Front ID Card Capture -->
                         <div class="form-group" style="margin-bottom: 24px;">
                             <label id="lbl-id-front" style="margin-bottom: 10px;">1. Government ID (Front Side) *</label>
                             <label for="capture-id-front" class="file-dummy" id="box-id-front">
@@ -681,7 +669,6 @@
                             <input type="file" id="capture-id-front" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-front', 'txt-id-front', 'Front ID Captured! ✓')">
                         </div>
 
-                        <!-- 2. Back ID Card Capture -->
                         <div class="form-group" style="margin-bottom: 24px;">
                             <label id="lbl-id-back" style="margin-bottom: 10px;">2. Government ID (Back Side) *</label>
                             <label for="capture-id-back" class="file-dummy" id="box-id-back">
@@ -691,7 +678,6 @@
                             <input type="file" id="capture-id-back" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-back', 'txt-id-back', 'Back ID Captured! ✓')">
                         </div>
 
-                        <!-- 3. Selfie with ID Identification Capture -->
                         <div class="form-group" style="margin-bottom: 24px;">
                             <label id="lbl-id-selfie" style="margin-bottom: 10px;">3. Selfie Holding Government ID *</label>
                             <label for="capture-id-selfie" class="file-dummy" id="box-id-selfie">
@@ -701,7 +687,6 @@
                             <input type="file" id="capture-id-selfie" class="camera-input" accept="image/*" capture="user" required onchange="handleCaptureFeedback(this, 'box-id-selfie', 'txt-id-selfie', 'Selfie Captured! ✓')">
                         </div>
 
-                        <!-- 4. Certificate Validation File -->
                         <div class="form-group">
                             <label id="lbl-cert" style="margin-bottom: 10px;">4. Massage Therapy Certificate / Training License *</label>
                             <label for="capture-cert" class="file-dummy" id="box-cert">
@@ -718,12 +703,10 @@
         </main>
     </div>
 
-    <!-- Operational Footer -->
     <footer>
         &copy; 2026 JMCY Wellness Network. All Rights Reserved.
     </footer>
 
-    <!-- Localization & Validation Mechanics Engine Script -->
     <script>
         let currentLang = 'en';
 
@@ -738,6 +721,7 @@
                 name: "Full Legal Name", birth: "Date of Birth", age: "Age", address: "Complete Home Address", phone: "Mobile Phone Number",
                 hintPhone: "Note: This must be your active GCash and WhatsApp number.",
                 secProfessional: "Professional Profiling & Operations", zone: "Preferred Service Locations / Coverage Zones", skills: "Massage Therapy Modalities & Specialties *",
+                specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Foot", specAroma: "Aromatherapy",
                 secDocuments: "Required Clearances & Verification",
                 lblIdFront: "1. Government ID (Front Side) *", txtIdFront: "[ Tap to Open Camera & Capture ID Front ]",
                 lblIdBack: "2. Government ID (Back Side) *", txtIdBack: "[ Tap to Open Camera & Capture ID Back ]",
@@ -756,8 +740,9 @@
                 password: "Password",
                 secIdentity: "Seguridad at Pagpapatunay ng Pagkakakilanlan",
                 name: "Buong Pangalan (Legal Name)", birth: "Araw ng Kapanganakan", age: "Edad", address: "Kumpletong Tirahan (Home Address)", phone: "Numero ng Mobile Phone",
-                hintPhone: "Paunawa: Dapat ito ang iyong aktibong GCash at WhatsApp number.",
+                hintPhone: "Paunawa: Dapat ito ang iyong aktibong GCash and WhatsApp number.",
                 secProfessional: "Propesyonal na Profile at Operasyon", zone: "Mga Lugar na Nais Mong Coveran (Coverage Zones)", skills: "Mga Uri ng Massage na Iyong Dalubhasa (Specialties) *",
+                specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Paa", specAroma: "Aromatherapy",
                 secDocuments: "Mga Kinakailangang Clearance at Pagpapatunay",
                 lblIdFront: "1. Government ID (Harap na Bahagi) *", txtIdFront: "[ I-tap para Buksan ang Kamera para sa Harap ng ID ]",
                 lblIdBack: "2. Government ID (Likod na Bahagi) *", txtIdBack: "[ I-tap para Buksan ang Kamera para sa Likod ng ID ]",
@@ -838,6 +823,13 @@
             document.getElementById('hint-phone').innerText = formContent[lang].hintPhone;
             document.getElementById('lbl-zone').innerText = formContent[lang].zone;
             document.getElementById('lbl-skills').innerText = formContent[lang].skills;
+
+            document.getElementById('spec-swedish').innerText = formContent[lang].specSwedish;
+            document.getElementById('spec-deep').innerText = formContent[lang].specDeep;
+            document.getElementById('spec-shiatsu').innerText = formContent[lang].specShiatsu;
+            document.getElementById('spec-thai').innerText = formContent[lang].specThai;
+            document.getElementById('spec-reflex').innerText = formContent[lang].specReflex;
+            document.getElementById('spec-aroma').innerText = formContent[lang].specAroma;
             
             document.getElementById('badge-text').innerText = formContent[lang].badge;
             document.getElementById('img-side-heading').innerText = formContent[lang].sideHeading;
