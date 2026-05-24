@@ -47,17 +47,32 @@
             z-index: 10;
         }
         .logo { 
-            font-size: 22px; 
+            font-size: 13px; 
             font-weight: 800; 
-            color: var(--primary); 
-            letter-spacing: 1.5px; 
+            color: #ffffff; 
+            background-color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 6px;
+            letter-spacing: 1.9px; 
             text-decoration: none; 
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(26, 54, 93, 0.15);
+            display: inline-block;
+        }
+        .logo:hover {
+            background-color: var(--secondary);
+            box-shadow: 0 4px 8px rgba(44, 82, 130, 0.25);
+            transform: translateY(-1px);
+        }
+        .logo:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(26, 54, 93, 0.15);
         }
         .nav-link { 
             color: var(--secondary); 
             text-decoration: none; 
             font-weight: 600; 
-            font-size: 0.95rem; 
+            font-size: 0.70rem; 
             transition: color 0.2s;
         }
         .nav-link:hover {
@@ -329,7 +344,7 @@
             background: #ffffff;
             border: 1px solid #cbd5e0;
             border-radius: 6px;
-            padding: 10px 8px; /* Slightly tighter padding for small phone widths */
+            padding: 10px 8px; 
             cursor: pointer;
             user-select: none;
             transition: all 0.15s ease-in-out;
@@ -389,7 +404,7 @@
         }
 
         .specialty-label {
-            font-size: 0.85rem; /* Adjusted for safety against text-wrapping on compact mobile layers */
+            font-size: 0.85rem; 
             color: #4a5568;
             font-weight: 500;
             transition: color 0.15s ease;
@@ -501,8 +516,6 @@
             .form-card { padding: 18px; }
             .form-row { flex-direction: column; gap: 0; } 
         }
-
-        /* REMOVED: The old media block that forced single column on smaller screens */
     </style>
 </head>
 <body>
@@ -513,7 +526,6 @@
     </header>
 
     <div class="page-container">
-        
         <section class="image-side">
             <div class="image-side-content">
                 <div class="feature-badge" id="badge-text">JMCY Professional Network</div>
@@ -524,7 +536,6 @@
 
         <main class="form-side">
             <div class="form-wrapper">
-                
                 <div class="lang-container">
                     <button class="lang-btn active" id="btn-en" onclick="setFormLang('en')">English</button>
                     <button class="lang-btn" id="btn-tl" onclick="setFormLang('tl')" style="margin-left: 8px;">Tagalog</button>
@@ -536,10 +547,8 @@
                 </div>
 
                 <form onsubmit="handleFormSubmit(event)">
-                    
                     <div class="form-card">
                         <div class="form-section-title" id="sec-account">Account Setup Credentials</div>
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label id="lbl-username" for="username">Username</label>
@@ -563,7 +572,6 @@
 
                     <div class="form-card">
                         <div class="form-section-title" id="sec-identity">Security & Identity Verification</div>
-
                         <div class="form-group">
                             <label id="lbl-name" for="fullName">Full Legal Name</label>
                             <div class="input-icon-wrapper">
@@ -609,7 +617,6 @@
 
                     <div class="form-card">
                         <div class="form-section-title" id="sec-professional">Professional Profiling & Operations</div>
-
                         <div class="form-group">
                             <label id="lbl-zone" for="coverage">Preferred Service Locations / Coverage Zones</label>
                             <div class="input-icon-wrapper">
@@ -659,7 +666,6 @@
 
                     <div class="form-card">
                         <div class="form-section-title" id="sec-documents">Required Clearances & Verification</div>
-
                         <div class="form-group" style="margin-bottom: 24px;">
                             <label id="lbl-id-front" style="margin-bottom: 10px;">1. Government ID (Front Side) *</label>
                             <label for="capture-id-front" class="file-dummy" id="box-id-front">

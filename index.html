@@ -23,6 +23,7 @@
             color: var(--dark); 
             background-color: #ffffff;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* ==========================================================================
@@ -147,7 +148,10 @@
         .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
 
         /* Structural Page Sections */
-        section { padding: 80px 10%; }
+        section { 
+            padding: 80px 10%; 
+            transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 40px; font-weight: 700; }
         .bg-light { background-color: var(--light); }
 
@@ -162,7 +166,7 @@
         .card { 
             flex: 1; max-width: 340px; background: #ffffff; padding: 40px 30px; 
             border-radius: 6px; border: 1px solid var(--border);
-            transition: box-shadow 0.3s, transform 0.3s;
+            transition: box-shadow 0.3s, transform 0.3s, margin 0.4s ease;
         }
         .card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
         .card h3 { color: var(--secondary); margin-top: 0; font-size: 1.25rem; margin-bottom: 15px; }
@@ -184,7 +188,7 @@
             border-radius: 8px;
             padding: 25px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
         .rate-card:hover {
             transform: translateY(-3px);
@@ -253,24 +257,103 @@
         .about-text p { color: #4a5568; font-size: 1.05rem; margin-bottom: 20px; }
         .about-image { flex: 1; height: 350px; background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center; border-radius: 8px; border: 1px solid var(--border); }
 
-        /* Recruitment Steps Pipeline */
-        .steps-container { display: flex; justify-content: space-between; gap: 20px; }
-        .step-node { flex: 1; text-align: center; position: relative; }
-        .step-number { width: 50px; height: 50px; background-color: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-weight: 700; font-size: 1.2rem; }
-        .step-node h4 { font-size: 1.15rem; color: var(--primary); margin: 0 0 10px 0; }
-        .step-node p { color: #4a5568; font-size: 0.9rem; margin: 0; padding: 0 10px; }
+        /* ==========================================================================
+           RECRUITMENT PIPELINE 1-BY-1 SLIDESHOW CAROUSEL
+           ========================================================================== */
+        .pipeline-wrapper {
+            max-width: 550px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            padding: 10px 0;
+        }
+        .steps-slider-track {
+            display: flex;
+            width: 300%; /* 3 Steps = 300% Width */
+            transition: transform 0.8s cubic-bezier(0.45, 0, 0.15, 1);
+            will-change: transform;
+        }
+        .step-node {
+            width: 33.333%;
+            flex: 1;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 20px 40px;
+        }
+        .step-number { 
+            width: 55px; 
+            height: 55px; 
+            background-color: var(--primary); 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 20px auto; 
+            font-weight: 700; 
+            font-size: 1.3rem; 
+            box-shadow: 0 4px 10px rgba(26, 54, 147, 0.15);
+        }
+        .step-node h4 { font-size: 1.3rem; color: var(--primary); margin: 0 0 12px 0; }
+        .step-node p { color: #4a5568; font-size: 1rem; margin: 0; line-height: 1.6; }
+
+        /* Carousel Indicator Elements */
+        .pipeline-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #cbd5e0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
 
         /* Structured FAQ Elements */
         .faq-max { max-width: 800px; margin: 0 auto; }
-        .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; cursor: pointer; }
+        .faq-item { 
+            border-bottom: 1px solid var(--border); 
+            padding: 20px 0; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease, padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .faq-question { font-size: 1.15rem; font-weight: 600; color: var(--primary); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: #4a5568; font-size: 0.95rem; margin-top: 0; }
-        .faq-item.open .faq-answer { max-height: 250px; margin-top: 10px; }
-        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); }
+        .faq-answer { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.4s ease; 
+            color: #4a5568; 
+            font-size: 0.95rem; 
+            margin-top: 0;
+            opacity: 0;
+        }
+        .faq-item.open .faq-answer { 
+            max-height: 350px; 
+            margin-top: 14px; 
+            opacity: 1;
+        }
+        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); transition: transform 0.3s ease; }
         .faq-item.open .faq-icon::after { content: '−'; }
 
         /* Legal Terms Block Layout */
-        .terms-box { max-width: 800px; margin: 0 auto; background: white; border: 1px solid var(--border); border-left: 4px solid var(--primary); padding: 30px; border-radius: 4px; }
+        .terms-box { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            border: 1px solid var(--border); 
+            border-left: 4px solid var(--primary); 
+            padding: 30px; 
+            border-radius: 4px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .terms-box h3 { margin-top: 0; color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; }
         .terms-box p { color: #4a5568; font-size: 0.95rem; margin-bottom: 12px; }
         .terms-box ul { margin: 0; padding-left: 20px; color: #4a5568; font-size: 0.95rem; }
@@ -332,6 +415,11 @@
             animation: whatsapp-pulse 2s infinite;
         }
 
+        @keyframes whatsapp-pulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
         .whatsapp-label {
             font-size: 0.78rem;
             font-weight: 700;
@@ -348,6 +436,22 @@
 
         .whatsapp-container:hover .whatsapp-label {
             color: #128C7E;
+        }
+
+        /* ==========================================================================
+           SCROLL REVEAL UPWARD ANIMATION
+           ========================================================================== */
+        .animate-up {
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform, opacity;
+        }
+
+        .animate-up.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         @media (max-width: 768px) {
@@ -396,13 +500,17 @@
             .hero-content h1 { font-size: 1.6rem; }
             .hero-content p { font-size: 0.95rem; }
 
-            .grid, .about-split, .steps-container { flex-direction: column; gap: 30px; }
-            .card, .step-node { max-width: 100%; width: 100%; box-sizing: border-box; }
+            .grid, .about-split { flex-direction: column; gap: 30px; }
+            .card { max-width: 100%; width: 100%; box-sizing: border-box; }
             
             .about-text h2 { text-align: center; }
             .about-image { display: none; }
             .terms-box { padding: 20px; }
             .lang-control-wrapper { justify-content: center; margin-bottom: 20px; }
+
+            /* Responsive Adjustments for Pipeline Slider Components */
+            .pipeline-wrapper { max-width: 100%; }
+            .step-node { padding: 10px 15px; }
 
             /* Responsive Adjustments for Floating WhatsApp Button Label */
             .whatsapp-container { bottom: 15px; right: 20px; gap: 4px; }
@@ -414,32 +522,27 @@
 </head>
 <body>
 
-    <!-- Promotional Hiring Notification Top Bar -->
     <div class="promo-hiring-bar">
         <span class="promo-badge" id="promo-tag">We Are Hiring</span>
         <span id="promo-msg"> JMCY Wellness is expanding! We are looking for professional, certified FREELANCE MASSAGE THERAPISTS.</span>
         <a href="apply.html" class="promo-link" id="promo-action">Apply Now &rarr;</a>
     </div>
 
-    <!-- Header Navigation -->
     <header>
         <a href="#" class="logo">JMCY WELLNESS</a>
         
-        <!-- Interactive Mobile Hamburger Trigger -->
         <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
-        <!-- Menu Action Content -->
         <div class="nav-actions" id="nav-actions-container">
-            <a href="login.html" class="nav-link">Login</a>
+            <a href="login.html" class="nav-link">Login Portal</a>
             <a href="apply.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Apply Now</a>
         </div>
     </header>
 
-    <!-- Sliding Banner Component -->
     <section class="hero-slider" style="padding: 0;">
         <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
@@ -457,8 +560,7 @@
         </div>
     </section>
 
-    <!-- About Us Section -->
-    <section class="about-us">
+    <section class="about-us animate-up">
         <div class="about-split">
             <div class="about-text">
                 <h2>About the JMCY Network</h2>
@@ -469,8 +571,7 @@
         </div>
     </section>
 
-    <!-- Advantages Grid -->
-    <section class="benefits bg-light">
+    <section class="benefits bg-light animate-up">
         <h2>The Core Network Advantages</h2>
         <div class="grid">
             <div class="card">
@@ -488,20 +589,15 @@
         </div>
     </section>
 
-    <!-- ==========================================================================
-       MASSAGE RATES & EARNINGS BREAKDOWN SECTION (EXPLICIT TIME TIERS)
-       ========================================================================== */ -->
-    <section class="massage-rates">
+    <section class="massage-rates animate-up">
         <h2 id="rates-section-title">Standard Service Rates & Therapist Earnings</h2>
         
-        <!-- Language Switcher Bar for Rates Context -->
         <div class="lang-control-wrapper">
             <button class="lang-toggle-btn active" id="lang-en" onclick="changeLanguage('en')">English</button>
             <button class="lang-toggle-btn" id="lang-tl" onclick="changeLanguage('tl')" style="margin-left: 8px;">Tagalog</button>
         </div>
 
         <div class="rates-grid" id="rates-matrix-container">
-            <!-- Rate Card 1: Swedish -->
             <div class="rate-card">
                 <h3 id="rate-t1">Swedish Massage</h3>
                 
@@ -524,7 +620,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 2: Shiatsu -->
             <div class="rate-card">
                 <h3 id="rate-t2">Shiatsu Massage</h3>
                 
@@ -547,7 +642,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 3: Thai -->
             <div class="rate-card">
                 <h3 id="rate-t3">Thai Massage</h3>
                 
@@ -570,7 +664,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 4: Reflexology -->
             <div class="rate-card">
                 <h3 id="rate-t4">Reflexology / Foot</h3>
                 
@@ -593,7 +686,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 5: Aromatherapy -->
             <div class="rate-card">
                 <h3 id="rate-t5">Aromatherapy</h3>
                 
@@ -616,7 +708,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 6: Deep Tissue -->
             <div class="rate-card">
                 <h3 id="rate-t6">Deep Tissue Massage</h3>
                 
@@ -639,7 +730,6 @@
                 </div>
             </div>
 
-            <!-- Rate Card 7: Combination -->
             <div class="rate-card">
                 <h3 id="rate-t7">Combination Massage</h3>
                 
@@ -664,33 +754,37 @@
         </div>
     </section>
 
-    <!-- Onboarding Pipeline Steps -->
     <section class="steps bg-light">
         <h2>Onboarding Pipeline</h2>
-        <div class="steps-container">
-            <div class="step-node">
-                <div class="step-number">1</div>
-                <h4>Online Registration</h4>
-                <p>Submit your professional credentials, target locations, and primary skill qualifications via our secure portal form.</p>
+        <div class="pipeline-wrapper">
+            <div class="steps-slider-track" id="pipelineTrack">
+                <div class="step-node">
+                    <div class="step-number">1</div>
+                    <h4>Online Registration</h4>
+                    <p>Submit your professional credentials, target locations, and primary skill qualifications via our secure portal form.</p>
+                </div>
+                <div class="step-node">
+                    <div class="step-number">2</div>
+                    <h4>Verification Review</h4>
+                    <p>Our internal operations panel evaluates your background checks, practical competencies, and government identification profiles.</p>
+                </div>
+                <div class="step-node">
+                    <div class="step-number">3</div>
+                    <h4>Collect & Remit</h4>
+                    <p>Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash payment, then send the 15% commission slice to JMCY.</p>
+                </div>
             </div>
-            <div class="step-node">
-                <div class="step-number">2</div>
-                <h4>Verification Review</h4>
-                <p>Our internal operations panel evaluates your background checks, practical competencies, and government identification profiles.</p>
-            </div>
-            <div class="step-node">
-                <div class="step-number">3</div>
-                <h4>Collect & Remit</h4>
-                <p>Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash payment, then send the 15% commission slice to JMCY.</p>
+            <div class="pipeline-dots">
+                <div class="dot active" onclick="goToStep(0)"></div>
+                <div class="dot" onclick="goToStep(1)"></div>
+                <div class="dot" onclick="goToStep(2)"></div>
             </div>
         </div>
     </section>
 
-    <!-- Frequently Asked Questions Accordion with Translation Engine -->
-    <section class="faq">
+    <section class="faq animate-up">
         <h2 id="faq-title">Frequently Asked Questions</h2>
         
-        <!-- FAQ Language Control (Shared logic sync) -->
         <div class="lang-control-wrapper">
             <button class="lang-toggle-btn active" id="lang-en-faq" onclick="changeLanguage('en')">English</button>
             <button class="lang-toggle-btn" id="lang-tl-faq" onclick="changeLanguage('tl')" style="margin-left: 8px;">Tagalog</button>
@@ -707,7 +801,7 @@
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question" id="q3">What are the core requirements to join the platform? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a3">Applicants must present a valid government-issued ID, a recent clean NBI clearance record, and valid proof of massage therapy training or certification.</div>
+                <div class="faq-answer" id="a3">Applicants must present a valid government-issued ID and valid proof of massage therapy training or certification.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question" id="q4">How does the payout mechanism distribute earnings? <span class="faq-icon"></span></div>
@@ -716,8 +810,7 @@
         </div>
     </section>
 
-    <!-- Terms and Conditions Summary Block -->
-    <section class="terms bg-light">
+    <section class="terms bg-light animate-up">
         <h2 id="terms-title">Platform Operations & Commission Policy</h2>
         <div class="terms-box">
             <h3 id="terms-subtitle">Revenue Split Framework</h3>
@@ -735,7 +828,6 @@
         &copy; 2026 JMCY Wellness Network. Compliance & Intermediary Technical Framework. All Rights Reserved.
     </footer>
 
-    <!-- Floating WhatsApp Link Wrapper with Text Label -->
     <a href="https://wa.me/639091297422?text=Hello%20JMCY%20Support,%20I%20have%20an%20inquiry%20about%20the%20therapist%20network%20onboarding%20process." 
        class="whatsapp-container" 
        target="_blank" 
@@ -749,7 +841,6 @@
         <span class="whatsapp-label">jmcy support</span>
     </a>
 
-    <!-- Functional Component Scripts -->
     <script>
         // Responsive Hamburger Engine Variables
         const hamburgerBtn = document.getElementById('hamburger-toggle');
@@ -787,6 +878,69 @@
             element.classList.toggle('open');
         }
 
+        // ==========================================================================
+        // ONBOARDING PIPELINE INTERACTIVE SLIDESHOW ENGINE LOGIC
+        // ==========================================================================
+        let activeStep = 0;
+        const track = document.getElementById('pipelineTrack');
+        const dots = document.querySelectorAll('.pipeline-dots .dot');
+        const totalSteps = 3;
+
+        function updatePipelineSlider() {
+            // Shift offset ratio percentage calculation per slider index block
+            const offset = -(activeStep * 33.333);
+            track.style.transform = `translateX(${offset}%)`;
+            
+            // Sync dot indicators styles
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeStep);
+            });
+        }
+
+        function goToStep(index) {
+            activeStep = index;
+            updatePipelineSlider();
+            resetPipelineTimer(); // Resets timer loop upon manual client dot hit
+        }
+
+        // Auto Animation Shift Rail Processing Loop
+        let pipelineInterval = setInterval(() => {
+            activeStep = (activeStep + 1) % totalSteps;
+            updatePipelineSlider();
+        }, 4500);
+
+        function resetPipelineTimer() {
+            clearInterval(pipelineInterval);
+            pipelineInterval = setInterval(() => {
+                activeStep = (activeStep + 1) % totalSteps;
+                updatePipelineSlider();
+            }, 4500);
+        }
+
+        // ==========================================================================
+        // SCROLL-DRIVEN SLIDE-UP REVEAL INTERSECTION OBSERVER ENGINE
+        // ==========================================================================
+        document.addEventListener("DOMContentLoaded", function () {
+            const animatedElements = document.querySelectorAll('.animate-up');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.12
+            };
+
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            animatedElements.forEach(el => scrollObserver.observe(el));
+        });
+
         // Translation Localization Data Object
         const translations = {
             en: {
@@ -803,7 +957,7 @@
                 q2: "What is required to return to active status and receive new bookings after a session? <span class='faq-icon'></span>",
                 a2: "Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 15% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.",
                 q3: "What are the core requirements to join the platform? <span class='faq-icon'></span>",
-                a3: "Applicants must present a valid government-issued ID, a recent clean NBI clearance record, and valid proof of massage therapy training or certification.",
+                a3: "Applicants must present a valid government-issued ID and proof of massage therapy training or certification.",
                 q4: "How does the payout mechanism distribute earnings? <span class='faq-icon'></span>",
                 a4: "There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash or GCash upon arrival or service completion. Afterwards, you remit the 15% network commission allocation to JMCY in accordance with terms.",
                 termsTitle: "Platform Operations & Commission Policy",
@@ -828,9 +982,9 @@
                 q1: "Paano nakakatanggap ang mga freelancer ng booking mula sa kliyente? <span class='faq-icon'></span>",
                 a1: "Kapag nag-book ang isang customer sa aming mga channel, titingnan ng algorithm ng JMCY kung sinong mga therapist ang malapit sa lugar. Ang mga mapipiling professional ay makakatanggap agad ng push notification alert sa kanilang network web dashboard na naglalaman ng petsa, oras, at lokasyon ng booking.",
                 q2: "Ano ang kailangang gawin para maging 'Active' muli at makatanggap ng bagong booking pagkatapos ng massage session? <span class='faq-icon'></span>",
-                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click ang button na 'Mark Service as Completed'. Ito ang magtatala ng 15% platform fee na dapat mong i-remit, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking.",
+                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click the button na 'Mark Service as Completed'. Ito ang magtatala ng 15% platform fee na dapat mong i-remit, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking.",
                 q3: "Ano ang mga pangunahing kinakailangan para sumali sa platform? <span class='faq-icon'></span>",
-                a3: "Ang mga aplikante ay kailangang magsumite ng balidong government-issued ID, pinakabagong NBI clearance, at sertipiko o patunay ng pagsasanay sa massage therapy.",
+                a3: "Ang mga aplikante ay kailangang magsumite ng balidong government-issued ID at sertipiko o patunay ng pagsasanay sa massage therapy.",
                 q4: "Paano ipinapadala ang kita o payout sa mga therapist? <span class='faq-icon'></span>",
                 a4: "Walang waiting period o antala sa sahod. Ang customer ay direktang magbabayad sa iyo ng buong halaga gamit ang Cash o GCash pagdating o pagkatapos ng serbisyo. Pagkatapos nito, ipadadala o ire-remit mo ang 15% komisyon sa JMCY alinsunod sa kasunduan.",
                 termsTitle: "Operasyon ng Platform & Patakaran sa Komisyon",
@@ -887,6 +1041,5 @@
             document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
         }
     </script>
-
 </body>
 </html>
