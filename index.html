@@ -13,6 +13,7 @@
             --light: #f7fafc; 
             --border: #e2e8f0;
             --text-muted: #718096;
+            --whatsapp-green: #25D366;
         }
         
         body { 
@@ -22,6 +23,44 @@
             color: var(--dark); 
             background-color: #ffffff;
             line-height: 1.6;
+        }
+
+        /* ==========================================================================
+           PROMOTIONAL HIRING TOP BAR NOTICE
+           ========================================================================== */
+        .promo-hiring-bar {
+            background-color: var(--primary);
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .promo-badge {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .promo-link {
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+        .promo-link:hover {
+            color: #cbd5e0;
         }
         
         /* ==========================================================================
@@ -162,9 +201,89 @@
         footer { background: #1a202c; color: #a0aec0; text-align: center; padding: 40px 20px; font-size: 14px; border-top: 1px solid #2d3748; }
 
         /* ==========================================================================
+           WHATSAPP FLOATING FLOATER ACTIONS WITH LABEL
+           ========================================================================== */
+        .whatsapp-container {
+            position: fixed;
+            bottom: 25px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 9999;
+            text-decoration: none;
+        }
+
+        .whatsapp-float {
+            background-color: var(--whatsapp-green);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            position: relative;
+        }
+        
+        .whatsapp-container:hover .whatsapp-float {
+            transform: scale(1.08);
+            background-color: #128C7E;
+        }
+
+        .whatsapp-float svg {
+            width: 34px;
+            height: 34px;
+            fill: currentColor;
+        }
+
+        /* Ambient subtle pulse to increase click engagement */
+        .whatsapp-float::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--whatsapp-green);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.4;
+            animation: whatsapp-pulse 2s infinite;
+        }
+
+        .whatsapp-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--dark);
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 3px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--border);
+            transition: color 0.2s ease;
+        }
+
+        .whatsapp-container:hover .whatsapp-label {
+            color: #128C7E;
+        }
+
+        @keyframes whatsapp-pulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(1.35); opacity: 0; }
+        }
+
+        /* ==========================================================================
            MOBILE VIEW INTERACTION INHERITANCE (Under 768px Width)
            ========================================================================== */
         @media (max-width: 768px) {
+            .promo-hiring-bar { font-size: 0.82rem; padding: 8px 12px; gap: 6px; }
+            .promo-badge { font-size: 0.65rem; padding: 1px 6px; }
+
             header { padding: 15px 5%; flex-direction: row; justify-content: space-between; text-align: left; gap: 0; }
             .logo { font-size: 20px; }
             
@@ -214,10 +333,23 @@
             .about-image { display: none; }
             .terms-box { padding: 20px; }
             .lang-control-wrapper { justify-content: center; margin-bottom: 20px; }
+
+            /* Responsive Adjustments for Floating WhatsApp Button Label */
+            .whatsapp-container { bottom: 15px; right: 20px; gap: 4px; }
+            .whatsapp-float { width: 52px; height: 52px; }
+            .whatsapp-float svg { width: 28px; height: 28px; }
+            .whatsapp-label { font-size: 0.7rem; padding: 2px 6px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Promotional Hiring Notification Top Bar -->
+    <div class="promo-hiring-bar">
+        <span class="promo-badge" id="promo-tag">We Are Hiring</span>
+        <span id="promo-msg"> JMCY Wellness is expanding! We are looking for professional, certified freelance massage therapists.</span>
+        <a href="apply.html" class="promo-link" id="promo-action">Apply Now &rarr;</a>
+    </div>
 
     <!-- Header Navigation -->
     <header>
@@ -356,6 +488,20 @@
         &copy; 2026 JMCY Wellness Network. Compliance & Intermediary Technical Framework. All Rights Reserved.
     </footer>
 
+    <!-- Floating WhatsApp Link Wrapper with Text Label -->
+    <a href="https://wa.me/639091297422?text=Hello%20JMCY%20Support,%20I%20have%20an%20inquiry%20about%20the%20therapist%20network%20onboarding%20process." 
+       class="whatsapp-container" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       title="Contact JMCY Support on WhatsApp">
+        <div class="whatsapp-float">
+            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+                <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+            </svg>
+        </div>
+        <span class="whatsapp-label">jmcy support</span>
+    </a>
+
     <!-- Functional Component Scripts -->
     <script>
         // Responsive Hamburger Engine Variables
@@ -398,6 +544,9 @@
         // Translation Localization Data Object
         const translations = {
             en: {
+                promoTag: "We Are Hiring",
+                promoMsg: " JMCY Wellness is expanding! We are looking for professional, certified freelance massage therapists.",
+                promoAction: "Apply Now &rarr;",
                 faqTitle: "Frequently Asked Questions",
                 q1: "How do freelancers receive a client booking? <span class='faq-icon'></span>",
                 a1: "When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.",
@@ -417,6 +566,9 @@
                 `
             },
             tl: {
+                promoTag: "Pooling Kami Ngayon",
+                promoMsg: " Lumalaki ang JMCY Wellness! Naghahanap kami ng mga propesyonal at sertipikadong freelance massage therapist.",
+                promoAction: "Mag-apply Ngayon &rarr;",
                 faqTitle: "Mga Madalas Itanong (FAQs)",
                 q1: "Paano nakakatanggap ang mga freelancer ng booking mula sa kliyente? <span class='faq-icon'></span>",
                 a1: "Kapag nag-book ang isang customer sa aming mga channel, titingnan ng algorithm ng JMCY kung sinong mga therapist ang malapit sa lugar. Ang mga mapipiling professional ay makakatanggap agad ng push notification alert sa kanilang network web dashboard na naglalaman ng petsa, oras, at lokasyon ng booking.",
@@ -445,6 +597,10 @@
             document.getElementById('lang-' + lang).classList.add('active');
 
             // Inject Content Mutations
+            document.getElementById('promo-tag').innerText = translations[lang].promoTag;
+            document.getElementById('promo-msg').innerText = translations[lang].promoMsg;
+            document.getElementById('promo-action').innerHTML = translations[lang].promoAction;
+
             document.getElementById('faq-title').innerText = translations[lang].faqTitle;
             document.getElementById('q1').innerHTML = translations[lang].q1;
             document.getElementById('a1').innerHTML = translations[lang].a1;

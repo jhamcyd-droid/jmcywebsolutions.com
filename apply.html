@@ -27,6 +27,9 @@
             color: var(--dark); 
             background: radial-gradient(circle at top right, #f0f4f8, var(--light));
             line-height: 1.6; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* ==========================================================================
@@ -40,6 +43,8 @@
             border-bottom: 1px solid var(--border); 
             background: #ffffff; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            position: relative;
+            z-index: 10;
         }
         .logo { 
             font-size: 22px; 
@@ -61,14 +66,78 @@
         }
 
         /* ==========================================================================
+           SPLIT LAYOUT CONTAINER ARCHITECTURE
+           ========================================================================== */
+        .page-container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Left Side Hero / Image Layout Section */
+        .image-side {
+            flex: 1;
+            position: relative;
+            background-color: var(--primary);
+            /* Replace the URL below with your actual index image path */
+            background-image: linear-gradient(rgba(26, 54, 93, 0.85), rgba(26, 54, 93, 0.85)), url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            color: #ffffff;
+        }
+
+        .image-side-content {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .image-side h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+
+        .image-side p {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            margin-bottom: 30px;
+        }
+
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 25px;
+        }
+
+        /* Right Side Form Content Wrapper Section */
+        .form-side {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 60px 80px 60px;
+            background: transparent;
+        }
+
+        /* ==========================================================================
            LANGUAGE CONTAINER CONTROL BAR
            ========================================================================== */
         .lang-container { 
-            max-width: 720px; 
-            margin: 30px auto 0 auto; 
             display: flex; 
             justify-content: flex-end; 
-            padding: 0 20px; 
+            margin-bottom: 20px;
         }
         .lang-btn { 
             background: #ffffff; 
@@ -92,13 +161,9 @@
             border-color: var(--secondary); 
         }
 
-        /* ==========================================================================
-           FORM CONTENT WRAPPER ARCHITECTURE
-           ========================================================================== */
         .form-wrapper { 
-            max-width: 720px; 
-            width: 90%;
-            margin: 15px auto 80px auto; 
+            width: 100%;
+            max-width: 680px;
             background: #ffffff; 
             border: 1px solid var(--border); 
             border-radius: 12px; 
@@ -400,15 +465,37 @@
             font-size: 13px; 
             letter-spacing: 0.3px;
             border-top: 1px solid #2d3748; 
+            position: relative;
+            z-index: 10;
         }
 
         /* ==========================================================================
            RESPONSIVE VIEW INTERACTIVE ADAPTATIONS
            ========================================================================== */
+        @media (max-width: 1024px) {
+            .page-container {
+                flex-direction: column;
+            }
+            .image-side {
+                padding: 45px 30px;
+                text-align: center;
+            }
+            .image-side-content {
+                margin: 0 auto;
+            }
+            .form-side {
+                padding: 30px 20px 60px 20px;
+                align-items: center;
+            }
+            .lang-container {
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+
         @media (max-width: 768px) { 
             header { padding: 15px 5%; } 
-            .lang-container { margin-top: 20px; justify-content: center; padding: 0; } 
-            .form-wrapper { margin: 15px auto 60px auto; padding: 25px 20px; } 
+            .form-wrapper { padding: 25px 20px; } 
             .form-card { padding: 18px; }
             .form-row { flex-direction: column; gap: 0; } 
         }
@@ -428,51 +515,65 @@
         <a href="login.html" class="nav-link" id="nav-login">Already have an account? Login</a>
     </header>
 
-    <!-- Language Control System Block -->
-    <div class="lang-container">
-        <button class="lang-btn active" id="btn-en" onclick="setFormLang('en')">English</button>
-        <button class="lang-btn" id="btn-tl" onclick="setFormLang('tl')" style="margin-left: 8px;">Tagalog</button>
-    </div>
-
-    <!-- Centralized Container Form -->
-    <main class="form-wrapper">
-        <div class="form-header">
-            <h1 id="f-title">Professional Network Application</h1>
-            <p id="f-desc">Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.</p>
-        </div>
-
-        <form onsubmit="handleFormSubmit(event)">
-            
-            <!-- SECTION 1: Account Access Configurations Card Box -->
-            <div class="form-card">
-                <div class="form-section-title" id="sec-account">Account Setup Credentials</div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label id="lbl-username" for="username">Username</label>
-                        <div class="input-icon-wrapper">
-                            <input type="text" id="username" class="form-control" required placeholder="e.g., juandelacruz2026">
-                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label id="lbl-password" for="password">Password</label>
-                        <div class="input-icon-wrapper password-wrapper">
-                            <input type="password" id="password" class="form-control" required placeholder="••••••••" minlength="8">
-                            <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                            <button type="button" class="toggle-password-btn" id="btn-toggle-pwd" onclick="togglePasswordVisibility()" aria-label="Toggle password view">
-                                <svg id="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Main Split Page Architecture Container -->
+    <div class="page-container">
+        
+        <!-- Left Banner Image Panel Layout -->
+        <section class="image-side">
+            <div class="image-side-content">
+                <div class="feature-badge" id="badge-text">JMCY Professional Network</div>
+                <h2 id="img-side-heading">Grow Your Wellness Practice With Us.</h2>
+                <p id="img-side-text">Join Metro Manila's leading dynamic network of certified wellness and massage therapy experts. Gain access to regular clients, stable hours, and a comprehensive digital therapist management platform.</p>
             </div>
+        </section>
 
-            <!-- SECTION 2: Personal Identity Card Box -->
-            <div class="form-card">
-                <div class="form-section-title" id="sec-identity">Security & Identity Verification</div>
+        <!-- Right Working Form Field Interface -->
+        <main class="form-side">
+            <div class="form-wrapper">
+                
+                <!-- Language Control System Block -->
+                <div class="lang-container">
+                    <button class="lang-btn active" id="btn-en" onclick="setFormLang('en')">English</button>
+                    <button class="lang-btn" id="btn-tl" onclick="setFormLang('tl')" style="margin-left: 8px;">Tagalog</button>
+                </div>
 
-                <div class="form-group">
+                <div class="form-header">
+                    <h1 id="f-title">Professional Network Application</h1>
+                    <p id="f-desc">Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.</p>
+                </div>
+
+                <form onsubmit="handleFormSubmit(event)">
+                    
+                    <!-- SECTION 1: Account Access Configurations Card Box -->
+                    <div class="form-card">
+                        <div class="form-section-title" id="sec-account">Account Setup Credentials</div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label id="lbl-username" for="username">Username</label>
+                                <div class="input-icon-wrapper">
+                                    <input type="text" id="username" class="form-control" required placeholder="e.g., juandelacruz2026">
+                                    <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="lbl-password" for="password">Password</label>
+                                <div class="input-icon-wrapper password-wrapper">
+                                    <input type="password" id="password" class="form-control" required placeholder="••••••••" minlength="8">
+                                    <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    <button type="button" class="toggle-password-btn" id="btn-toggle-pwd" onclick="togglePasswordVisibility()" aria-label="Toggle password view">
+                                        <svg id="eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: Personal Identity Card Box -->
+                    <div class="form-card">
+                        <div class="form-section-title" id="sec-identity">Security & Identity Verification</div>
+
+                        <div class="form-group">
                     <label id="lbl-name" for="fullName">Full Legal Name</label>
                     <div class="input-icon-wrapper">
                         <input type="text" id="fullName" class="form-control" required placeholder="Juan Dela Cruz">
@@ -513,13 +614,13 @@
                     </div>
                     <span id="hint-phone" class="hint-text">Note: This must be your active GCash and WhatsApp number.</span>
                 </div>
-            </div>
+                    </div>
 
-            <!-- SECTION 3: Professional Experience Card Box -->
-            <div class="form-card">
-                <div class="form-section-title" id="sec-professional">Professional Profiling & Operations</div>
+                    <!-- SECTION 3: Professional Experience Card Box -->
+                    <div class="form-card">
+                        <div class="form-section-title" id="sec-professional">Professional Profiling & Operations</div>
 
-                <div class="form-group">
+                        <div class="form-group">
                     <label id="lbl-zone" for="coverage">Preferred Service Locations / Coverage Zones</label>
                     <div class="input-icon-wrapper">
                         <input type="text" id="coverage" class="form-control" required placeholder="e.g., Makati, Pasig, Quezon City">
@@ -527,7 +628,6 @@
                     </div>
                 </div>
 
-                <!-- UPDATE MODALITIES INPUT SYSTEM -->
                 <div class="form-group">
                     <label id="lbl-skills">Massage Therapy Modalities & Specialties *</label>
                     <div class="specialties-grid">
@@ -565,56 +665,58 @@
                     <input type="text" id="specialties-validate" required style="opacity: 0; height: 0; width: 0; position: absolute;">
                     <span id="hint-skills" class="hint-text" style="display: none; margin-top: 8px;">Please select at least one modality specialty.</span>
                 </div>
+                    </div>
+
+                    <!-- SECTION 4: Media Clearances Verification Card Box -->
+                    <div class="form-card">
+                        <div class="form-section-title" id="sec-documents">Required Clearances & Verification</div>
+
+                        <!-- 1. Front ID Card Capture -->
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label id="lbl-id-front" style="margin-bottom: 10px;">1. Government ID (Front Side) *</label>
+                            <label for="capture-id-front" class="file-dummy" id="box-id-front">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span id="txt-id-front" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Front ]</span>
+                            </label>
+                            <input type="file" id="capture-id-front" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-front', 'txt-id-front', 'Front ID Captured! ✓')">
+                        </div>
+
+                        <!-- 2. Back ID Card Capture -->
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label id="lbl-id-back" style="margin-bottom: 10px;">2. Government ID (Back Side) *</label>
+                            <label for="capture-id-back" class="file-dummy" id="box-id-back">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span id="txt-id-back" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Back ]</span>
+                            </label>
+                            <input type="file" id="capture-id-back" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-back', 'txt-id-back', 'Back ID Captured! ✓')">
+                        </div>
+
+                        <!-- 3. Selfie with ID Identification Capture -->
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label id="lbl-id-selfie" style="margin-bottom: 10px;">3. Selfie Holding Government ID *</label>
+                            <label for="capture-id-selfie" class="file-dummy" id="box-id-selfie">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span id="txt-id-selfie" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Front Camera for Selfie ]</span>
+                            </label>
+                            <input type="file" id="capture-id-selfie" class="camera-input" accept="image/*" capture="user" required onchange="handleCaptureFeedback(this, 'box-id-selfie', 'txt-id-selfie', 'Selfie Captured! ✓')">
+                        </div>
+
+                        <!-- 4. Certificate Validation File -->
+                        <div class="form-group">
+                            <label id="lbl-cert" style="margin-bottom: 10px;">4. Massage Therapy Certificate / Training License *</label>
+                            <label for="capture-cert" class="file-dummy" id="box-cert">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                <span id="txt-cert" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Capture Therapy Certificate ]</span>
+                            </label>
+                            <input type="file" id="capture-cert" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-cert', 'txt-cert', 'Certificate Captured! ✓')">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="btn-submit">Submit Registration Details</button>
+                </form>
             </div>
-
-            <!-- SECTION 4: Media Clearances Verification Card Box -->
-            <div class="form-card">
-                <div class="form-section-title" id="sec-documents">Required Clearances & Verification</div>
-
-                <!-- 1. Front ID Card Capture -->
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label id="lbl-id-front" style="margin-bottom: 10px;">1. Government ID (Front Side) *</label>
-                    <label for="capture-id-front" class="file-dummy" id="box-id-front">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span id="txt-id-front" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Front ]</span>
-                    </label>
-                    <input type="file" id="capture-id-front" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-front', 'txt-id-front', 'Front ID Captured! ✓')">
-                </div>
-
-                <!-- 2. Back ID Card Capture -->
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label id="lbl-id-back" style="margin-bottom: 10px;">2. Government ID (Back Side) *</label>
-                    <label for="capture-id-back" class="file-dummy" id="box-id-back">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span id="txt-id-back" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Camera & Capture ID Back ]</span>
-                    </label>
-                    <input type="file" id="capture-id-back" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-id-back', 'txt-id-back', 'Back ID Captured! ✓')">
-                </div>
-
-                <!-- 3. Selfie with ID Identification Capture -->
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label id="lbl-id-selfie" style="margin-bottom: 10px;">3. Selfie Holding Government ID *</label>
-                    <label for="capture-id-selfie" class="file-dummy" id="box-id-selfie">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span id="txt-id-selfie" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Open Front Camera for Selfie ]</span>
-                    </label>
-                    <input type="file" id="capture-id-selfie" class="camera-input" accept="image/*" capture="user" required onchange="handleCaptureFeedback(this, 'box-id-selfie', 'txt-id-selfie', 'Selfie Captured! ✓')">
-                </div>
-
-                <!-- 4. Certificate Validation File -->
-                <div class="form-group">
-                    <label id="lbl-cert" style="margin-bottom: 10px;">4. Massage Therapy Certificate / Training License *</label>
-                    <label for="capture-cert" class="file-dummy" id="box-cert">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        <span id="txt-cert" style="color: var(--secondary); font-weight: 600; font-size: 0.9rem;">[ Tap to Capture Therapy Certificate ]</span>
-                    </label>
-                    <input type="file" id="capture-cert" class="camera-input" accept="image/*" capture="environment" required onchange="handleCaptureFeedback(this, 'box-cert', 'txt-cert', 'Certificate Captured! ✓')">
-                </div>
-            </div>
-
-            <button type="submit" class="submit-btn" id="btn-submit">Submit Registration Details</button>
-        </form>
-    </main>
+        </main>
+    </div>
 
     <!-- Operational Footer -->
     <footer>
@@ -641,7 +743,10 @@
                 lblIdBack: "2. Government ID (Back Side) *", txtIdBack: "[ Tap to Open Camera & Capture ID Back ]",
                 lblIdSelfie: "3. Selfie Holding Government ID *", txtIdSelfie: "[ Tap to Open Front Camera for Selfie ]",
                 lblCert: "4. Massage Therapy Certificate / Training License *", txtCert: "[ Tap to Capture Therapy Certificate ]",
-                submit: "Submit Registration Details", navLogin: "Already have an account? Login"
+                submit: "Submit Registration Details", navLogin: "Already have an account? Login",
+                badge: "JMCY Professional Network",
+                sideHeading: "Grow Your Wellness Practice With Us.",
+                sideText: "Join Metro Manila's leading dynamic network of certified wellness and massage therapy experts. Gain access to regular clients, stable hours, and a comprehensive digital therapist management platform."
             },
             tl: {
                 title: "Aplikasyon para sa Network",
@@ -658,7 +763,10 @@
                 lblIdBack: "2. Government ID (Likod na Bahagi) *", txtIdBack: "[ I-tap para Buksan ang Kamera para sa Likod ng ID ]",
                 lblIdSelfie: "3. Selfie na Hawak ang Government ID *", txtIdSelfie: "[ I-tap para Buksan ang Kamera para sa Selfie ]",
                 lblCert: "4. Massage Therapy Certificate o Lisensya sa Pagsasanay *", txtCert: "[ I-tap para Kuhanan ng Larawan ang Sertipiko ]",
-                submit: "Ipadala ang Aplikasyon", navLogin: "May account na? Mag-login dito"
+                submit: "Ipadala ang Aplikasyon", navLogin: "May account na? Mag-login dito",
+                badge: "Propesyonal na Network ng JMCY",
+                sideHeading: "Palaguin ang Iyong Propesyon Kasama Kami.",
+                sideText: "Sumali sa nangungunang network ng mga sertipikadong eksperto sa massage therapy sa Metro Manila. Magkaroon ng regular na kliyente at access sa aming modernong platform."
             }
         };
 
@@ -731,6 +839,10 @@
             document.getElementById('lbl-zone').innerText = formContent[lang].zone;
             document.getElementById('lbl-skills').innerText = formContent[lang].skills;
             
+            document.getElementById('badge-text').innerText = formContent[lang].badge;
+            document.getElementById('img-side-heading').innerText = formContent[lang].sideHeading;
+            document.getElementById('img-side-text').innerText = formContent[lang].sideText;
+
             document.getElementById('lbl-id-front').innerText = formContent[lang].lblIdFront;
             if(!document.getElementById('capture-id-front').files.length) {
                 document.getElementById('txt-id-front').innerText = formContent[lang].txtIdFront;
@@ -755,7 +867,6 @@
         function handleFormSubmit(event) {
             event.preventDefault();
             
-            // Check validation explicitly for checked elements
             validateSpecialties();
             if (!document.getElementById('specialties-validate').value) {
                 return false;

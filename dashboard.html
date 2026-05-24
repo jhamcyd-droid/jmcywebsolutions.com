@@ -26,32 +26,104 @@
         .logout-btn { background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; color: white; border-radius: 4px; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 0.85rem; }
         .logout-btn:hover { background: rgba(255,255,255,0.25); }
 
-        .dashboard-grid { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
-        .card-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        /* ==========================================================================
+           MAIN CONTENT ARCHITECTURE LAYOUT
+           ========================================================================== */
+        .workspace-wrapper {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Top Profile Layout Matrix Treatment Block */
+        .top-profile-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            background-image: linear-gradient(to right, #ffffff, var(--light));
+        }
+
+        .profile-identity-segment {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .profile-avatar-circle { 
+            width: 64px; 
+            height: 64px; 
+            background: #ebf8ff; 
+            border: 2px solid #bee3f8; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--secondary); 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .profile-title-meta h3 { margin: 0 0 4px 0; font-size: 1.35rem; color: var(--primary); font-weight: 700; letter-spacing: -0.3px; }
+        .profile-title-meta span { font-size: 0.9rem; color: #718096; font-weight: 600; }
+
+        .profile-details-segment {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px 30px;
+        }
+
+        .meta-data-item {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+        }
+
+        .meta-data-item .lbl {
+            color: #718096;
+            font-weight: 600;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-data-item .val {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        /* Dual Column Sub-Grid Display System */
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 30px; 
+        }
+
+        .card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+        .card-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; letter-spacing: -0.3px; }
         
         /* Status Tracking Banner Component */
-        .status-banner { background-color: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 15px; border-radius: 6px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 25px; }
-        .status-banner .status-title { font-weight: 700; margin-bottom: 3px; font-size: 0.95rem; }
-        .status-banner p { margin: 0; font-size: 0.88rem; line-height: 1.4; }
+        .status-banner { background-color: var(--alert-bg); border: 1px solid var(--alert-border); color: var(--alert-text); padding: 20px; border-radius: 10px; display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
+        .status-banner .status-title { font-weight: 700; margin-bottom: 4px; font-size: 1rem; }
+        .status-banner p { margin: 0; font-size: 0.9rem; line-height: 1.5; }
 
         /* Metric Grid Components */
         .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .metric-block { border: 1px solid var(--border); padding: 15px; border-radius: 6px; background: var(--light); text-align: center; }
-        .metric-val { font-size: 1.8rem; font-weight: 800; color: var(--secondary); margin-bottom: 2px; }
+        .metric-block { border: 1px solid var(--border); padding: 20px; border-radius: 8px; background: var(--light); text-align: center; transition: transform 0.2s; }
+        .metric-block:hover { transform: translateY(-2px); }
+        .metric-val { font-size: 1.9rem; font-weight: 800; color: var(--secondary); margin-bottom: 4px; }
         .metric-lbl { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 600; }
-
-        /* Profile Block Styling */
-        .profile-summary-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .profile-avatar-circle { width: 52px; height: 52px; background: #ebf8ff; border: 2px solid #bee3f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.3rem; font-weight: 700; text-transform: uppercase; }
-        .profile-title-meta h3 { margin: 0; font-size: 1.1rem; color: var(--primary); font-weight: 700; }
-        .profile-title-meta span { font-size: 0.8rem; color: #718096; font-weight: 600; }
-
-        /* General Info Table formatting */
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .data-table td { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
-        .data-table td.label { color: #718096; font-weight: 600; width: 40%; }
-        .data-table td.value { color: var(--dark); font-weight: 500; }
 
         /* ==========================================================================
            WHATSAPP FLOATING FLOATER ACTIONS WITH LABEL
@@ -130,13 +202,36 @@
             100% { transform: scale(1.35); opacity: 0; }
         }
 
+        /* ==========================================================================
+           MEDIA RESPONSIVE DESIGN ADAPTATIONS
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .top-profile-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 25px;
+            }
+            .profile-details-segment {
+                width: 100%;
+                flex: none;
+            }
+        }
+
         @media (max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; margin: 20px auto; }
+            .workspace-wrapper { margin: 20px auto; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 0; }
             .metrics { grid-template-columns: 1fr; }
             .whatsapp-container { bottom: 15px; right: 20px; gap: 4px; }
             .whatsapp-float { width: 52px; height: 52px; }
             .whatsapp-float svg { width: 28px; height: 28px; }
             .whatsapp-label { font-size: 0.7rem; padding: 2px 6px; }
+        }
+
+        @media (max-width: 520px) {
+            .profile-details-segment {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
         }
     </style>
 </head>
@@ -151,80 +246,85 @@
         </div>
     </nav>
 
-    <!-- Main Workspace Frame -->
-    <main class="dashboard-grid">
-        
-        <!-- Left Column Block -->
-        <div>
-            <!-- Live Onboarding Compliance Validation Indicator -->
-            <div class="status-banner">
-                <div style="font-size: 1.5rem; line-height: 1;">⏳</div>
-                <div>
-                    <div class="status-title">Profile Under Document Security Review</div>
-                    <p>Our background verification team is currently matching your submitted Front/Back IDs, Biometric Selfie, and Therapy Certificates. Dispatch signals are muted until authorization finishes.</p>
+    <!-- Main Dynamic Application Container Shell -->
+    <div class="workspace-wrapper">
+
+        <!-- Contractor Profile Top Treatment Structural Block -->
+        <section class="top-profile-card">
+            
+            <!-- Profile Identity Sub-Segment -->
+            <div class="profile-identity-segment">
+                <div class="profile-avatar-circle" id="profile-initials">--</div>
+                <div class="profile-title-meta">
+                    <h3 id="profile-display-name">Loading Account Profile...</h3>
+                    <span id="profile-display-handle">@username</span>
                 </div>
             </div>
 
-            <div class="card">
-                <h2 class="card-title">Live Assignment Dispatch Console</h2>
-                <div style="text-align: center; padding: 40px 20px; color: #a0aec0;">
-                    <div style="font-size: 2.5rem; margin-bottom: 10px;">📴</div>
-                    <p style="margin: 0; font-size: 0.95rem;">No active dispatches available. Approved credentials must be activated before platform booking alerts stream in.</p>
+            <!-- Profile Matrix Data Table Flex Engine Conversion -->
+            <div class="profile-details-segment">
+                <div class="meta-data-item">
+                    <div class="lbl">Platform Handle</div>
+                    <div class="val" id="meta-user">--</div>
+                </div>
+                <div class="meta-data-item">
+                    <div class="lbl">Legal Entity</div>
+                    <div class="val" id="meta-name">--</div>
+                </div>
+                <div class="meta-data-item">
+                    <div class="lbl">GCash / WhatsApp</div>
+                    <div class="val" id="meta-comms">Verified on File</div>
+                </div>
+                <div class="meta-data-item">
+                    <div class="lbl">Verification State</div>
+                    <div class="val" style="color: #dd6b20; font-weight: 700;">Pending Core Audit</div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Column Block -->
-        <div>
-            <div class="card">
-                <h2 class="card-title">Operational Statements</h2>
-                <div class="metrics">
-                    <div class="metric-block">
-                        <div class="metric-val">₱0.00</div>
-                        <div class="metric-lbl">Ledger Escrow</div>
+        </section>
+
+        <!-- Main Workspace Operational Split Grid View -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Column Content Engine Block -->
+            <div>
+                <!-- Live Onboarding Compliance Validation Indicator -->
+                <div class="status-banner">
+                    <div style="font-size: 1.6rem; line-height: 1;">⏳</div>
+                    <div>
+                        <div class="status-title">Profile Under Document Security Review</div>
+                        <p>Our background verification team is currently matching your submitted Front/Back IDs, Biometric Selfie, and Therapy Certificates. Dispatch signals are muted until authorization finishes.</p>
                     </div>
-                    <div class="metric-block">
-                        <div class="metric-val">0</div>
-                        <div class="metric-lbl">Bookings Cleared</div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Live Assignment Dispatch Console</h2>
+                    <div style="text-align: center; padding: 45px 20px; color: #a0aec0;">
+                        <div style="font-size: 2.8rem; margin-bottom: 12px;">📴</div>
+                        <p style="margin: 0; font-size: 0.95rem;">No active dispatches available. Approved credentials must be activated before platform booking alerts stream in.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Contractor Profile & Tracking Matrix Card -->
-            <div class="card">
-                <h2 class="card-title">Contractor Profiling Matrix</h2>
-                
-                <!-- Profile Identity Top Block -->
-                <div class="profile-summary-header">
-                    <div class="profile-avatar-circle" id="profile-initials">--</div>
-                    <div class="profile-title-meta">
-                        <h3 id="profile-display-name">Loading...</h3>
-                        <span id="profile-display-handle">@username</span>
+            <!-- Right Column Sidebar Info Block -->
+            <div>
+                <div class="card">
+                    <h2 class="card-title">Operational Statements</h2>
+                    <div class="metrics">
+                        <div class="metric-block">
+                            <div class="metric-val">₱0.00</div>
+                            <div class="metric-lbl">Ledger Escrow</div>
+                        </div>
+                        <div class="metric-block">
+                            <div class="metric-val">0</div>
+                            <div class="metric-lbl">Bookings Cleared</div>
+                        </div>
                     </div>
                 </div>
-
-                <table class="data-table">
-                    <tr>
-                        <td class="label">Platform Handle</td>
-                        <td class="value" id="meta-user">--</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Legal Entity</td>
-                        <td class="value" id="meta-name">--</td>
-                    </tr>
-                    <tr>
-                        <td class="label">GCash / WhatsApp</td>
-                        <td class="value" id="meta-comms">Verified on File</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Verification State</td>
-                        <td class="value" style="color: #dd6b20; font-weight: 700;">Pending Core Audit</td>
-                    </tr>
-                </table>
             </div>
-        </div>
 
-    </main>
+        </main>
+    </div>
 
     <!-- Floating WhatsApp Link Wrapper with Text Label -->
     <a href="https://wa.me/639091297422?text=Hello%20JMCY%20Support,%20I%20am%20following%20up%20on%20my%20therapist%20account%20onboarding%20status." 

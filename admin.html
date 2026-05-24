@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrative HQ | JMCY Wellness Network</title>
+    <style>
+        :root { 
+            --primary: #1a365d; 
+            --secondary: #2c5282; 
+            --accent: #2f855a; 
+            --dark: #2d3748; 
+            --light: #f7fafc; 
+            --border: #e2e8f0;
+            --alert-bg: #edf2f7;
+            --alert-border: #cbd5e0;
+            --alert-text: #4a5568;
+            --whatsapp-green: #25D366;
+        }
+        body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; color: var(--dark); background-color: #edf2f7; }
+        
+        /* Dashboard Nav structure */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: var(--primary); color: white; }
+        nav .brand { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+        nav .user-badge { display: flex; align-items: center; gap: 15px; }
+        .logout-btn { background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; color: white; border-radius: 4px; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 0.85rem; }
+        .logout-btn:hover { background: rgba(255,255,255,0.25); }
+
+        .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Modern System Card Layouts */
+        .card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
+        .card-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; letter-spacing: -0.3px; }
+        
+        /* Stats Dashboard Control Grid */
+        .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border: 1px solid var(--border); padding: 25px 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: transform 0.2s ease; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-val { font-size: 2.1rem; font-weight: 800; color: var(--secondary); letter-spacing: -0.5px; }
+        .stat-lbl { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 700; margin-top: 6px; }
+
+        /* Employee Directory Layout Grid */
+        .employee-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        
+        /* Employee Card Custom Styles */
+        .emp-card { border: 1px solid var(--border); border-radius: 12px; padding: 25px; background: white; transition: box-shadow 0.2s ease, border-color 0.2s ease; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .emp-card:hover { box-shadow: 0 6px 15px rgba(0,0,0,0.04); border-color: #cbd5e0; }
+        
+        .emp-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-right: 120px; }
+        .emp-avatar { width: 52px; height: 52px; background: #ebf8ff; color: var(--secondary); border: 1px solid #bee3f8; font-weight: 700; font-size: 1.3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .emp-info h3 { margin: 0; font-size: 1.1rem; color: var(--dark); font-weight: 700; }
+        .emp-info span { font-size: 0.8rem; background: #ebf8ff; color: #2b6cb0; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: inline-block; margin-top: 4px; }
+        
+        /* Clean Layout Status Badges */
+        .status-badge { position: absolute; top: 25px; right: 25px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 5px 10px; border-radius: 6px; letter-spacing: 0.3px; }
+        .status-active { background-color: #c6f6d5; color: #22543d; border: 1px solid #c6f6d5; }
+        .status-pending { background-color: #feebc8; color: #744210; border: 1px solid #feebc8; }
+
+        /* General Data Details View Styling */
+        .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .detail-table td { padding: 10px 0; border-bottom: 1px solid var(--light); font-size: 0.92rem; }
+        .detail-table tr:last-child td { border-bottom: none; }
+        .detail-table td.label { color: #718096; font-weight: 600; width: 38%; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.3px; }
+        .detail-table td.value { color: var(--dark); font-weight: 500; }
+
+        /* WhatsApp Dispatch Button Action Layout */
+        .dispatch-btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            background-color: var(--whatsapp-green); 
+            color: white; 
+            text-decoration: none; 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            transition: background-color 0.2s ease, transform 0.1s ease; 
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(37, 211, 102, 0.2);
+        }
+        .dispatch-btn:hover { background-color: #128C7E; }
+        .dispatch-btn:active { transform: scale(0.99); }
+        .dispatch-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        @media (max-width: 950px) {
+            .admin-stats { grid-template-columns: repeat(2, 1fr); }
+            .employee-grid { grid-template-columns: 1fr; }
+            .emp-header { padding-right: 0; margin-top: 25px; }
+            .status-badge { top: 20px; left: 25px; right: auto; }
+        }
+        @media (max-width: 550px) {
+            .admin-stats { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+            .emp-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Admin Upper Navigation Bar -->
+    <nav>
+        <div class="brand">JMCY ADMINISTRATIVE HUB</div>
+        <div class="user-badge">
+            <span style="font-weight: 600; font-size: 0.95rem; color: #cbd5e0;">👑 System Admin</span>
+            <a href="login.html" class="logout-btn" onclick="localStorage.clear()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        
+        <!-- Live Admin High-Level Metrics -->
+        <section class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-val">14</div>
+                <div class="stat-lbl">Total Therapists</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="color: var(--accent);">9</div>
+                <div class="stat-lbl">Active / Verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" style="color: #dd6b20;">5</div>
+                <div class="stat-lbl">Pending Audits</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">₱42,150.00</div>
+                <div class="stat-lbl">Escrow Vol. (Today)</div>
+            </div>
+        </section>
+
+        <!-- Main Employee Roster Management Module -->
+        <main class="card">
+            <div class="card-title">
+                <span>Contractor Roster & Dispatch Engine</span>
+                <span style="font-size: 0.8rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.5px;">Real-time Directory Matrix</span>
+            </div>
+
+            <div class="employee-grid" id="roster-matrix">
+                
+                <!-- Employee Card Template 1 (Default: Your Registered Info) -->
+                <div class="emp-card">
+                    <span class="status-badge status-pending">Pending Core Audit</span>
+                    <div class="emp-header">
+                        <div class="emp-avatar" id="admin-user-initials">JS</div>
+                        <div class="emp-info">
+                            <h3 id="admin-user-fullname">John Doe (Sample Account)</h3>
+                            <span id="admin-user-handle">@username</span>
+                        </div>
+                    </div>
+                    <table class="detail-table">
+                        <tr>
+                            <td class="label">Primary Specialist</td>
+                            <td class="value">Swedish & Deep Tissue</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Mobile Number</td>
+                            <td class="value">09091297422</td>
+                        </tr>
+                        <tr>
+                            <td class="label">System Clearance</td>
+                            <td class="value">Awaiting Document Match</td>
+                        </tr>
+                    </table>
+                    <!-- Clicking this injects specific system message data directly into the custom URL parameters -->
+                    <a href="https://wa.me/639091297422?text=---%20JMCY%20NEW%20BOOKING%20DISPATCH%20---%0A%0ACustomer%20Name:%20%0AAppointment%20Time:%20%0ALocation%20Address:%20%0AService%20Selected:%20%0ATotal%20Payout:%20%E2%82%B1" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="dispatch-btn">
+                        <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+                        <span>Dispatch Booking Info</span>
+                    </a>
+                </div>
+
+                <!-- Employee Card Template 2 (Standard Active Profile Mockup) -->
+                <div class="emp-card">
+                    <span class="status-badge status-active">Verified Active</span>
+                    <div class="emp-header">
+                        <div class="emp-avatar">MS</div>
+                        <div class="emp-info">
+                            <h3>Maria Santos</h3>
+                            <span>@marias_jmcy</span>
+                        </div>
+                    </div>
+                    <table class="detail-table">
+                        <tr>
+                            <td class="label">Primary Specialist</td>
+                            <td class="value">Shiatsu & Aromatherapy</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Mobile Number</td>
+                            <td class="value">09176543210</td>
+                        </tr>
+                        <tr>
+                            <td class="label">System Clearance</td>
+                            <td class="value">Full Dispatch Authorized</td>
+                        </tr>
+                    </table>
+                    <a href="https://wa.me/639176543210?text=---%20JMCY%20NEW%20BOOKING%20DISPATCH%20---%0A%0ACustomer%20Name:%20%0AAppointment%20Time:%20%0ALocation%20Address:%20%0AService%20Selected:%20%0ATotal%20Payout:%20%E2%82%B1" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="dispatch-btn">
+                        <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+                        <span>Dispatch Booking Info</span>
+                    </a>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Syncs the mock data setup with whichever current user registration exists inside local memory setup frames
+        window.onload = function() {
+            const savedUser = localStorage.getItem("jmcy_user");
+            const savedName = localStorage.getItem("jmcy_name");
+
+            if(savedUser) {
+                document.getElementById('admin-user-handle').innerText = "@" + savedUser;
+            }
+            if(savedName) {
+                document.getElementById('admin-user-fullname').innerText = savedName;
+
+                // Auto-generate profile layout graphics matching the system styling models
+                const words = savedName.trim().split(' ');
+                let initials = words[0].charAt(0);
+                if (words.length > 1) {
+                    initials += words[words.length - 1].charAt(0);
+                }
+                document.getElementById('admin-user-initials').innerText = initials;
+            }
+        }
+    </script>
+</body>
+</html>
