@@ -114,18 +114,15 @@
                 <span style="font-size: 0.8rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.5px;">Real-Time Location Mapping Matrix</span>
             </div>
 
-            <!-- RAW SOURCE DATA DATASET LAYER -->
             <div id="raw-master-roster" style="display: none;">
                 <div class="raw-therapist" data-username="username" data-fullname="John Doe (Sample Account)" data-initials="JS" data-status="Pending Core Audit" data-specialist="Swedish & Deep Tissue" data-mobile="09091297422" data-locations="Manila, Makati" data-wa-link="https://wa.me/639091297422"></div>
                 <div class="raw-therapist" data-username="marias_jmcy" data-fullname="Maria Santos" data-initials="MS" data-status="Verified Active" data-specialist="Shiatsu & Aromatherapy" data-mobile="09176543210" data-locations="Quezon City, Manila" data-wa-link="https://wa.me/639176543210"></div>
             </div>
 
-            <!-- GEOGRAPHIC MATRIX TABLES OUTPUT CONTAINER -->
             <div id="allocated-tables-output"></div>
         </main>
     </div>
 
-    <!-- PERSISTENT DETAILS MODAL POPUP VIEW OVERLAY -->
     <div class="modal-overlay" id="infoModal" onclick="closeTherapistModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="document.getElementById('infoModal').style.display='none'">&times;</button>
@@ -177,8 +174,8 @@
                 pillContainer.innerHTML += `<span class="loc-pill">${l.trim()}</span>`;
             });
 
-            // Set up fallback text for WhatsApp template dispatch payload
-            const textPayload = encodeURIComponent("--- JMCY NEW BOOKING DISPATCH ---\n\nCustomer Name: \nAppointment Time: \nLocation Address: \nService Selected: \nTotal Payout: ₱");
+            // Set up hourly billing text for WhatsApp template dispatch payload
+            const textPayload = encodeURIComponent("--- JMCY NEW BOOKING DISPATCH ---\n\nCustomer Name: \nAppointment Time: \nLocation Address: \nService Selected: \nTotal Hours Scheduled: \nRate per Hour: ₱\nTotal Payout: ₱");
             document.getElementById('m-dispatch-link').href = `${data.waLink}?text=${textPayload}`;
             
             document.getElementById('infoModal').style.display = 'flex';
@@ -269,7 +266,7 @@
 
                         tr.onclick = () => viewTherapistDetails(profileObj);
 
-                        const textPayload = encodeURIComponent("--- JMCY NEW BOOKING DISPATCH ---\n\nCustomer Name: \nAppointment Time: \nLocation Address: \nService Selected: \nTotal Payout: ₱");
+                        const textPayload = encodeURIComponent("--- JMCY NEW BOOKING DISPATCH ---\n\nCustomer Name: \nAppointment Time: \nLocation Address: \nService Selected: \nTotal Hours Scheduled: \nRate per Hour: ₱\nTotal Payout: ₱");
                         const fullWaLink = `${profileObj.waLink}?text=${textPayload}`;
 
                         tr.innerHTML = `
