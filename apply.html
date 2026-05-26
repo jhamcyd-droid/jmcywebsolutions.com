@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Therapist Registration | JMCY Wellness Network</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { 
             --primary: #1a365d; 
@@ -608,7 +609,7 @@
                         <div class="form-group">
                             <label id="lbl-phone" for="phoneNum">Mobile Phone Number</label>
                             <div class="input-icon-wrapper">
-                                <input type="tel" id="phoneNum" class="form-control" required placeholder="0917XXXXXXX" pattern="^(09)\\d{9}$">
+                                <input type="tel" id="phoneNum" class="form-control" required placeholder="0917XXXXXXX" pattern="^(09)\d{9}$">
                                 <svg class="prefix-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                             </div>
                             <span id="hint-phone" class="hint-text">Note: This must be your active GCash and WhatsApp number.</span>
@@ -714,73 +715,31 @@
     </footer>
 
     <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://ovzcjjekmekgxtjcxjbf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         let currentLang = 'en';
 
+        // (Previous content object and helper functions remain unchanged)
         const formContent = {
-            en: {
-                title: "Professional Network Application",
-                desc: "Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.",
-                secAccount: "Account Setup Credentials",
-                username: "Username",
-                password: "Password",
-                secIdentity: "Security & Identity Verification",
-                name: "Full Legal Name", birth: "Date of Birth", age: "Age", address: "Complete Home Address", phone: "Mobile Phone Number",
-                hintPhone: "Note: This must be your active GCash and WhatsApp number.",
-                secProfessional: "Professional Profiling & Operations", zone: "Preferred Service Locations / Coverage Zones", skills: "Massage Therapy Modalities & Specialties *",
-                specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Foot", specAroma: "Aromatherapy",
-                secDocuments: "Required Clearances & Verification",
-                lblIdFront: "1. Government ID (Front Side) *", txtIdFront: "[ Tap to Open Camera & Capture ID Front ]",
-                lblIdBack: "2. Government ID (Back Side) *", txtIdBack: "[ Tap to Open Camera & Capture ID Back ]",
-                lblIdSelfie: "3. Selfie Holding Government ID *", txtIdSelfie: "[ Tap to Open Front Camera for Selfie ]",
-                lblCert: "4. Massage Therapy Certificate / Training License *", txtCert: "[ Tap to Capture Therapy Certificate ]",
-                submit: "Submit Registration Details", navLogin: "Already have an account? Login",
-                badge: "JMCY Professional Network",
-                sideHeading: "Grow Your Wellness Practice With Us.",
-                sideText: "Join Metro Manila's leading dynamic network of certified wellness and massage therapy experts. Gain access to regular clients, stable hours, and a comprehensive digital therapist management platform."
-            },
-            tl: {
-                title: "Aplikasyon para sa Network",
-                desc: "Kumpletuhin ang iyong pagpaparehistro upang magawa ang iyong profile. Ang mga detalye ng Account ay gagamitin mo upang buksan ang iyong dashboard.",
-                secAccount: "Impormasyon ng Account (Credentials)",
-                username: "Username",
-                password: "Password",
-                secIdentity: "Seguridad at Pagpapatunay ng Pagkakakilanlan",
-                name: "Buong Pangalan (Legal Name)", birth: "Araw ng Kapanganakan", age: "Edad", address: "Kumpletong Tirahan (Home Address)", phone: "Numero ng Mobile Phone",
-                hintPhone: "Paunawa: Dapat ito ang iyong aktibong GCash and WhatsApp number.",
-                secProfessional: "Propesyonal na Profile at Operasyon", zone: "Mga Lugar na Nais Mong Coveran (Coverage Zones)", skills: "Mga Uri ng Massage na Iyong Dalubhasa (Specialties) *",
-                specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Paa", specAroma: "Aromatherapy",
-                secDocuments: "Mga Kinakailangang Clearance at Pagpapatunay",
-                lblIdFront: "1. Government ID (Harap na Bahagi) *", txtIdFront: "[ I-tap para Buksan ang Kamera para sa Harap ng ID ]",
-                lblIdBack: "2. Government ID (Likod na Bahagi) *", txtIdBack: "[ I-tap para Buksan ang Kamera para sa Likod ng ID ]",
-                lblIdSelfie: "3. Selfie na Hawak ang Government ID *", txtIdSelfie: "[ I-tap para Buksan ang Kamera para sa Selfie ]",
-                lblCert: "4. Massage Therapy Certificate o Lisensya sa Pagsasanay *", txtCert: "[ I-tap para Kuhanan ng Larawan ang Sertipiko ]",
-                submit: "Ipadala ang Aplikasyon", navLogin: "May account na? Mag-login dito",
-                badge: "Propesyonal na Network ng JMCY",
-                sideHeading: "Palaguin ang Iyong Propesyon Kasama Kami.",
-                sideText: "Sumali sa nangungunang network ng mga sertipikadong eksperto sa massage therapy sa Metro Manila. Magkaroon ng regular na kliyente at access sa aming modernong platform."
-            }
+            en: { title: "Professional Network Application", desc: "Complete your registration to build your profile credentials. Fields inside Account Details will be used to access your therapist mobile dashboard portal.", secAccount: "Account Setup Credentials", username: "Username", password: "Password", secIdentity: "Security & Identity Verification", name: "Full Legal Name", birth: "Date of Birth", age: "Age", address: "Complete Home Address", phone: "Mobile Phone Number", hintPhone: "Note: This must be your active GCash and WhatsApp number.", secProfessional: "Professional Profiling & Operations", zone: "Preferred Service Locations / Coverage Zones", skills: "Massage Therapy Modalities & Specialties *", specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Foot", specAroma: "Aromatherapy", secDocuments: "Required Clearances & Verification", lblIdFront: "1. Government ID (Front Side) *", txtIdFront: "[ Tap to Open Camera & Capture ID Front ]", lblIdBack: "2. Government ID (Back Side) *", txtIdBack: "[ Tap to Open Camera & Capture ID Back ]", lblIdSelfie: "3. Selfie Holding Government ID *", txtIdSelfie: "[ Tap to Open Front Camera for Selfie ]", lblCert: "4. Massage Therapy Certificate / Training License *", txtCert: "[ Tap to Capture Therapy Certificate ]", submit: "Submit Registration Details", navLogin: "Already have an account? Login", badge: "JMCY Professional Network", sideHeading: "Grow Your Wellness Practice With Us.", sideText: "Join Metro Manila's leading dynamic network of certified wellness and massage therapy experts. Gain access to regular clients, stable hours, and a comprehensive digital therapist management platform." },
+            tl: { title: "Aplikasyon para sa Network", desc: "Kumpletuhin ang iyong pagpaparehistro upang magawa ang iyong profile. Ang mga detalye ng Account ay gagamitin mo upang buksan ang iyong dashboard.", secAccount: "Impormasyon ng Account (Credentials)", username: "Username", password: "Password", secIdentity: "Seguridad at Pagpapatunay ng Pagkakakilanlan", name: "Buong Pangalan (Legal Name)", birth: "Araw ng Kapanganakan", age: "Edad", address: "Kumpletong Tirahan (Home Address)", phone: "Numero ng Mobile Phone", hintPhone: "Paunawa: Dapat ito ang iyong aktibong GCash and WhatsApp number.", secProfessional: "Propesyonal na Profile at Operasyon", zone: "Mga Lugar na Nais Mong Coveran (Coverage Zones)", skills: "Mga Uri ng Massage na Iyong Dalubhasa (Specialties) *", specSwedish: "Swedish Massage", specDeep: "Deep Tissue", specShiatsu: "Shiatsu", specThai: "Thai Massage", specReflex: "Reflexology / Paa", specAroma: "Aromatherapy", secDocuments: "Mga Kinakailangang Clearance at Pagpapatunay", lblIdFront: "1. Government ID (Harap na Bahagi) *", txtIdFront: "[ I-tap para Buksan ang Kamera para sa Harap ng ID ]", lblIdBack: "2. Government ID (Likod na Bahagi) *", txtIdBack: "[ I-tap para Buksan ang Kamera para sa Likod ng ID ]", lblIdSelfie: "3. Selfie na Hawak ang Government ID *", txtIdSelfie: "[ I-tap para Buksan ang Kamera para sa Selfie ]", lblCert: "4. Massage Therapy Certificate o Lisensya sa Pagsasanay *", txtCert: "[ I-tap para Kuhanan ng Larawan ang Sertipiko ]", submit: "Ipadala ang Aplikasyon", navLogin: "May account na? Mag-login dito", badge: "Propesyonal na Network ng JMCY", sideHeading: "Palaguin ang Iyong Propesyon Kasama Kami.", sideText: "Sumali sa nangungunang network ng mga sertipikadong eksperto sa massage therapy sa Metro Manila. Magkaroon ng regular na kliyente at access sa aming modernong platform." }
         };
 
         function validateSpecialties() {
             const checkboxes = document.querySelectorAll('input[name="specialties"]:checked');
             const validatorInput = document.getElementById('specialties-validate');
             const validationHint = document.getElementById('hint-skills');
-            
-            if (checkboxes.length > 0) {
-                validatorInput.value = "valid";
-                validationHint.style.display = "none";
-            } else {
-                validatorInput.value = "";
-                if(validationHint) validationHint.style.display = "block";
-            }
+            if (checkboxes.length > 0) { validatorInput.value = "valid"; validationHint.style.display = "none"; } 
+            else { validatorInput.value = ""; if(validationHint) validationHint.style.display = "block"; }
         }
 
         function getSelectedSpecialties() {
             const checkboxes = document.querySelectorAll('input[name="specialties"]:checked');
             let selected = [];
-            checkboxes.forEach((cb) => {
-                selected.push(cb.value);
-            });
+            checkboxes.forEach((cb) => { selected.push(cb.value); });
             return selected.join(", ");
         }
 
@@ -797,14 +756,8 @@
         function togglePasswordVisibility() {
             const pwdField = document.getElementById('password');
             const eyeIcon = document.getElementById('eye-icon');
-            
-            if (pwdField.type === "password") {
-                pwdField.type = "text";
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`;
-            } else {
-                pwdField.type = "password";
-                eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
-            }
+            if (pwdField.type === "password") { pwdField.type = "text"; eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>`; } 
+            else { pwdField.type = "password"; eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`; }
         }
 
         function setFormLang(lang) {
@@ -812,7 +765,6 @@
             document.getElementById('btn-en').classList.remove('active');
             document.getElementById('btn-tl').classList.remove('active');
             document.getElementById('btn-' + lang).classList.add('active');
-            
             document.getElementById('f-title').innerText = formContent[lang].title;
             document.getElementById('f-desc').innerText = formContent[lang].desc;
             document.getElementById('sec-account').innerText = formContent[lang].secAccount;
@@ -829,53 +781,61 @@
             document.getElementById('hint-phone').innerText = formContent[lang].hintPhone;
             document.getElementById('lbl-zone').innerText = formContent[lang].zone;
             document.getElementById('lbl-skills').innerText = formContent[lang].skills;
-
             document.getElementById('spec-swedish').innerText = formContent[lang].specSwedish;
             document.getElementById('spec-deep').innerText = formContent[lang].specDeep;
             document.getElementById('spec-shiatsu').innerText = formContent[lang].specShiatsu;
             document.getElementById('spec-thai').innerText = formContent[lang].specThai;
             document.getElementById('spec-reflex').innerText = formContent[lang].specReflex;
             document.getElementById('spec-aroma').innerText = formContent[lang].specAroma;
-            
             document.getElementById('badge-text').innerText = formContent[lang].badge;
             document.getElementById('img-side-heading').innerText = formContent[lang].sideHeading;
             document.getElementById('img-side-text').innerText = formContent[lang].sideText;
-
             document.getElementById('lbl-id-front').innerText = formContent[lang].lblIdFront;
-            if(!document.getElementById('capture-id-front').files.length) {
-                document.getElementById('txt-id-front').innerText = formContent[lang].txtIdFront;
-            }
+            if(!document.getElementById('capture-id-front').files.length) { document.getElementById('txt-id-front').innerText = formContent[lang].txtIdFront; }
             document.getElementById('lbl-id-back').innerText = formContent[lang].lblIdBack;
-            if(!document.getElementById('capture-id-back').files.length) {
-                document.getElementById('txt-id-back').innerText = formContent[lang].txtIdBack;
-            }
+            if(!document.getElementById('capture-id-back').files.length) { document.getElementById('txt-id-back').innerText = formContent[lang].txtIdBack; }
             document.getElementById('lbl-id-selfie').innerText = formContent[lang].lblIdSelfie;
-            if(!document.getElementById('capture-id-selfie').files.length) {
-                document.getElementById('txt-id-selfie').innerText = formContent[lang].txtIdSelfie;
-            }
+            if(!document.getElementById('capture-id-selfie').files.length) { document.getElementById('txt-id-selfie').innerText = formContent[lang].txtIdSelfie; }
             document.getElementById('lbl-cert').innerText = formContent[lang].lblCert;
-            if(!document.getElementById('capture-cert').files.length) {
-                document.getElementById('txt-cert').innerText = formContent[lang].txtCert;
-            }
-            
+            if(!document.getElementById('capture-cert').files.length) { document.getElementById('txt-cert').innerText = formContent[lang].txtCert; }
             document.getElementById('btn-submit').innerText = formContent[lang].submit;
             document.getElementById('nav-login').innerText = formContent[lang].navLogin;
         }
 
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
             
             validateSpecialties();
-            if (!document.getElementById('specialties-validate').value) {
-                return false;
-            }
+            if (!document.getElementById('specialties-validate').value) return false;
 
-            localStorage.setItem("jmcy_user", document.getElementById('username').value);
-            localStorage.setItem("jmcy_name", document.getElementById('fullName').value);
-            localStorage.setItem("jmcy_specialties", getSelectedSpecialties());
-            
-            alert("Account created successfully! Let's log in to view your validation dashboard tracking queue.");
-            window.location.href = "login.html";
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerText = "Submitting...";
+
+            try {
+                const { data, error } = await supabase
+                    .from('therapists')
+                    .insert([{
+                        username: document.getElementById('username').value,
+                        full_name: document.getElementById('fullName').value,
+                        birthdate: document.getElementById('birthdate').value,
+                        age: parseInt(document.getElementById('age').value),
+                        address: document.getElementById('homeAddress').value,
+                        phone: document.getElementById('phoneNum').value,
+                        coverage: document.getElementById('coverage').value,
+                        specialties: getSelectedSpecialties()
+                    }]);
+
+                if (error) throw error;
+
+                alert("Registration Successful!");
+                window.location.href = "login.html";
+            } catch (err) {
+                console.error(err);
+                alert("Submission failed: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "Submit Registration Details";
+            }
         }
     </script>
 </body>
