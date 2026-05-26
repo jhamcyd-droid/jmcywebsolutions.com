@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium On-Demand Massage Services | JMCY Wellness Network</title>
+    <style>
+        :root { 
+            --primary: #1a365d; 
+            --secondary: #2c5282; 
+            --accent: #2f855a; 
+            --dark: #2d3748; 
+            --light: #f7fafc; 
+            --border: #e2e8f0;
+            --text-muted: #718096;
+            --whatsapp-green: #25D366;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            color: var(--dark); 
+            background-color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10%;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+            position: relative;
+            z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-decoration: none; }
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-link { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
+        .nav-link:hover { color: var(--secondary); }
+
+        .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 5px; flex-direction: column; gap: 5px; z-index: 110; }
+        .hamburger span { display: block; width: 25px; height: 3px; background-color: var(--primary); border-radius: 3px; transition: all 0.3s ease-in-out; }
+
+        /* Sliding Hero */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 450px; 
+            overflow: hidden;
+            background-color: #111;
+        }
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide.active { opacity: 1; }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(26, 54, 93, 0.9), rgba(42, 67, 101, 0.4));
+            z-index: 1;
+        }
+        .hero-content { 
+            position: relative;
+            z-index: 2;
+            color: white; 
+            padding: 0 10%; 
+            max-width: 800px;
+            margin-right: auto;
+        }
+        .hero-content h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
+        .hero-content p { font-size: 1.2rem; margin: 0 0 30px 0; opacity: 0.9; font-weight: 300; max-width: 600px; }
+
+        .cta-btn { 
+            background-color: var(--accent); 
+            color: white; 
+            padding: 12px 32px; 
+            border: none; border-radius: 4px; 
+            font-size: 0.95rem; font-weight: 600; 
+            text-decoration: none; display: inline-block; 
+            transition: background-color 0.2s, transform 0.2s; 
+            letter-spacing: 0.5px;
+        }
+        .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
+
+        section { padding: 80px 10%; transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 40px; font-weight: 700; }
+        .bg-light { background-color: var(--light); }
+
+        /* Values Grid Layout */
+        .grid { display: flex; justify-content: center; gap: 30px; }
+        .card { 
+            flex: 1; max-width: 340px; background: #ffffff; padding: 40px 30px; 
+            border-radius: 6px; border: 1px solid var(--border);
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
+        .card h3 { color: var(--secondary); margin-top: 0; font-size: 1.25rem; margin-bottom: 15px; }
+        .card p { color: #4a5568; font-size: 0.95rem; margin: 0; }
+
+        /* Premium Menu & Pricing Matrix Slider Styles */
+        .matrix-slider-container {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            user-select: none;
+        }
+        .matrix-track {
+            display: flex;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            cursor: grab;
+        }
+        .matrix-track:active {
+            cursor: grabbing;
+        }
+        .matrix-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 60px 80px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 480px;
+        }
+        .matrix-slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(26, 54, 93, 0.92) 0%, rgba(44, 82, 130, 0.75) 100%);
+            z-index: 1;
+        }
+        .matrix-card-content {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            width: 100%;
+            max-width: 550px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .matrix-slide h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 12px;
+            font-weight: 700;
+        }
+        .tier-block { margin-bottom: 18px; }
+        .tier-block:last-child { margin-bottom: 0; }
+        
+        .duration-badge {
+            font-size: 0.8rem;
+            color: var(--primary);
+            background-color: #ebf8ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 8px;
+            border: 1px solid #bee3f8;
+        }
+        .rate-metrics { background-color: rgba(255, 255, 255, 0.15); border-radius: 6px; padding: 12px 15px; }
+        .metric-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+        .metric-label { color: #e2e8f0; font-weight: 500; }
+        .metric-val { font-weight: 800; color: #63e2b7; font-size: 1.2rem; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        /* Slider Controls */
+        .matrix-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+        .matrix-arrow:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-50%) scale(1.05); }
+        .matrix-arrow.prev { left: 20px; }
+        .matrix-arrow.next { right: 20px; }
+        
+        .matrix-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .matrix-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #cbd5e0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .matrix-dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        /* Split Blocks */
+        .about-split { display: flex; align-items: center; gap: 60px; }
+        .about-text { flex: 1; }
+        .about-text h2 { text-align: left; margin-bottom: 25px; }
+        .about-text p { color: #4a5568; font-size: 1.05rem; margin-bottom: 20px; }
+        .about-image { flex: 1; height: 350px; background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center; border-radius: 8px; border: 1px solid var(--border); }
+
+        /* Booking Steps Carousel */
+        .pipeline-wrapper { max-width: 550px; margin: 0 auto; position: relative; overflow: hidden; padding: 10px 0; }
+        .steps-slider-track { display: flex; width: 300%; transition: transform 0.8s cubic-bezier(0.45, 0, 0.15, 1); will-change: transform; }
+        .step-node { width: 33.333%; flex: 1; text-align: center; box-sizing: border-box; padding: 20px 40px; }
+        .step-number { 
+            width: 55px; height: 55px; background-color: var(--primary); color: white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; 
+            font-weight: 700; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(26, 54, 147, 0.15);
+        }
+        .step-node h4 { font-size: 1.3rem; color: var(--primary); margin: 0 0 12px 0; }
+        .step-node p { color: #4a5568; font-size: 1rem; margin: 0; line-height: 1.6; }
+
+        .pipeline-dots { display: flex; justify-content: center; gap: 10px; margin-top: 25px; }
+        .dot { width: 10px; height: 10px; background-color: #cbd5e0; border-radius: 50%; cursor: pointer; transition: background-color 0.3s, transform 0.3s; }
+        .dot.active { background-color: var(--primary); transform: scale(1.2); }
+
+        /* Accordion FAQs */
+        .faq-max { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; cursor: pointer; }
+        .faq-question { font-size: 1.15rem; font-weight: 600; color: var(--primary); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .faq-answer { 
+            max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s; 
+            color: #4a5568; font-size: 0.95rem; margin-top: 0; opacity: 0;
+        }
+        .faq-item.open .faq-answer { max-height: 350px; margin-top: 14px; opacity: 1; }
+        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); }
+        .faq-item.open .faq-icon::after { content: '−'; }
+
+        footer { background: #1a202c; color: #a0aec0; text-align: center; padding: 40px 20px; font-size: 14px; border-top: 1px solid #2d3748; }
+
+        /* Floating Action Buttons */
+        .whatsapp-container {
+            position: fixed;
+            bottom: 25px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 9999;
+            text-decoration: none;
+        }
+        .whatsapp-float {
+            background-color: var(--secondary); color: #ffffff; border-radius: 50%;
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: transform 0.2s, background-color 0.2s;
+            position: relative;
+        }
+        .whatsapp-container:hover .whatsapp-float { transform: scale(1.08); background-color: var(--primary); }
+        .whatsapp-float svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .whatsapp-float::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--secondary); border-radius: 50%; z-index: -1; opacity: 0.4;
+            animation: whatsapp-pulse 2s infinite;
+        }
+        @keyframes whatsapp-pulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .whatsapp-label {
+            font-size: 0.78rem; font-weight: 700; color: var(--dark); background-color: rgba(255, 255, 255, 0.95);
+            padding: 3px 8px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border);
+        }
+
+        .animate-up { opacity: 0; transform: translateY(40px) scale(0.98); transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform, opacity; }
+        .animate-up.active { opacity: 1; transform: translateY(0) scale(1); }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 5%; }
+            .logo { font-size: 20px; }
+            .hamburger { display: flex; }
+            .nav-actions { 
+                position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; 
+                background: #ffffff; flex-direction: column; align-items: flex-start; 
+                justify-content: flex-start; padding: 100px 40px 40px 40px; box-sizing: border-box; 
+                gap: 25px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease-in-out; z-index: 105; 
+            }
+            .nav-link { font-size: 1.15rem; width: 100%; padding: 5px 0; display: block; }
+            .cta-btn { width: 100%; box-sizing: border-box; text-align: center; }
+            .nav-actions.open { right: 0; }
+            .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+            .hamburger.open span:nth-child(2) { opacity: 0; }
+            .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+            section { padding: 50px 5%; }
+            section h2 { font-size: 1.65rem; margin-bottom: 30px; }
+            .hero-slider { height: 350px; }
+            .hero-content h1 { font-size: 1.8rem; }
+            .hero-content p { font-size: 1rem; }
+            .grid, .about-split { flex-direction: column; gap: 30px; }
+            .about-image { display: none; }
+            .about-text h2 { text-align: center; }
+            .whatsapp-container { bottom: 15px; right: 20px; }
+            .whatsapp-float { width: 52px; height: 52px; }
+            
+            .matrix-slide { padding: 40px 30px; min-height: 440px; }
+            .matrix-arrow { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">JMCY WELLNESS</a>
+        
+        <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="nav-actions" id="nav-actions-container">
+            <a href="#services" class="nav-link">Our Services</a>
+            <a href="#rates" class="nav-link">Pricing Matrix</a>
+            <a href="/wellness/booking.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Fill Up Form</a>
+        </div>
+    </header>
+
+    <section class="hero-slider" style="padding: 0;">
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
+            <div class="hero-content">
+                <h1 id="hero-title-1">Premium Home-Service Massage on Demand</h1>
+                <p id="hero-desc-1">Experience restorative bodywork therapies administered by verified, background-screened independent professionals in your area.</p>
+                <a href="/wellness/booking.html" class="cta-btn">Book via Intake Form</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80');">
+            <div class="hero-content">
+                <h1 id="hero-title-2">Total Relaxation, Right at Your Doorstep</h1>
+                <p id="hero-desc-2">No travel friction, no spa crowds. Choose your treatment style, date, and runtime duration. Pay securely on-site via Cash or GCash.</p>
+                <a href="/wellness/booking.html" class="cta-btn">Fill Up Form Now</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-us animate-up" id="services">
+        <div class="about-split">
+            <div class="about-text">
+                <h2 id="about-heading">The JMCY Wellness Standard</h2>
+                <p id="about-p1">JMCY Wellness operations serve as a specialized technical framework connecting discerning clients directly to independent, certified wellness specialists across major metropolitan centers.</p>
+                <p id="about-p2">Every therapist dispatched from our routing registry is independently certified, highly practiced, and fully evaluated for practical safety, giving you access to professional, personalized spa treatments right in your home, hotel room, or condominium suite.</p>
+            </div>
+            <div class="about-image"></div>
+        </div>
+    </section>
+
+    <section class="benefits bg-light animate-up">
+        <h2 id="benefits-heading">Why Choose JMCY Network?</h2>
+        <div class="grid">
+            <div class="card">
+                <h3 id="b1-title">Verified Practitioners</h3>
+                <p id="b1-desc">Rest easy knowing that every wellness partner is thoroughly evaluated with standard background verifications and physical practical skill audits.</p>
+            </div>
+            <div class="card">
+                <h3 id="b2-title">Direct On-Site Settlement</h3>
+                <p id="b2-desc">Transparent billing structures. Hand your professional provider the session fee directly via standard Cash or GCash upon arrival.</p>
+            </div>
+            <div class="card">
+                <h3 id="b3-title">Dynamic Route Dispatching</h3>
+                <p id="b3-desc">Say goodbye to hours of scheduling wait times. Our smart logistics systems identify active professionals nearest to your exact target coordinates.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="massage-rates animate-up" id="rates">
+        <h2 id="rates-section-title">Premium Service Menu & Pricing Matrix</h2>
+
+        <div class="matrix-slider-container">
+            <button class="matrix-arrow prev" id="matrixPrevBtn" aria-label="Previous Slide">&#10094;</button>
+            <button class="matrix-arrow next" id="matrixNextBtn" aria-label="Next Slide">&#10095;</button>
+            
+            <div class="matrix-track" id="matrixSliderTrack">
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t1">Swedish Massage</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱500.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱950.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,400.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t2">Shiatsu Massage</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱550.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,050.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,550.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t3">Thai Massage</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱550.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,050.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,550.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t4">Reflexology / Foot</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱500.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱950.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,400.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t5">Aromatherapy</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱650.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,250.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,850.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t6">Deep Tissue Massage</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱700.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,350.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱2,000.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519824206182-3cf22d2f3b75?auto=format&fit=crop&w=1200&q=80');">
+                    <div class="matrix-card-content">
+                        <h3 id="rate-t7">Combination Massage</h3>
+                        <div class="tier-block">
+                            <span class="duration-badge d-1h">1 Hour</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱600.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-2h">2 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,150.00</span></div></div>
+                        </div>
+                        <div class="tier-block">
+                            <span class="duration-badge d-3h">3 Hours</span>
+                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,700.00</span></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="matrix-dots" id="matrixSliderDots"></div>
+    </section>
+
+    <section class="steps bg-light">
+        <h2 id="pipeline-heading">Simple 3-Step Process</h2>
+        <div class="pipeline-wrapper">
+            <div class="steps-slider-track" id="pipelineTrack">
+                <div class="step-node">
+                    <div class="step-number">1</div>
+                    <h4 id="s1-title">Submit Details Form</h4>
+                    <p id="s1-desc">Click our intake links to open the structure profile form. Provide your address location parameters and session structural criteria layout.</p>
+                </div>
+                <div class="step-node">
+                    <div class="step-number">2</div>
+                    <h4 id="s2-title">Provider Matching</h4>
+                    <p id="s2-desc">Our digital intermediary network instantly logs the request item and routes it to verified available therapists across your town.</p>
+                </div>
+                <div class="step-node">
+                    <div class="step-number">3</div>
+                    <h4 id="s3-title">Enjoy & Pay Direct</h4>
+                    <p id="s3-desc">Relax during your premium session treatment. Hand your full professional flat-rate payment straight to your therapist on-site.</p>
+                </div>
+            </div>
+            <div class="pipeline-dots">
+                <div class="dot active" onclick="goToStep(0)"></div>
+                <div class="dot" onclick="goToStep(1)"></div>
+                <div class="dot" onclick="goToStep(2)"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq animate-up">
+        <h2 id="faq-title">Frequently Asked Questions</h2>
+
+        <div class="faq-max">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q1">How do I submit an automated dispatch request? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a1">Simply select any form submission button or use our floating support tool to complete our quick input document. Fill in your preferred massage selection type, timeline schedule, and complete address footprint to initiate routing sequences.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q2">What locations are currently handled by the matching engine? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a2">The network matching logs map automated routing footprints dynamically across active sectors, focusing core independent therapeutic dispatches inside Manila, Quezon City, and Makati regions.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q3">Are there any hidden platform charges or separate transactional fees? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a3">No, JMCY Wellness utilizes a direct billing transparency framework. The flat figures showcased across our menus match the total amount you hand over to your localized partner on-site. No separate application fees are calculated for consumers.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question" id="q4">How do customers pay for the session? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a4">All transactions resolve directly inside your destination room locale. You can settle the entire flat service fee using physical Cash or send the exact figure to the assigned professional's individual GCash wallet mobile accounts safely.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 JMCY Wellness Network. Premium Intermediary Technical Dispatch Framework. All Rights Reserved.
+    </footer>
+
+    <a href="/wellness/booking.html" 
+       class="whatsapp-container" 
+       title="Inquire about a Session">
+        <div class="whatsapp-float">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+        </div>
+        <span class="whatsapp-label">Inquiries</span>
+    </a>
+
+    <script>
+        const hamburgerBtn = document.getElementById('hamburger-toggle');
+        const navActions = document.getElementById('nav-actions-container');
+
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('open');
+            navActions.classList.toggle('open');
+        });
+
+        window.addEventListener('scroll', () => {
+            if (navActions.classList.contains('open')) {
+                hamburgerBtn.classList.remove('open');
+                navActions.classList.remove('open');
+            }
+        });
+
+        // Hero Images Rotation
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        function toggleFaq(element) {
+            const listItems = document.querySelectorAll('.faq-item');
+            listItems.forEach(item => {
+                if(item !== element) item.classList.remove('open');
+            });
+            element.classList.toggle('open');
+        }
+
+        // Booking Slider
+        let activeStep = 0;
+        const track = document.getElementById('pipelineTrack');
+        const dots = document.querySelectorAll('.pipeline-dots .dot');
+        const totalSteps = 3;
+
+        function updatePipelineSlider() {
+            const offset = -(activeStep * 33.333);
+            track.style.transform = `translateX(${offset}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeStep);
+            });
+        }
+
+        function goToStep(index) {
+            activeStep = index;
+            updatePipelineSlider();
+            resetPipelineTimer();
+        }
+
+        let pipelineInterval = setInterval(() => {
+            activeStep = (activeStep + 1) % totalSteps;
+            updatePipelineSlider();
+        }, 4500);
+
+        function resetPipelineTimer() {
+            clearInterval(pipelineInterval);
+            pipelineInterval = setInterval(() => {
+                activeStep = (activeStep + 1) % totalSteps;
+                updatePipelineSlider();
+            }, 4500);
+        }
+
+        /* --- PREMIUM PRICING MATRIX SWIPER LOGIC --- */
+        const matrixTrack = document.getElementById('matrixSliderTrack');
+        const matrixSlides = document.querySelectorAll('.matrix-slide');
+        const matrixDotsContainer = document.getElementById('matrixSliderDots');
+        const prevBtn = document.getElementById('matrixPrevBtn');
+        const nextBtn = document.getElementById('matrixNextBtn');
+        
+        let matrixIndex = 0;
+        const totalMatrixSlides = matrixSlides.length;
+        
+        matrixSlides.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.classList.add('matrix-dot');
+            if(idx === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => jumpToMatrixSlide(idx));
+            matrixDotsContainer.appendChild(dot);
+        });
+        
+        const matrixDots = document.querySelectorAll('.matrix-dot');
+
+        function updateMatrixSlider() {
+            matrixTrack.style.transform = `translateX(-${matrixIndex * 100}%)`;
+            matrixDots.forEach((dot, i) => dot.classList.toggle('active', i === matrixIndex));
+        }
+
+        function jumpToMatrixSlide(idx) {
+            matrixIndex = idx;
+            updateMatrixSlider();
+        }
+
+        nextBtn.addEventListener('click', () => {
+            matrixIndex = (matrixIndex + 1) % totalMatrixSlides;
+            updateMatrixSlider();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            matrixIndex = (matrixIndex - 1 + totalMatrixSlides) % totalMatrixSlides;
+            updateMatrixSlider();
+        });
+
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        let dragThreshold = 60;
+
+        matrixTrack.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        }, { passive: true });
+
+        matrixTrack.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+        }, { passive: true });
+
+        matrixTrack.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            handleDragRelease();
+        });
+
+        matrixTrack.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            isDragging = true;
+            matrixTrack.style.transition = 'none';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            currentX = e.clientX;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            matrixTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+            handleDragRelease();
+        });
+
+        function handleDragRelease() {
+            let shift = startX - currentX;
+            if(currentX === 0) return; 
+
+            if (shift > dragThreshold) {
+                matrixIndex = (matrixIndex + 1) % totalMatrixSlides;
+            } else if (shift < -dragThreshold) {
+                matrixIndex = (matrixIndex - 1 + totalMatrixSlides) % totalMatrixSlides;
+            }
+            updateMatrixSlider();
+            startX = 0;
+            currentX = 0;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const animatedElements = document.querySelectorAll('.animate-up');
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.12 };
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        scrollObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            animatedElements.forEach(el => scrollObserver.observe(el));
+        });
+    </script>
+</body>
+</html>
