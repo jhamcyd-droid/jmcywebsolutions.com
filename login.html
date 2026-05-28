@@ -11,7 +11,7 @@
         header { padding: 20px; background: white; border-bottom: 1px solid var(--border); text-align: center; }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .page-container { display: flex; flex: 1; width: 100%; }
-        .image-side { flex: 1; background: linear-gradient(rgba(26, 54, 93, 0.85), rgba(26, 54, 93, 0.85)), url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80'); background-size: cover; display: flex; flex-direction: column; justify-content: center; padding: 60px; color: #ffffff; }
+        .image-side { flex: 1; background: linear-gradient(rgba(26, 54, 93, 0.85), rgba(26, 54, 93, 0.85)), url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; padding: 60px; color: #ffffff; }
         .form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .login-container { max-width: 400px; width: 100%; background: #ffffff; border-radius: 12px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 20px; }
@@ -36,7 +36,7 @@
     <div class="page-container">
         <section class="image-side">
             <h2>Welcome Back to Your Network Dashboard.</h2>
-            <p>Log in using your unique username to manage your workspace.</p>
+            <p>Log in using your unique credentials to manage your workspace.</p>
         </section>
 
         <main class="form-side">
@@ -61,27 +61,17 @@
     </div>
 
     <script>
-        // Initialize Supabase
-        const supabase = window.supabase.createClient(
-            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
-        );
+        const supabase = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
-        // Fixed Toggle Logic using Event Listener
         const toggleBtn = document.getElementById('toggleBtn');
         const passInput = document.getElementById('pass');
 
-        toggleBtn.addEventListener('click', function() {
-            if (passInput.type === "password") {
-                passInput.type = "text";
-                toggleBtn.innerText = "Hide";
-            } else {
-                passInput.type = "password";
-                toggleBtn.innerText = "Show";
-            }
+        toggleBtn.addEventListener('click', () => {
+            const isPassword = passInput.type === "password";
+            passInput.type = isPassword ? "text" : "password";
+            toggleBtn.innerText = isPassword ? "Hide" : "Show";
         });
 
-        // Login Logic
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
@@ -92,24 +82,19 @@
             btn.disabled = true;
 
             try {
-                const { data, error } = await supabase
-                    .from('therapist_applications')
-                    .select('username, password')
-                    .eq('username', usernameInput)
-                    .maybeSingle();
+                // Secure Authentication using Supabase Auth
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: `${usernameInput}@jmcywellness.local`,
+                    password: passwordInput
+                });
 
                 if (error) throw error;
 
-                if (data && data.password === passwordInput) {
-                    window.location.href = "dashboard.html";
-                } else {
-                    alert("Invalid username or password.");
-                    btn.innerText = "Log In";
-                    btn.disabled = false;
-                }
+                // If successful, redirect to dashboard
+                window.location.href = "dashboard.html";
             } catch (err) {
-                console.error("Database Error:", err);
-                alert("Login failed. Check console for details.");
+                console.error("Auth Error:", err);
+                alert("Login failed: " + err.message);
                 btn.innerText = "Log In";
                 btn.disabled = false;
             }
