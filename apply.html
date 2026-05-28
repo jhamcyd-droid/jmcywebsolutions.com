@@ -151,7 +151,12 @@
         try {
             const uploadFile = async (id) => {
                 const file = document.getElementById(id).files[0];
-                const { error, data } = await client.storage.from('applications').upload(`${Date.now()}_${file.name}`, file);
+                
+                // Sanitize filename to prevent 'Invalid key' error
+                const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '_').toLowerCase();
+                const filePath = `${Date.now()}_${sanitizedName}`;
+                
+                const { error, data } = await client.storage.from('applications').upload(filePath, file);
                 if (error) throw error;
                 return client.storage.from('applications').getPublicUrl(data.path).data.publicUrl;
             };
