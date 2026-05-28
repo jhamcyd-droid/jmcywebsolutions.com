@@ -16,8 +16,8 @@
         }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* Local background image reference */
-            background: linear-gradient(rgba(247, 250, 252, 0.9), rgba(247, 250, 252, 0.9)), 
+            /* Local background image */
+            background: linear-gradient(rgba(247, 250, 252, 0.6), rgba(247, 250, 252, 0.6)), 
                         url('background.jpg'); 
             background-size: cover;
             background-position: center;
@@ -26,25 +26,32 @@
             color: #2d3748; 
             line-height: 1.6; 
         }
-        .form-container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        /* Transparent Glassmorphism Container */
+        .form-container { 
+            max-width: 600px; margin: 0 auto; 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(10px);
+            padding: 40px; border-radius: 16px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
         
-        /* Navbar Styles */
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .nav-link { 
             text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem; 
-            padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; transition: all 0.2s; 
+            padding: 8px 16px; border: 1px solid var(--primary); border-radius: 6px; transition: all 0.2s; 
         }
         .nav-link:hover { background: var(--primary); color: white; }
 
         h2 { margin-bottom: 30px; color: var(--primary); text-align: center; font-weight: 700; }
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #4a5568; letter-spacing: 0.02em; }
+        label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #2d3748; letter-spacing: 0.02em; }
         input[type="text"], input[type="password"], input[type="tel"], input[type="file"], select { 
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; transition: all 0.2s ease;
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; transition: all 0.2s ease; background: rgba(255,255,255,0.5);
         }
         input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.15); }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         .file-row { display: flex; gap: 10px; align-items: center; }
         .remove-btn { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
@@ -52,7 +59,7 @@
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: background 0.2s; }
         .submit-btn:hover { background: #276749; }
         .submit-btn:disabled { background: #a0aec0; cursor: not-allowed; }
-        .note { font-size: 0.75rem; color: #718096; margin-top: 6px; display: block; font-style: italic; }
+        .note { font-size: 0.75rem; color: #4a5568; margin-top: 6px; display: block; font-style: italic; }
         .password-wrapper { position: relative; display: flex; align-items: center; }
         .toggle-password-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 700; color: var(--accent); }
     </style>
@@ -174,6 +181,7 @@
 
             const { error } = await client.from('therapist_applications').insert([{
                 username: document.getElementById('username').value,
+                password: document.getElementById('password').value, 
                 full_name: document.getElementById('fullName').value,
                 address: document.getElementById('address').value,
                 locations: locations,
