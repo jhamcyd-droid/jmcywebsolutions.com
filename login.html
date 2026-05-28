@@ -18,7 +18,7 @@
         .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
         .submit-btn { background-color: var(--primary); color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .input-icon-wrapper { position: relative; }
-        .toggle-password-btn { position: absolute; right: 10px; top: 12px; border: none; background: none; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; font-weight: bold; }
+        .toggle-password-btn { position: absolute; right: 10px; top: 12px; border: none; background: none; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; font-weight: bold; z-index: 10; }
         @media (max-width: 768px) {
             .page-container { flex-direction: column; }
             .image-side { display: none; }
@@ -51,7 +51,7 @@
                         <label for="pass">Password</label>
                         <div class="input-icon-wrapper">
                             <input type="password" id="pass" class="form-control" required placeholder="••••••••">
-                            <button type="button" class="toggle-password-btn" id="toggleBtn" onclick="togglePasswordVisibility()">Show</button>
+                            <button type="button" class="toggle-password-btn" id="toggleBtn">Show</button>
                         </div>
                     </div>
                     <button type="submit" class="submit-btn" id="login-btn">Log In</button>
@@ -61,24 +61,27 @@
     </div>
 
     <script>
-        // 1. Correct Initialization using the global window object
+        // Initialize Supabase
         const supabase = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
         );
 
-        function togglePasswordVisibility() {
-            const p = document.getElementById('pass');
-            const btn = document.getElementById('toggleBtn');
-            if (p.type === "password") {
-                p.type = "text";
-                btn.innerText = "Hide";
-            } else {
-                p.type = "password";
-                btn.innerText = "Show";
-            }
-        }
+        // Fixed Toggle Logic using Event Listener
+        const toggleBtn = document.getElementById('toggleBtn');
+        const passInput = document.getElementById('pass');
 
+        toggleBtn.addEventListener('click', function() {
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                toggleBtn.innerText = "Hide";
+            } else {
+                passInput.type = "password";
+                toggleBtn.innerText = "Show";
+            }
+        });
+
+        // Login Logic
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
@@ -89,7 +92,6 @@
             btn.disabled = true;
 
             try {
-                // 2. Querying the database
                 const { data, error } = await supabase
                     .from('therapist_applications')
                     .select('username, password')
@@ -98,7 +100,6 @@
 
                 if (error) throw error;
 
-                // 3. Verification
                 if (data && data.password === passwordInput) {
                     window.location.href = "dashboard.html";
                 } else {
@@ -108,7 +109,7 @@
                 }
             } catch (err) {
                 console.error("Database Error:", err);
-                alert("Login failed: " + err.message);
+                alert("Login failed. Check console for details.");
                 btn.innerText = "Log In";
                 btn.disabled = false;
             }
