@@ -126,7 +126,7 @@
             });
             if (authError) throw authError;
 
-            // 2. Stability Wait
+            // 2. Wait for Session
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             // 3. Upload Files
@@ -143,9 +143,8 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // 4. Insert Data
+            // 4. Insert Data (auth_id removed, database fills it via auth.uid() default)
             const { error: dbError } = await client.from('therapist_applications').insert([{
-                auth_id: authData.user.id,
                 username: username,
                 full_name: document.getElementById('fullName').value,
                 address: document.getElementById('address').value,
@@ -157,10 +156,7 @@
                 cert_url: cert
             }]);
 
-            if (dbError) {
-                console.error("DB Error Details:", dbError);
-                throw new Error(dbError.message + " (" + (dbError.details || "Check your table columns.") + ")");
-            }
+            if (dbError) throw dbError;
             
             alert("Application successful!");
             window.location.href = "login.html";
