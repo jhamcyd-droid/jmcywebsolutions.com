@@ -10,17 +10,8 @@
             --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; 
             --border: #cbd5e0; --danger: #e53e3e; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(rgba(247, 250, 252, 0.6), rgba(247, 250, 252, 0.6)), url('background.jpg'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-            padding: 40px 20px; color: #2d3748; line-height: 1.6; 
-        }
-        .form-container { 
-            max-width: 600px; margin: 0 auto; background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; 
-            box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.3);
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(rgba(247, 250, 252, 0.6), rgba(247, 250, 252, 0.6)), url('background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; padding: 40px 20px; color: #2d3748; line-height: 1.6; }
+        .form-container { max-width: 600px; margin: 0 auto; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.3); }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .nav-link { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border: 1px solid var(--primary); border-radius: 6px; transition: all 0.2s; }
@@ -28,9 +19,12 @@
         h2 { margin-bottom: 30px; color: var(--primary); text-align: center; font-weight: 700; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #2d3748; }
-        input[type="text"], input[type="password"], input[type="tel"], input[type="file"] { 
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: rgba(255,255,255,0.5);
-        }
+        input[type="text"], input[type="password"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: rgba(255,255,255,0.5); }
+        
+        /* New File Wrapper Styles */
+        .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
+        .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; }
@@ -76,9 +70,29 @@
         </div>
         <div class="form-group"><label>Massage Specialties</label><input type="text" id="specialties" required /></div>
         <div class="form-group"><label>Contact Number</label><input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}" required /></div>
-        <div class="form-group"><label>Government ID</label><input type="file" id="govId" accept="image/*" required /></div>
-        <div class="form-group"><label>Selfie with Gov. ID</label><input type="file" id="selfieId" accept="image/*" required /></div>
-        <div class="form-group"><label>Massage Certificate</label><input type="file" id="cert" accept="image/*,.pdf" required /></div>
+        
+        <div class="form-group">
+            <label>Government ID</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="govId" accept="image/*" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('govId').value=''">X</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Selfie with Gov. ID</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="selfieId" accept="image/*" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('selfieId').value=''">X</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Massage Certificate</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="cert" accept="image/*,.pdf" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('cert').value=''">X</button>
+            </div>
+        </div>
+
         <button type="submit" class="submit-btn" id="btn-submit">Submit Application</button>
     </form>
 </div>
@@ -105,7 +119,6 @@
         btn.disabled = true;
 
         try {
-            // 1. Sign Up
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -113,21 +126,19 @@
             });
             if (authError) throw authError;
 
-            // 2. Upload Files
             const uploadFile = async (id) => {
-                const file = document.getElementById(id).files[0];
-                const fileExt = file.name.split('.').pop();
+                const fileInput = document.getElementById(id);
+                if (!fileInput.files[0]) throw new Error(`Please select a file for ${id}`);
+                const fileExt = fileInput.files[0].name.split('.').pop();
                 const filePath = `${authData.user.id}/${id}.${fileExt}`;
                 
-                const { error: uploadError } = await client.storage.from('applications').upload(filePath, file);
+                const { error: uploadError } = await client.storage.from('applications').upload(filePath, fileInput.files[0]);
                 if (uploadError) throw uploadError;
-                
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // 3. Insert to Table
             const { error: dbError } = await client.from('therapist_applications').insert([{
                 auth_id: authData.user.id,
                 username: username,
@@ -136,9 +147,7 @@
                 locations: locations,
                 specialties: document.getElementById('specialties').value,
                 phone: document.getElementById('phone').value,
-                gov_id_url: gov, 
-                selfie_url: selfie, 
-                cert_url: cert
+                gov_id_url: gov, selfie_url: selfie, cert_url: cert
             }]);
 
             if (dbError) throw dbError;
