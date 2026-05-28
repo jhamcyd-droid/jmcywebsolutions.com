@@ -14,7 +14,18 @@
             --danger: #e53e3e;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 40px 20px; color: #2d3748; line-height: 1.6; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            /* Local background image reference */
+            background: linear-gradient(rgba(247, 250, 252, 0.9), rgba(247, 250, 252, 0.9)), 
+                        url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 40px 20px; 
+            color: #2d3748; 
+            line-height: 1.6; 
+        }
         .form-container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         
         /* Navbar Styles */
@@ -151,8 +162,6 @@
         try {
             const uploadFile = async (id) => {
                 const file = document.getElementById(id).files[0];
-                
-                // Sanitize filename to prevent 'Invalid key' error
                 const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '_').toLowerCase();
                 const filePath = `${Date.now()}_${sanitizedName}`;
                 
@@ -174,10 +183,11 @@
             }]);
 
             if (error) throw error;
-            alert("Application submitted successfully!");
+            
+            alert("Thank you for your application. Your submission has been received successfully, as of now you can login on our portal and wait the verification review by the JMCY Wellness team.");
             document.getElementById('hireForm').reset();
         } catch (err) {
-            alert("Submission failed: " + err.message);
+            alert("Submission failed. Please check your connection and try again. Error details: " + err.message);
         } finally {
             btn.textContent = "Submit Application";
             btn.disabled = false;
