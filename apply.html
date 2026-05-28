@@ -33,8 +33,6 @@
         }
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
-        .file-row { display: flex; gap: 10px; align-items: center; }
-        .remove-btn { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         .submit-btn:disabled { background: #a0aec0; }
         .password-wrapper { position: relative; display: flex; align-items: center; }
@@ -107,9 +105,9 @@
         btn.disabled = true;
 
         try {
-            // 1. Register with Supabase Auth
+            // 1. Register with valid .com email
             const { data: authData, error: authError } = await client.auth.signUp({
-                email: `${username}@jmcywellness.local`,
+                email: `${username}@jmcywellness.com`,
                 password: password,
                 options: { data: { username: username } }
             });
@@ -118,14 +116,16 @@
             // 2. Upload Files
             const uploadFile = async (id) => {
                 const file = document.getElementById(id).files[0];
-                const { error, data } = await client.storage.from('applications').upload(`${authData.user.id}/${id}`, file);
+                const fileExt = file.name.split('.').pop();
+                const { error, data } = await client.storage.from('applications')
+                    .upload(`${authData.user.id}/${id}.${fileExt}`, file);
                 if (error) throw error;
                 return client.storage.from('applications').getPublicUrl(data.path).data.publicUrl;
             };
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // 3. Save to Table (linking via auth_id)
+            // 3. Save to Table
             const { error: dbError } = await client.from('therapist_applications').insert([{
                 auth_id: authData.user.id,
                 username: username,
@@ -139,11 +139,10 @@
 
             if (dbError) throw dbError;
             
-            alert("Application submitted! You can now log in.");
+            alert("Application successful! You can now log in.");
             window.location.href = "login.html";
         } catch (err) {
             alert("Submission failed: " + err.message);
-        } finally {
             btn.textContent = "Submit Application";
             btn.disabled = false;
         }
