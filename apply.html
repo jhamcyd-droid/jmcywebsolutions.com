@@ -6,35 +6,62 @@
     <title>Therapist Application | JMCY Wellness Network</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; --border: #e2e8f0; --danger: #e53e3e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 40px 20px; color: var(--primary); }
-        .form-container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid var(--border); }
-        h2 { margin-bottom: 25px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 5px; color: #4a5568; }
-        input[type="text"], input[type="password"], input[type="tel"], input[type="file"], select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .checkbox-item { display: flex; align-items: center; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
+        :root { 
+            --primary: #1a365d; 
+            --accent: #2f855a; 
+            --bg: #f7fafc; 
+            --border: #cbd5e0; 
+            --danger: #e53e3e;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 40px 20px; color: #2d3748; line-height: 1.6; }
+        .form-container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        
+        /* Navbar Styles */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-link { 
+            text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem; 
+            padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; transition: all 0.2s; 
+        }
+        .nav-link:hover { background: var(--primary); color: white; }
+
+        h2 { margin-bottom: 30px; color: var(--primary); text-align: center; font-weight: 700; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #4a5568; letter-spacing: 0.02em; }
+        input[type="text"], input[type="password"], input[type="tel"], input[type="file"], select { 
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; transition: all 0.2s ease;
+        }
+        input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.15); }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         .file-row { display: flex; gap: 10px; align-items: center; }
-        .remove-btn { background: var(--danger); color: white; border: none; padding: 10px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; white-space: nowrap; }
-        .submit-btn { background: var(--accent); color: white; width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .remove-btn { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .remove-btn:hover { background: var(--danger); color: white; }
+        .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: background 0.2s; }
+        .submit-btn:hover { background: #276749; }
         .submit-btn:disabled { background: #a0aec0; cursor: not-allowed; }
-        .note { font-size: 0.75rem; color: #718096; margin-top: 4px; display: block; }
+        .note { font-size: 0.75rem; color: #718096; margin-top: 6px; display: block; font-style: italic; }
         .password-wrapper { position: relative; display: flex; align-items: center; }
-        .toggle-password-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 0.75rem; font-weight: bold; color: #2f855a; }
+        .toggle-password-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 700; color: var(--accent); }
     </style>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>Therapist Hiring Application</h2>
+    <nav class="navbar">
+        <a href="index.html" class="logo">JMCY</a>
+        <a href="index.html" class="nav-link">&larr; Back to Home</a>
+    </nav>
+
+    <h2>Therapist Application</h2>
     <form id="hireForm">
         <div class="form-group"><label>Username</label><input type="text" id="username" required /></div>
         
         <div class="form-group">
             <label>Password</label>
             <div class="password-wrapper">
-                <input type="password" id="password" required minlength="8" style="padding-right: 60px;" />
+                <input type="password" id="password" required minlength="8" />
                 <button type="button" id="togglePass" class="toggle-password-btn">Show</button>
             </div>
         </div>
@@ -43,26 +70,26 @@
         <div class="form-group"><label>Address</label><input type="text" id="address" required /></div>
 
         <div class="form-group">
-            <label>Preferred Service Locations (Select 1-3)</label>
+            <label>Preferred Locations (Select 1-3)</label>
             <div class="checkbox-group">
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Quezon City"> Quezon City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Manila"> City of Manila</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="San Juan"> San Juan City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Mandaluyong"> Mandaluyong City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Pasig"> Pasig City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Makati"> Makati City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas City</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa City</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Manila"> Manila</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="San Juan"> San Juan</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Mandaluyong"> Mandaluyong</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Pasig"> Pasig</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Makati"> Makati</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
             </div>
         </div>
 
         <div class="form-group"><label>Massage Specialties</label><input type="text" id="specialties" required /></div>
         <div class="form-group">
-            <label>Contact Number</label>
-            <input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}$" required />
-            <span class="note">*Must be your active GCash and WhatsApp number.</span>
+            <label>Contact Number (GCash/WhatsApp)</label>
+            <input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}" required />
+            <span class="note">*Must be your active number.</span>
         </div>
 
         <div class="form-group">
@@ -92,18 +119,15 @@
 </div>
 
 <script>
-    // Initialize Supabase
-    const supabase = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+    const { createClient } = supabase;
+    const client = createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
-    // 1. Password Toggle
     document.getElementById('togglePass').addEventListener('click', function() {
         const pw = document.getElementById('password');
-        const isPassword = pw.type === 'password';
-        pw.type = isPassword ? 'text' : 'password';
-        this.textContent = isPassword ? 'Hide' : 'Show';
+        pw.type = pw.type === 'password' ? 'text' : 'password';
+        this.textContent = pw.type === 'password' ? 'Show' : 'Hide';
     });
 
-    // 2. FIXED Clear File
     window.replaceInput = function(id) {
         const oldInput = document.getElementById(id);
         const newInput = document.createElement("input");
@@ -114,52 +138,41 @@
         oldInput.parentNode.replaceChild(newInput, oldInput);
     };
 
-    // 3. Form Submit
     document.getElementById('hireForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-submit');
         const locations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
         
-        if (locations.length === 0 || locations.length > 3) {
-            return alert("Please select between 1 and 3 locations.");
-        }
+        if (locations.length === 0 || locations.length > 3) return alert("Please select 1-3 locations.");
 
-        btn.textContent = "Uploading...";
+        btn.textContent = "Processing...";
         btn.disabled = true;
 
         try {
-            const uploadFile = async (fileInputId) => {
-                const file = document.getElementById(fileInputId).files[0];
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-                const { error } = await supabase.storage.from('applications').upload(fileName, file);
+            const uploadFile = async (id) => {
+                const file = document.getElementById(id).files[0];
+                const { error, data } = await client.storage.from('applications').upload(`${Date.now()}_${file.name}`, file);
                 if (error) throw error;
-                return supabase.storage.from('applications').getPublicUrl(fileName).data.publicUrl;
+                return client.storage.from('applications').getPublicUrl(data.path).data.publicUrl;
             };
 
-            const [govIdUrl, selfieUrl, certUrl] = await Promise.all([
-                uploadFile('govId'),
-                uploadFile('selfieId'),
-                uploadFile('cert')
-            ]);
+            const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            const { error: dbError } = await supabase.from('therapist_applications').insert([{
+            const { error } = await client.from('therapist_applications').insert([{
                 username: document.getElementById('username').value,
                 full_name: document.getElementById('fullName').value,
                 address: document.getElementById('address').value,
                 locations: locations,
                 specialties: document.getElementById('specialties').value,
                 phone: document.getElementById('phone').value,
-                gov_id_url: govIdUrl,
-                selfie_url: selfieUrl,
-                cert_url: certUrl
+                gov_id_url: gov, selfie_url: selfie, cert_url: cert
             }]);
 
-            if (dbError) throw dbError;
+            if (error) throw error;
             alert("Application submitted successfully!");
             document.getElementById('hireForm').reset();
         } catch (err) {
-            alert("Error: " + err.message);
+            alert("Submission failed: " + err.message);
         } finally {
             btn.textContent = "Submit Application";
             btn.disabled = false;
