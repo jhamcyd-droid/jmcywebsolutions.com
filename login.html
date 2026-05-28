@@ -70,21 +70,30 @@
             const toggleBtn = document.getElementById('toggleBtn');
             const passInput = document.getElementById('pass');
 
+            // Password Toggle Logic
             toggleBtn.addEventListener('click', () => {
                 const isPassword = passInput.type === "password";
                 passInput.type = isPassword ? "text" : "password";
                 toggleBtn.innerText = isPassword ? "Hide" : "Show";
             });
 
+            // Login Form Logic
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('login-btn');
                 const usernameInput = document.getElementById('username').value.trim();
                 const passwordInput = document.getElementById('pass').value;
 
+                // 1. Admin Override Check
+                if (usernameInput === "jmcywellness" && passwordInput === "jmcy1234") {
+                    window.location.href = "admin.html";
+                    return;
+                }
+
                 btn.innerText = "Authenticating...";
                 btn.disabled = true;
 
+                // 2. Supabase Therapist Auth
                 try {
                     const { data, error } = await supabase.auth.signInWithPassword({
                         email: `${usernameInput}@jmcywellness.com`,
@@ -95,7 +104,7 @@
                     window.location.href = "dashboard.html";
                 } catch (err) {
                     console.error("Auth Error:", err);
-                    alert("Login failed: " + err.message);
+                    alert("Invalid username or password.");
                     btn.innerText = "Log In";
                     btn.disabled = false;
                 }

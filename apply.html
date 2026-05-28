@@ -105,7 +105,7 @@
         btn.disabled = true;
 
         try {
-            // 1. Register with valid .com email
+            // 1. Sign Up
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -117,15 +117,17 @@
             const uploadFile = async (id) => {
                 const file = document.getElementById(id).files[0];
                 const fileExt = file.name.split('.').pop();
-                const { error, data } = await client.storage.from('applications')
-                    .upload(`${authData.user.id}/${id}.${fileExt}`, file);
-                if (error) throw error;
-                return client.storage.from('applications').getPublicUrl(data.path).data.publicUrl;
+                const filePath = `${authData.user.id}/${id}.${fileExt}`;
+                
+                const { error: uploadError } = await client.storage.from('applications').upload(filePath, file);
+                if (uploadError) throw uploadError;
+                
+                return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // 3. Save to Table
+            // 3. Insert to Table
             const { error: dbError } = await client.from('therapist_applications').insert([{
                 auth_id: authData.user.id,
                 username: username,
@@ -134,7 +136,9 @@
                 locations: locations,
                 specialties: document.getElementById('specialties').value,
                 phone: document.getElementById('phone').value,
-                gov_id_url: gov, selfie_url: selfie, cert_url: cert
+                gov_id_url: gov, 
+                selfie_url: selfie, 
+                cert_url: cert
             }]);
 
             if (dbError) throw dbError;
@@ -142,6 +146,7 @@
             alert("Application successful! You can now log in.");
             window.location.href = "login.html";
         } catch (err) {
+            console.error("Submission Error:", err);
             alert("Submission failed: " + err.message);
             btn.textContent = "Submit Application";
             btn.disabled = false;
