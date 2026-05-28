@@ -61,7 +61,7 @@
     </div>
 
     <script>
-        // Correct initialization
+        // 1. Correct Initialization using the global window object
         const supabase = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
@@ -82,24 +82,35 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('login-btn');
-            const usernameInput = document.getElementById('username').value;
+            const usernameInput = document.getElementById('username').value.trim();
             const passwordInput = document.getElementById('pass').value;
 
             btn.innerText = "Authenticating...";
             btn.disabled = true;
 
-            const { data, error } = await supabase
-                .from('therapist_applications')
-                .select('username, password')
-                .eq('username', usernameInput)
-                .maybeSingle();
+            try {
+                // 2. Querying the database
+                const { data, error } = await supabase
+                    .from('therapist_applications')
+                    .select('username, password')
+                    .eq('username', usernameInput)
+                    .maybeSingle();
 
-            if (error || !data || data.password !== passwordInput) {
-                alert("Invalid username or password.");
+                if (error) throw error;
+
+                // 3. Verification
+                if (data && data.password === passwordInput) {
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Invalid username or password.");
+                    btn.innerText = "Log In";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error("Database Error:", err);
+                alert("Login failed: " + err.message);
                 btn.innerText = "Log In";
                 btn.disabled = false;
-            } else {
-                window.location.href = "dashboard.html";
             }
         });
     </script>
