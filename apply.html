@@ -125,6 +125,7 @@
             });
             if (authError) throw authError;
 
+            // Wait a moment for the auth record to propagate
             await new Promise(resolve => setTimeout(resolve, 2000));
             await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
 
@@ -140,10 +141,11 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // Corrected to use 'full_name' to match your database column
+            // Database insertion
             const { error: dbError } = await client.from('therapist_applications').insert([{
+                auth_id: authData.user.id,
                 username: username,
-                full_name: document.getElementById('fullName').value, 
+                full_name: document.getElementById('fullName').value,
                 address: document.getElementById('address').value,
                 locations: locations,
                 specialties: document.getElementById('specialties').value,
