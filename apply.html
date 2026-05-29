@@ -125,7 +125,7 @@
             });
             if (authError) throw authError;
 
-            // Wait a moment for the auth record to propagate
+            // Wait for auth to propagate
             await new Promise(resolve => setTimeout(resolve, 2000));
             await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
 
@@ -141,19 +141,22 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // Database insertion
-            const { error: dbError } = await client.from('therapist_applications').insert([{
-                auth_id: authData.user.id,
-                username: username,
-                full_name: document.getElementById('fullName').value,
-                address: document.getElementById('address').value,
-                locations: locations,
-                specialties: document.getElementById('specialties').value,
-                phone: document.getElementById('phone').value,
-                gov_id_url: gov, 
-                selfie_url: selfie, 
-                cert_url: cert
-            }]);
+            // Database insertion with .select(null) to avoid RLS read error
+            const { error: dbError } = await client
+                .from('therapist_applications')
+                .insert([{
+                    auth_id: authData.user.id,
+                    username: username,
+                    full_name: document.getElementById('fullName').value,
+                    address: document.getElementById('address').value,
+                    locations: locations,
+                    specialties: document.getElementById('specialties').value,
+                    phone: document.getElementById('phone').value,
+                    gov_id_url: gov, 
+                    selfie_url: selfie, 
+                    cert_url: cert
+                }])
+                .select(null);
 
             if (dbError) throw dbError;
             
