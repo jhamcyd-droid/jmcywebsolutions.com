@@ -125,7 +125,6 @@
             });
             if (authError) throw authError;
 
-            // Wait for auth to propagate
             await new Promise(resolve => setTimeout(resolve, 2000));
             await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
 
@@ -141,7 +140,6 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // Database insertion with .select(null) to avoid RLS read error
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .insert([{
