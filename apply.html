@@ -126,8 +126,12 @@
             });
             if (authError) throw authError;
 
-            // 2. Wait for Session
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // 2. FORCE SIGN IN: Establishes session context for DB policies
+            const { error: signInError } = await client.auth.signInWithPassword({
+                email: `${username}@jmcywellness.com`,
+                password: password
+            });
+            if (signInError) throw signInError;
 
             // 3. Upload Files
             const uploadFile = async (id) => {
@@ -143,7 +147,7 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // 4. Insert Data (auth_id removed, database fills it via auth.uid() default)
+            // 4. Insert Data
             const { error: dbError } = await client.from('therapist_applications').insert([{
                 username: username,
                 full_name: document.getElementById('fullName').value,
