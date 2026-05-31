@@ -49,18 +49,25 @@
     </div>
 
     <script>
-        const supabase = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+        // Securely initialize client
+        if (!window.mySupabaseClient) {
+            window.mySupabaseClient = window.supabase.createClient(
+                'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+            );
+        }
 
         async function fetchBookings() {
             const tableBody = document.getElementById('bookingsTableBody');
             const timestamp = document.getElementById('lastUpdated');
             
-            const { data, error } = await supabase
+            const { data, error } = await window.mySupabaseClient
                 .from('bookings')
-                .select('appointment_date, full_name, mobile_number, services, total_duration_hours, city, address, total_price')
+                .select('appointment_date, full_name, mobile_number, services, total_duration_hours, city, address, total_price, created_at')
                 .order('created_at', { ascending: false });
 
             if (error) {
+                console.error("Supabase Error:", error);
                 tableBody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Error: ${error.message}</td></tr>`;
                 return;
             }
@@ -72,25 +79,24 @@
 
             tableBody.innerHTML = data.map(b => `
                 <tr>
-                    <td>${b.appointment_date}</td>
-                    <td style="font-weight:bold;">${b.full_name}</td>
-                    <td>${b.mobile_number}</td>
-                    <td>${b.services}</td>
-                    <td>${b.total_duration_hours} hrs</td>
-                    <td>${b.city}</td>
-                    <td>${b.address}</td>
+                    <td>${b.appointment_date || ''}</td>
+                    <td style="font-weight:bold;">${b.full_name || ''}</td>
+                    <td>${b.mobile_number || ''}</td>
+                    <td>${b.services || ''}</td>
+                    <td>${b.total_duration_hours || 0} hrs</td>
+                    <td>${b.city || ''}</td>
+                    <td>${b.address || ''}</td>
                     <td style="color:var(--accent); font-weight:bold;">₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
-
-            // Update timestamp
+            
             timestamp.textContent = "Last updated: " + new Date().toLocaleTimeString();
         }
 
-        // 1. Export data immediately on open
+        // Run immediately
         fetchBookings();
 
-        // 2. Keep data live by refreshing every 60 seconds
+        // Refresh every 60 seconds
         setInterval(fetchBookings, 60000);
     </script>
 </body>
