@@ -10,6 +10,8 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: #edf2f7; margin: 0; padding: 20px; }
         .admin-container { max-width: 1400px; margin: 0 auto; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .timestamp { font-size: 0.8rem; color: #718096; }
         .table-responsive { overflow-x: auto; }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .admin-table th { background: var(--light); padding: 12px; text-align: left; border-bottom: 2px solid var(--border); text-transform: uppercase; }
@@ -20,7 +22,10 @@
 
     <div class="admin-container">
         <main class="card">
-            <h2>Recent Bookings</h2>
+            <div class="header-section">
+                <h2>Recent Bookings</h2>
+                <div class="timestamp" id="lastUpdated">Initializing...</div>
+            </div>
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
@@ -36,7 +41,7 @@
                         </tr>
                     </thead>
                     <tbody id="bookingsTableBody">
-                        <tr><td colspan="8" style="text-align:center;">Loading...</td></tr>
+                        <tr><td colspan="8" style="text-align:center;">Loading data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -48,6 +53,7 @@
 
         async function fetchBookings() {
             const tableBody = document.getElementById('bookingsTableBody');
+            const timestamp = document.getElementById('lastUpdated');
             
             const { data, error } = await supabase
                 .from('bookings')
@@ -76,12 +82,15 @@
                     <td style="color:var(--accent); font-weight:bold;">₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
                 </tr>
             `).join('');
+
+            // Update timestamp
+            timestamp.textContent = "Last updated: " + new Date().toLocaleTimeString();
         }
 
-        // Fetch immediately on load
+        // 1. Export data immediately on open
         fetchBookings();
 
-        // Auto-refresh every 60 seconds
+        // 2. Keep data live by refreshing every 60 seconds
         setInterval(fetchBookings, 60000);
     </script>
 </body>
