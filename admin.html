@@ -63,17 +63,23 @@
 
     async function markAsPaid(booking) {
         // 1. Insert into history
-        await window.mySupabaseClient.from('transaction_history').insert([{
+        const { error: insertError } = await window.mySupabaseClient.from('transaction_history').insert([{
             booking_id: booking.booking_id,
             service: booking.services,
-            commission_paid: (booking.total_price * 0.15).toFixed(2),
-            status: 'completed'
+            commission_paid: (booking.total_price * 0.15).toFixed(2)
         }]);
 
-        // 2. Update booking status
-        await window.mySupabaseClient.from('bookings').update({ status: 'completed' }).eq('booking_id', booking.booking_id);
+        if (insertError) { alert("Error recording history: " + insertError.message); return; }
+
+        // 2. Update booking status to 'completed' so it moves out of the 'accepted' list
+        const { error: updateError } = await window.mySupabaseClient
+            .from('bookings')
+            .update({ status: 'completed' })
+            .eq('booking_id', booking.booking_id);
         
-        alert("Commission recorded in history!");
+        if (updateError) { alert("Error updating status: " + updateError.message); return; }
+        
+        alert("Commission marked as paid and moved to history!");
         fetchBookings();
     }
 
@@ -84,11 +90,11 @@
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted');
 
-        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td>${b.appointment_date}</td><td>${b.full_name}</td><td>${b.mobile_number}</td><td>${b.services}</td><td>₱${parseFloat(b.total_price).toLocaleString()}</td></tr>`).join('') : '<tr><td colspan="5">No pending.</td></tr>';
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td>${b.appointment_date || '-'}</td><td>${b.full_name || '-'}</td><td>${b.mobile_number || '-'}</td><td>${b.services || '-'}</td><td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td></tr>`).join('') : '<tr><td colspan="5">No pending bookings.</td></tr>';
 
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.appointment_date}</td><td>${b.full_name}</td><td>${b.services}</td><td class="assigned-name">${b.therapist_name || 'Unassigned'}</td><td>₱${parseFloat(b.total_price).toLocaleString()}</td><td>₱${(b.total_price * 0.15).toFixed(2)}</td><td><button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b)})'>Mark Paid</button></td></tr>`).join('') : '<tr><td colspan="7">No accepted.</td></tr>';
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.appointment_date || '-'}</td><td>${b.full_name || '-'}</td><td>${b.services || '-'}</td><td class="assigned-name">${b.therapist_name || 'Unassigned'}</td><td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td><td>₱${(b.total_price * 0.15).toFixed(2)}</td><td><button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b)})'>Mark Paid</button></td></tr>`).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
 
-        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history.</td></tr>';
+        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
     }
 
     fetchBookings();
