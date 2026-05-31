@@ -10,6 +10,7 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
+        .payment-box { background: #ebf8ff; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem; }
         .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 10px; border: none; background: #cbd5e0; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -34,6 +35,7 @@
 </div>
 
 <div id="dispatch-tab" class="tab-content active">
+    <!-- Live Booking Assignment -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Live Booking Assignment</h2>
         <div class="scroll-wrapper">
@@ -43,6 +45,20 @@
             </table>
         </div>
     </div>
+    
+    <!-- Payment Instructions -->
+    <div class="fixed-mobile-card">
+        <h2 class="card-title">Payment Instructions (GCash)</h2>
+        <p style="font-size: 12px;">Please send commission to the account below:</p>
+        <div class="payment-box">
+            <strong>Account Name:</strong> JA**S D.<br>
+            <strong>Mobile No:</strong> +63 931 041 ....<br>
+            <strong>User ID:</strong> ............95NV2I
+        </div>
+        <a href="gcash://" style="display:block; text-align:center; margin-top:15px; padding:10px; background:var(--secondary); color:white; text-decoration:none; border-radius:8px; font-weight:bold;">OPEN GCASH APP</a>
+    </div>
+
+    <!-- Accepted Bookings -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Accepted Bookings</h2>
         <div class="scroll-wrapper">
@@ -52,12 +68,14 @@
             </table>
         </div>
     </div>
+    
+    <!-- Transaction History -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Transaction History</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>ID</th><th>Service</th><th>Price</th><th>Paid Commission</th><th>Status</th></tr></thead>
-                <tbody id="historyBody"><tr><td colspan="5">No history yet.</td></tr></tbody>
+                <thead><tr><th>ID</th><th>Service</th><th>Paid</th><th>Date</th></tr></thead>
+                <tbody id="historyBody"><tr><td colspan="4">No history yet.</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -95,27 +113,18 @@
         fetchBookings();
     }
 
-    async function payCommission(booking) {
-        await window.supabaseClient.from('transaction_history').insert([{
-            booking_id: booking.booking_id,
-            service: booking.services,
-            commission_paid: (booking.total_price * 0.15).toFixed(2),
-            status: 'completed'
-        }]);
-        await window.supabaseClient.from('bookings').update({ status: 'completed' }).eq('booking_id', booking.booking_id);
-        window.location.href = "admin.html";
-    }
-
     async function fetchBookings() {
-        const { data } = await window.supabaseClient.from('bookings').select('*');
-        const { data: history } = await window.supabaseClient.from('transaction_history').select('*');
+        const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
+        const { data: history } = await window.supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
         
-        const pending = data.filter(b => b.status === 'pending');
-        const accepted = data.filter(b => b.status === 'accepted');
+        const pending = bookings.filter(b => b.status === 'pending');
+        const accepted = bookings.filter(b => b.status === 'accepted');
 
-        document.getElementById('pendingBody').innerHTML = pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('');
-        document.getElementById('acceptedBody').innerHTML = accepted.map(b => `<tr><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td><td><button class="btn-pay" onclick='payCommission(${JSON.stringify(b)})'>PAY COMMISSION</button></td></tr>`).join('');
-        document.getElementById('historyBody').innerHTML = history ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>-</td><td>₱${h.commission_paid}</td><td>Verified</td></tr>`).join('') : '<tr><td colspan="5">No history yet.</td></tr>';
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
+        
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td><td>Paid</td></tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+        
+        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
 
     async function updateBookingStatus(id) {
