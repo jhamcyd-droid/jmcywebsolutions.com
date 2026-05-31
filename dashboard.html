@@ -60,8 +60,8 @@
         <h2 class="card-title">Accepted Bookings</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>ID</th><th>Service</th><th>Price</th><th>Comm. (15%)</th><th>Status</th></tr></thead>
-                <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+                <thead><tr><th>ID</th><th>Service</th><th>Therapist</th><th>Price</th><th>Comm. (15%)</th><th>Status</th></tr></thead>
+                <tbody id="acceptedBody"><tr><td colspan="6">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -112,13 +112,27 @@
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
         
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td><td>Accepted</td></tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr>
+            <td>${b.booking_id}</td>
+            <td>${b.services}</td>
+            <td>${b.therapist_name || 'Assigned'}</td>
+            <td>₱${b.total_price}</td>
+            <td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td>
+            <td>Accepted</td>
+        </tr>`).join('') : '<tr><td colspan="6">No accepted bookings.</td></tr>';
         
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
 
     async function updateBookingStatus(id) {
-        await window.supabaseClient.from('bookings').update({ status: 'accepted' }).eq('booking_id', id);
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
+        
+        await window.supabaseClient.from('bookings').update({ 
+            status: 'accepted',
+            therapist_name: profile.full_name 
+        }).eq('booking_id', id);
+        
         fetchBookings();
     }
 
