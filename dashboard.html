@@ -20,9 +20,9 @@
         .scroll-wrapper { width: 100%; overflow-x: auto; }
         .ledger-table { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 12px; }
         .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
-        .ledger-table th { background: var(--light); color: var(--primary); text-transform: uppercase; }
+        .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
         .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .btn-pay { background: var(--secondary); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+        .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -35,7 +35,6 @@
 </div>
 
 <div id="dispatch-tab" class="tab-content active">
-    <!-- Live Booking Assignment -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Live Booking Assignment</h2>
         <div class="scroll-wrapper">
@@ -46,30 +45,27 @@
         </div>
     </div>
     
-    <!-- Payment Instructions -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
         <p style="font-size: 12px;">Please send commission to the account below:</p>
         <div class="payment-box">
             <strong>Account Name:</strong> JA**S D.<br>
-            <strong>Mobile No:</strong> +63 931 041 ....<br>
-            <strong>User ID:</strong> ............95NV2I
+            <strong>Mobile No:</strong> 0931 041 0733
         </div>
-        <a href="gcash://" style="display:block; text-align:center; margin-top:15px; padding:10px; background:var(--secondary); color:white; text-decoration:none; border-radius:8px; font-weight:bold;">OPEN GCASH APP</a>
+        <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
+        <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
 
-    <!-- Accepted Bookings -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Accepted Bookings</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>ID</th><th>Service</th><th>Price</th><th>Comm. (15%)</th><th>Action</th></tr></thead>
+                <thead><tr><th>ID</th><th>Service</th><th>Price</th><th>Comm. (15%)</th><th>Status</th></tr></thead>
                 <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
     
-    <!-- Transaction History -->
     <div class="fixed-mobile-card">
         <h2 class="card-title">Transaction History</h2>
         <div class="scroll-wrapper">
@@ -98,13 +94,7 @@
     async function init() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) { window.location.href = "login.html"; return; }
-
-        const { data: profile } = await window.supabaseClient
-            .from('therapist_applications')
-            .select('full_name, phone, address')
-            .eq('auth_id', user.id)
-            .single();
-
+        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name, phone, address').eq('auth_id', user.id).single();
         if (profile) {
             document.getElementById('display-name').innerText = profile.full_name;
             document.getElementById('input-phone').value = profile.phone || '';
@@ -122,7 +112,7 @@
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
         
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td><td>Paid</td></tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td><td>Accepted</td></tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
         
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
@@ -130,6 +120,12 @@
     async function updateBookingStatus(id) {
         await window.supabaseClient.from('bookings').update({ status: 'accepted' }).eq('booking_id', id);
         fetchBookings();
+    }
+
+    function submitReference() {
+        const ref = document.getElementById('ref-number').value;
+        if (!ref) { alert("Please enter a reference number."); return; }
+        alert("Reference submitted: " + ref + ". Pending admin verification.");
     }
 
     async function saveProfileChanges() {
