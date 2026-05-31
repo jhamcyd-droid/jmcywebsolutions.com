@@ -89,7 +89,17 @@
 
     // --- Dispatch Logic ---
     async function updateBookingStatus(id) {
-        const { error } = await window.supabaseClient.from('bookings').update({ status: 'accepted' }).eq('booking_id', id);
+        // Retrieve name from localStorage to assign therapist
+        const therapistName = localStorage.getItem("jmcy_name");
+
+        const { error } = await window.supabaseClient
+            .from('bookings')
+            .update({ 
+                status: 'accepted',
+                therapist_name: therapistName 
+            })
+            .eq('booking_id', id);
+
         if (error) alert("Error: " + error.message);
         else fetchBookings();
     }
@@ -115,7 +125,7 @@
 
     // --- Profile Logic ---
     async function saveProfileChanges() {
-        const email = localStorage.getItem("jmcy_email"); // Ensure this is set during login
+        const email = localStorage.getItem("jmcy_email"); 
         const { error } = await window.supabaseClient
             .from('therapist_applications')
             .update({
