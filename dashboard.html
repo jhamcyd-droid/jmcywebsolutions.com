@@ -28,8 +28,8 @@
 <div class="user-banner">Logged in as: <span id="display-name" style="font-weight: bold;">Authenticating...</span></div>
 
 <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('dispatch')">Dispatches</button>
-    <button class="tab-btn" onclick="switchTab('profile')">My Profile</button>
+    <button class="tab-btn active" onclick="switchTab('dispatch', event)">Dispatches</button>
+    <button class="tab-btn" onclick="switchTab('profile', event)">My Profile</button>
 </div>
 
 <div id="dispatch-tab" class="tab-content active">
@@ -63,7 +63,6 @@
 </div>
 
 <script>
-    // Global safe initialization
     if (!window.supabaseClient) {
         window.supabaseClient = supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
@@ -77,11 +76,15 @@
 
         const { data: profile } = await window.supabaseClient
             .from('therapist_applications')
-            .select('full_name')
-            .eq('email', user.email)
+            .select('full_name, phone, address')
+            .eq('auth_id', user.id)
             .single();
 
-        document.getElementById('display-name').innerText = profile ? profile.full_name : "Therapist";
+        if (profile) {
+            document.getElementById('display-name').innerText = profile.full_name;
+            document.getElementById('input-phone').value = profile.phone || '';
+            document.getElementById('input-address').value = profile.address || '';
+        }
         fetchBookings();
     }
 
@@ -90,8 +93,10 @@
         const { data: profile } = await window.supabaseClient
             .from('therapist_applications')
             .select('full_name')
-            .eq('email', user.email)
+            .eq('auth_id', user.id)
             .single();
+
+        if (!profile) return alert("Profile not found.");
 
         const { error } = await window.supabaseClient
             .from('bookings')
@@ -99,7 +104,10 @@
             .eq('booking_id', id);
 
         if (error) alert("Error: " + error.message);
-        else fetchBookings();
+        else {
+            alert("Booking accepted!");
+            fetchBookings();
+        }
     }
 
     async function fetchBookings() {
@@ -109,18 +117,18 @@
         const pending = data.filter(b => b.status === 'pending');
         const accepted = data.filter(b => b.status === 'accepted');
 
-        document.getElementById('pendingBody').innerHTML = pending.map(b => `<tr>
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr>
             <td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td>
             <td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td>
             <td>${b.mobile_number}</td><td>${b.services}</td><td>${b.total_duration_hours} hrs</td>
             <td>${b.city}</td><td>${b.address}</td><td>₱${b.total_price}</td>
-        </tr>`).join('');
+        </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
 
-        document.getElementById('acceptedBody').innerHTML = accepted.map(b => `<tr>
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr>
             <td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td>
             <td>${b.mobile_number}</td><td>${b.services}</td><td>${b.total_duration_hours} hrs</td>
             <td>${b.city}</td><td>${b.address}</td><td>₱${b.total_price}</td>
-        </tr>`).join('');
+        </tr>`).join('') : '<tr><td colspan="9">No accepted bookings.</td></tr>';
     }
 
     async function saveProfileChanges() {
@@ -128,16 +136,16 @@
         const { error } = await window.supabaseClient
             .from('therapist_applications')
             .update({
-                mobile_number: document.getElementById('input-phone').value,
+                phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value
             })
-            .eq('email', user.email);
+            .eq('auth_id', user.id);
 
         if (error) alert("Error: " + error.message);
         else alert("Profile Updated!");
     }
 
-    function switchTab(tab) {
+    function switchTab(tab, event) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tab + '-tab').classList.add('active');
