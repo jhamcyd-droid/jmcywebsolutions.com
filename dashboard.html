@@ -3,434 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Workspace Panel</title>
+    <title>JMCY Dispatch & Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { 
-            --primary: #1a365d; 
-            --secondary: #2c5282; 
-            --accent: #2f855a; 
-            --dark: #2d3748; 
-            --light: #f7fafc; 
-            --border: #e2e8f0;
-            --alert-bg: #fffaf0;
-            --alert-border: #feebc8;
-            --alert-text: #c05621;
-        }
+        :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --light: #f7fafc; --accent: #2f855a; }
+        body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
+        .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
         
-        /* FORCE EVERYTHING TO STAY INSIDE SCREEN NO MATTER WHAT */
-        * {
-            box-sizing: border-box !important;
-            margin: 0;
-            padding: 0;
-        }
+        /* TAB STYLES */
+        .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: #cbd5e0; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        html, body { 
-            font-family: 'Segoe UI', -apple-system, sans-serif; 
-            color: var(--dark); 
-            background-color: #edf2f7; 
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: hidden !important; /* Block horizontal side scrolling */
-        }
-        
-        nav { 
-            display: block;
-            background: var(--primary); 
-            color: white; 
-            padding: 14px 16px;
-            width: 100%;
-            clear: both;
-        }
-        nav .brand { float: left; font-size: 15px; font-weight: 800; line-height: 26px; letter-spacing: 0.5px; }
-        nav .user-badge { float: right; }
-        .logout-btn { background: rgba(255,255,255,0.25); padding: 6px 12px; color: white; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; }
-
-        .workspace-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 12px !important;
-            display: block;
-            clear: both;
-        }
-
-        /* CARDS RE-ENGINEERED WITH A MAX-WIDTH STICK */
-        .fixed-mobile-card { 
-            background: white; 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            padding: 18px; 
-            margin-bottom: 14px; 
-            width: 100% !important;
-            max-width: 100% !important;
-            display: block;
-            overflow: hidden; /* Strict cut-off point */
-        }
-
-        /* NOTICEABLE CLICKABLE PROFILE STYLING EXTENSION */
-        .clickable-profile {
-            cursor: pointer;
-            position: relative;
-            background: #ffffff;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
-            border-left: 4px solid var(--secondary); /* Striking left accent border to guide user attention */
-        }
-        .clickable-profile:hover {
-            border-color: var(--secondary);
-            background: #fafbfe;
-            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.12);
-            transform: translateY(-2px);
-        }
-        .clickable-profile:active {
-            transform: scale(0.98) translateY(0);
-            background: #f0f4f8;
-        }
-
-        /* Profile Layout Fixes */
-        .avatar-container-mini {
-            width: 46px; 
-            height: 46px; 
-            background: #ebf8ff; 
-            border-radius: 50%; 
-            float: left; 
-            text-align: center; 
-            line-height: 46px; 
-            font-weight: 800; 
-            color: var(--secondary); 
-            font-size: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .avatar-container-mini img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none; /* Controlled via JS storage checker checks */
-        }
-
-        .p-meta-box {
-            width: 100%;
-            margin-top: 12px;
-            border-top: 2px dashed var(--border);
-            padding-top: 12px;
-        }
-        .p-meta-item {
-            width: 48%;
-            display: inline-block;
-            vertical-align: top;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-        .p-meta-item .lbl { color: #718096; font-weight: 700; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.3px; }
-        .p-meta-item .val { color: var(--dark); font-weight: bold; font-size: 14px; }
-
-        .card-title { 
-            font-size: 17px; 
-            font-weight: 800; 
-            color: var(--primary); 
-            margin-bottom: 14px; 
-            border-bottom: 2px solid var(--border); 
-            padding-bottom: 8px; 
-        }
-        
-        /* STATUS BANNER SYSTEM */
-        .status-banner-fixed { 
-            background-color: var(--alert-bg); 
-            border: 1px solid var(--alert-border); 
-            color: var(--alert-text); 
-            padding: 16px; 
-            border-radius: 12px; 
-            margin-bottom: 14px; 
-            width: 100% !important;
-            display: block;
-        }
-        .status-banner-fixed p { 
-            margin: 0; 
-            font-size: 13.5px; 
-            line-height: 1.5; 
-            white-space: normal !important; 
-            word-break: break-word !important; 
-        }
-
-        /* OPERATIONAL STATEMENTS METRIC CARDS */
-        .metric-row {
-            width: 100%;
-            display: block;
-        }
-        .metric-block-fixed { 
-            border: 1px solid var(--border); 
-            padding: 16px; 
-            border-radius: 10px; 
-            background: var(--light); 
-            margin-bottom: 10px;
-            width: 100% !important;
-            display: block;
-            clear: both;
-        }
-        .metric-lbl { float: left; font-size: 14px; text-transform: uppercase; color: #718096; font-weight: 700; line-height: 28px; }
-        .metric-val { float: right; font-size: 22px; font-weight: 800; color: var(--secondary); }
-
-        /* THE LIVE DISPATCH & LEDGER SCROLLER GUARDS */
-        .scroll-container-fixed {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important; /* Force touch scroll window box */
-            display: block;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .scroll-inner-forced {
-            width: 100%;
-            min-width: 680px; /* Increased to allow flawless panning with the new added columns */
-        }
-
-        .ledger-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
-        }
-        .ledger-table th, .ledger-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-        }
-        .ledger-table th {
-            background-color: var(--light);
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 11.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* BASE STATUS BADGE SYSTEM */
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border: 1px solid transparent;
-            user-select: none;
-            text-align: center;
-        }
-        
-        /* STATIC PAID STATUS (No Click) */
-        .status-badge.paid { 
-            background-color: #e6fffa; 
-            color: #234e52; 
-            border-color: #b2f5ea;
-        }
-
-        /* INTERACTIVE PENDING STATUS BUTTON */
-        .status-badge.pending { 
-            background-color: #fffaf0; 
-            color: #7b341e; 
-            border-color: #feebc8;
-            box-shadow: 0 2px 4px rgba(123, 52, 30, 0.06);
-            cursor: pointer;
-            transition: all 0.15s ease-in-out;
-        }
-        .status-badge.pending:hover {
-            background-color: #feebc8;
-            transform: translateY(-1px);
-        }
-        .status-badge.pending:active {
-            transform: scale(0.97) translateY(0);
-        }
-
-        /* FIXED WHATSAPP PILL SUPPORT */
-        .whatsapp-container {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 99999;
-            background-color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
+        /* FORM & TABLE STYLES */
+        .scroll-wrapper { width: 100%; overflow-x: auto; }
+        .ledger-table { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 12px; }
+        .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .ledger-table th { background: var(--light); color: var(--primary); text-transform: uppercase; }
+        .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .info-group { margin-bottom: 12px; }
+        .edit-field { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+        .save-btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="brand">JMCY MANAGEMENT PORTAL</div>
-        <div class="user-badge">
-            <a href="login.html" class="logout-btn" onclick="localStorage.clear()">Logout</a>
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('dispatch')">Dispatches</button>
+    <button class="tab-btn" onclick="switchTab('profile')">My Profile</button>
+</div>
+
+<div id="dispatch-tab" class="tab-content active">
+    <div class="fixed-mobile-card">
+        <h2 class="card-title">Live Booking Assignment</h2>
+        <div class="scroll-wrapper">
+            <table class="ledger-table">
+                <thead><tr><th>Action</th><th>Date</th><th>ID</th><th>Name</th><th>Mobile</th><th>Service</th><th>Duration</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
+                <tbody id="pendingBody"><tr><td colspan="10">Loading...</td></tr></tbody>
+            </table>
         </div>
-        <div style="clear:both;"></div>
-    </nav>
-
-    <div class="workspace-wrapper">
-
-        <section class="fixed-mobile-card clickable-profile" onclick="window.location.href='profile.html'">
-            <div style="display:block; margin-bottom:10px; position: relative; padding-right: 24px;">
-                
-                <div class="avatar-container-mini">
-                    <span id="profile-initials">--</span>
-                    <img id="dashboard-avatar-img" alt="Profile Icon View">
-                </div>
-
-                <div style="margin-left:58px; padding-top:2px;">
-                    <h3 id="profile-display-name" style="font-size:16px; font-weight: 800; color:var(--primary);">Loading Profile...</h3>
-                    <span id="profile-display-handle" style="font-size:13px; color:#718096; font-weight: 600;">@username</span>
-                </div>
-                
-                <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 14px; color: #a0aec0; font-weight: bold;">
-                    &gt;
-                </div>
-                <div style="clear:both;"></div>
-            </div>
-
-            <div class="p-meta-box">
-                <div class="p-meta-item">
-                    <div class="lbl">Platform Handle</div>
-                    <div class="val" id="meta-user">--</div>
-                </div>
-                <div class="p-meta-item">
-                    <div class="lbl">Legal Entity</div>
-                    <div class="val" id="meta-name">--</div>
-                </div>
-                <div class="p-meta-item">
-                    <div class="lbl">GCash / WhatsApp</div>
-                    <div class="val">Verified</div>
-                </div>
-                <div class="p-meta-item">
-                    <div class="lbl">Verification State</div>
-                    <div class="val" style="color: #dd6b20;">Pending Audit</div>
-                </div>
-            </div>
-            
-            <div style="text-align: right; font-size: 11px; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">
-                View Details Tool &rarr;
-            </div>
-        </section>
-
-        <div class="status-banner-fixed">
-            <div style="font-weight: 800; font-size: 14.5px; margin-bottom: 6px;">⏳ Profile Under Document Security Review</div>
-            <p>Our background verification team is currently matching your submitted Front/Back IDs, Biometric Selfie, and Therapy Certificates. Dispatch signals are muted until authorization finishes.</p>
-        </div>
-
-        <div class="fixed-mobile-card">
-            <h2 class="card-title">Live Assignment Dispatch Console</h2>
-            <div style="text-align: center; padding: 25px 0; color: #a0aec0;">
-                <div style="font-size: 26px; margin-bottom: 6px;">📴</div>
-                <p style="font-size: 13.5px; margin: 0; line-height: 1.4;">No active dispatches available. Approved credentials must be activated before platform booking alerts stream in.</p>
-            </div>
-        </div>
-
-        <div class="fixed-mobile-card">
-            <h2 class="card-title">Booking Ledger & Commission Track</h2>
-            <div class="scroll-container-fixed">
-                <div class="scroll-inner-forced">
-                    <table class="ledger-table">
-                        <thead>
-                            <tr>
-                                <th>Booking ID</th>
-                                <th>Date</th>
-                                <th>Massage Service Type</th>
-                                <th>Total Hours</th>
-                                <th>Service Amount</th>
-                                <th>Commission (15%)</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>#JMCY-9042</strong></td>
-                                <td>May 24, 2026</td>
-                                <td>Deep Tissue Massage</td>
-                                <td>2 hours</td>
-                                <td>₱1,400.00</td>
-                                <td style="color: #c05621; font-weight: bold;">₱210.00</td>
-                                <td><span class="status-badge pending" onclick="launchGCashApp(event)">Pending Remit</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>#JMCY-8911</strong></td>
-                                <td>May 22, 2026</td>
-                                <td>Swedish Massage</td>
-                                <td>1 hour</td>
-                                <td>₱500.00</td>
-                                <td style="color: var(--accent); font-weight: bold;">₱75.00</td>
-                                <td><span class="status-badge paid">Paid</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed-mobile-card">
-            <h2 class="card-title">Operational Statements</h2>
-            <div class="metric-row">
-                <div class="metric-block-fixed">
-                    <div class="metric-lbl">Commission to Pay</div>
-                    <div class="metric-val">₱210.00</div>
-                    <div style="clear:both;"></div>
-                </div>
-                <div class="metric-block-fixed">
-                    <div class="metric-lbl">Bookings Cleared</div>
-                    <div class="metric-val">1</div>
-                    <div style="clear:both;"></div>
-                </div>
-            </div>
-        </div>
-
     </div>
+    <div class="fixed-mobile-card">
+        <h2 class="card-title">Accepted Bookings</h2>
+        <div class="scroll-wrapper">
+            <table class="ledger-table">
+                <thead><tr><th>Date</th><th>ID</th><th>Name</th><th>Mobile</th><th>Service</th><th>Duration</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
+                <tbody id="acceptedBody"><tr><td colspan="9">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-    <a href="https://wa.me/639091297422?text=Hello%20Support" class="whatsapp-container" target="_blank">
-        💬 Support
-    </a>
+<div id="profile-tab" class="tab-content">
+    <div class="fixed-mobile-card">
+        <h2 class="card-title">Edit Profile Information</h2>
+        <div class="info-group">
+            <label>Mobile Number</label>
+            <input type="text" class="edit-field" id="input-phone">
+        </div>
+        <div class="info-group">
+            <label>Residential Address</label>
+            <input type="text" class="edit-field" id="input-address">
+        </div>
+        <button class="save-btn" onclick="saveProfileChanges()">SAVE CHANGES</button>
+    </div>
+</div>
 
-    <script>
-        function launchGCashApp(event) {
-            // Prevent clicking the status row from triggering the profile detail card transition hook
-            event.stopPropagation();
-            window.location.href = "gcash://";
-        }
+<script>
+    if (!window.supabaseClient) {
+        window.supabaseClient = window.supabase.createClient(
+            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+        );
+    }
 
-        window.onload = function() {
-            const savedUser = localStorage.getItem("jmcy_user");
-            const savedName = localStorage.getItem("jmcy_name");
-            const savedAvatar = localStorage.getItem("jmcy_avatar_data") || "";
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tab + '-tab').classList.add('active');
+        event.target.classList.add('active');
+    }
 
-            if(savedUser) {
-                document.getElementById('meta-user').innerText = "@" + savedUser;
-                document.getElementById('profile-display-handle').innerText = "@" + savedUser;
-            }
-            if(savedName) {
-                document.getElementById('meta-name').innerText = savedName;
-                document.getElementById('profile-display-name').innerText = savedName;
+    // --- Dispatch Logic ---
+    async function updateBookingStatus(id) {
+        const { error } = await window.supabaseClient.from('bookings').update({ status: 'accepted' }).eq('booking_id', id);
+        if (error) alert("Error: " + error.message);
+        else fetchBookings();
+    }
 
-                const words = savedName.trim().split(' ');
-                let initials = words[0].charAt(0);
-                if (words.length > 1) initials += words[words.length - 1].charAt(0);
-                document.getElementById('profile-initials').innerText = initials.toUpperCase();
-            }
+    async function fetchBookings() {
+        const { data } = await window.supabaseClient.from('bookings').select('*');
+        const pending = data.filter(b => b.status === 'pending');
+        const accepted = data.filter(b => b.status === 'accepted');
 
-            // CROSS-LINK CHECKER ROUTINE FOR THE PERSISTED AVATAR DATA
-            if (savedAvatar) {
-                const imgNode = document.getElementById('dashboard-avatar-img');
-                const initialsNode = document.getElementById('profile-initials');
-                
-                imgNode.src = savedAvatar;
-                imgNode.style.display = 'block';
-                initialsNode.style.display = 'none';
-            }
-        }
-    </script>
+        document.getElementById('pendingBody').innerHTML = pending.map(b => `<tr>
+            <td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td>
+            <td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td>
+            <td>${b.mobile_number}</td><td>${b.services}</td><td>${b.total_duration_hours} hrs</td>
+            <td>${b.city}</td><td>${b.address}</td><td>₱${b.total_price}</td>
+        </tr>`).join('');
+
+        document.getElementById('acceptedBody').innerHTML = accepted.map(b => `<tr>
+            <td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td>
+            <td>${b.mobile_number}</td><td>${b.services}</td><td>${b.total_duration_hours} hrs</td>
+            <td>${b.city}</td><td>${b.address}</td><td>₱${b.total_price}</td>
+        </tr>`).join('');
+    }
+
+    // --- Profile Logic ---
+    async function saveProfileChanges() {
+        const email = localStorage.getItem("jmcy_email"); // Ensure this is set during login
+        const { error } = await window.supabaseClient
+            .from('therapist_applications')
+            .update({
+                mobile_number: document.getElementById('input-phone').value,
+                address: document.getElementById('input-address').value
+            })
+            .eq('email', email);
+
+        if (error) alert("Error: " + error.message);
+        else alert("Profile Updated Successfully!");
+    }
+
+    fetchBookings();
+    setInterval(fetchBookings, 30000);
+</script>
 </body>
 </html>
