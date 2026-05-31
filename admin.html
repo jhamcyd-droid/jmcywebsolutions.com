@@ -15,6 +15,7 @@
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .admin-table th { background: var(--light); padding: 12px; text-align: left; border-bottom: 2px solid var(--border); text-transform: uppercase; }
         .admin-table td { padding: 12px; border-bottom: 1px solid var(--border); }
+        .assigned-name { color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -25,7 +26,7 @@
         <div class="table-responsive">
             <table class="admin-table">
                 <thead><tr><th>Date</th><th>Name</th><th>Mobile</th><th>Services</th><th>Total Price</th></tr></thead>
-                <tbody id="pendingBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+                <tbody id="pendingBody"><tr><td colspan="5">Loading data...</td></tr></tbody>
             </table>
         </div>
     </main>
@@ -35,7 +36,7 @@
         <div class="table-responsive">
             <table class="admin-table">
                 <thead><tr><th>Date</th><th>Name</th><th>Services</th><th>Assigned Therapist</th><th>Total Price</th></tr></thead>
-                <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+                <tbody id="acceptedBody"><tr><td colspan="5">Loading data...</td></tr></tbody>
             </table>
         </div>
     </main>
@@ -55,31 +56,34 @@
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (error) { console.error(error); return; }
+        if (error) { console.error("Fetch error:", error); return; }
 
         const pending = data.filter(b => b.status === 'pending');
         const accepted = data.filter(b => b.status === 'accepted');
 
-        document.getElementById('pendingBody').innerHTML = pending.map(b => `
+        // Render Pending
+        document.getElementById('pendingBody').innerHTML = pending.length > 0 ? pending.map(b => `
             <tr>
-                <td>${b.appointment_date || ''}</td>
-                <td>${b.full_name || ''}</td>
-                <td>${b.mobile_number || ''}</td>
-                <td>${b.services || ''}</td>
+                <td>${b.appointment_date || '-'}</td>
+                <td>${b.full_name || '-'}</td>
+                <td>${b.mobile_number || '-'}</td>
+                <td>${b.services || '-'}</td>
                 <td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
-            </tr>`).join('');
+            </tr>`).join('') : '<tr><td colspan="5">No pending bookings.</td></tr>';
 
-        document.getElementById('acceptedBody').innerHTML = accepted.map(b => `
+        // Render Accepted
+        document.getElementById('acceptedBody').innerHTML = accepted.length > 0 ? accepted.map(b => `
             <tr>
-                <td>${b.appointment_date || ''}</td>
-                <td>${b.full_name || ''}</td>
-                <td>${b.services || ''}</td>
-                <td style="color: var(--accent); font-weight: bold;">${b.therapist_name || 'Unassigned'}</td>
+                <td>${b.appointment_date || '-'}</td>
+                <td>${b.full_name || '-'}</td>
+                <td>${b.services || '-'}</td>
+                <td class="assigned-name">${b.therapist_name || 'Unassigned'}</td>
                 <td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
-            </tr>`).join('');
+            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings yet.</td></tr>';
     }
 
     fetchBookings();
+    // Refresh every 30 seconds
     setInterval(fetchBookings, 30000);
 </script>
 </body>

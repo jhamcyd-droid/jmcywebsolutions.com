@@ -93,7 +93,7 @@
                 try {
                     const emailAddr = `${usernameInput}@jmcywellness.com`;
                     
-                    // 1. Authenticate
+                    // 1. Authenticate with Supabase Auth
                     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                         email: emailAddr,
                         password: passwordInput
@@ -101,7 +101,7 @@
 
                     if (authError) throw authError;
 
-                    // 2. Fetch therapist name from database
+                    // 2. Fetch the therapist's full_name from the database
                     const { data: profile, error: profileError } = await supabase
                         .from('therapist_applications')
                         .select('full_name')
@@ -109,6 +109,7 @@
                         .single();
 
                     if (profile) {
+                        // 3. Store name in localStorage for use in dashboard.html
                         localStorage.setItem("jmcy_name", profile.full_name);
                         localStorage.setItem("jmcy_email", emailAddr);
                     }

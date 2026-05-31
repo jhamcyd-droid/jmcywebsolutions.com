@@ -10,6 +10,7 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
+        .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; }
         
         /* TAB STYLES */
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
@@ -24,12 +25,11 @@
         .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
         .ledger-table th { background: var(--light); color: var(--primary); text-transform: uppercase; }
         .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .info-group { margin-bottom: 12px; }
-        .edit-field { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
-        .save-btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div class="user-banner">Logged in as: <span id="display-name" style="font-weight: bold;">Loading...</span></div>
 
 <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('dispatch')">Dispatches</button>
@@ -60,15 +60,9 @@
 <div id="profile-tab" class="tab-content">
     <div class="fixed-mobile-card">
         <h2 class="card-title">Edit Profile Information</h2>
-        <div class="info-group">
-            <label>Mobile Number</label>
-            <input type="text" class="edit-field" id="input-phone">
-        </div>
-        <div class="info-group">
-            <label>Residential Address</label>
-            <input type="text" class="edit-field" id="input-address">
-        </div>
-        <button class="save-btn" onclick="saveProfileChanges()">SAVE CHANGES</button>
+        <input type="text" class="edit-field" id="input-phone" placeholder="Mobile Number" style="margin-bottom:10px; width:100%; padding:10px; border:1px solid var(--border);">
+        <input type="text" class="edit-field" id="input-address" placeholder="Address" style="margin-bottom:10px; width:100%; padding:10px; border:1px solid var(--border);">
+        <button class="save-btn" onclick="saveProfileChanges()" style="width:100%; padding:12px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer;">SAVE CHANGES</button>
     </div>
 </div>
 
@@ -80,6 +74,9 @@
         );
     }
 
+    // Set Name on Load
+    document.getElementById('display-name').innerText = localStorage.getItem("jmcy_name") || "Therapist";
+
     function switchTab(tab) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -87,17 +84,13 @@
         event.target.classList.add('active');
     }
 
-    // --- Dispatch Logic ---
     async function updateBookingStatus(id) {
-        // Retrieve name from localStorage to assign therapist
         const therapistName = localStorage.getItem("jmcy_name");
+        if (!therapistName) { alert("Session error. Please log in again."); return; }
 
         const { error } = await window.supabaseClient
             .from('bookings')
-            .update({ 
-                status: 'accepted',
-                therapist_name: therapistName 
-            })
+            .update({ status: 'accepted', therapist_name: therapistName })
             .eq('booking_id', id);
 
         if (error) alert("Error: " + error.message);
@@ -106,6 +99,8 @@
 
     async function fetchBookings() {
         const { data } = await window.supabaseClient.from('bookings').select('*');
+        if (!data) return;
+        
         const pending = data.filter(b => b.status === 'pending');
         const accepted = data.filter(b => b.status === 'accepted');
 
@@ -123,9 +118,8 @@
         </tr>`).join('');
     }
 
-    // --- Profile Logic ---
     async function saveProfileChanges() {
-        const email = localStorage.getItem("jmcy_email"); 
+        const email = localStorage.getItem("jmcy_email");
         const { error } = await window.supabaseClient
             .from('therapist_applications')
             .update({
@@ -135,7 +129,7 @@
             .eq('email', email);
 
         if (error) alert("Error: " + error.message);
-        else alert("Profile Updated Successfully!");
+        else alert("Profile Updated!");
     }
 
     fetchBookings();
