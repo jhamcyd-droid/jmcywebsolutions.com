@@ -53,20 +53,6 @@
         <div class="form-group"><label>Contact Number</label><input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}" required /></div>
         
         <div class="form-group">
-            <label>Government ID</label>
-            <div class="file-input-wrapper">
-                <input type="file" id="govId" accept="image/*" required />
-                <button type="button" class="delete-btn" onclick="document.getElementById('govId').value=''">X</button>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Selfie with Gov. ID</label>
-            <div class="file-input-wrapper">
-                <input type="file" id="selfieId" accept="image/*" required />
-                <button type="button" class="delete-btn" onclick="document.getElementById('selfieId').value=''">X</button>
-            </div>
-        </div>
-        <div class="form-group">
             <label>Massage Certificate</label>
             <div class="file-input-wrapper">
                 <input type="file" id="cert" accept="image/*,.pdf" required />
@@ -117,7 +103,7 @@
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
-            const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
+            const certUrl = await uploadFile('cert');
 
             const { error: dbError } = await client
                 .from('therapist_applications')
@@ -127,9 +113,7 @@
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     phone: document.getElementById('phone').value,
-                    gov_id_url: gov, 
-                    selfie_url: selfie, 
-                    cert_url: cert
+                    cert_url: certUrl
                 }])
                 .select(null);
 
