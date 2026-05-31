@@ -70,21 +70,18 @@
             const toggleBtn = document.getElementById('toggleBtn');
             const passInput = document.getElementById('pass');
 
-            // Password Toggle Logic
             toggleBtn.addEventListener('click', () => {
                 const isPassword = passInput.type === "password";
                 passInput.type = isPassword ? "text" : "password";
                 toggleBtn.innerText = isPassword ? "Hide" : "Show";
             });
 
-            // Login Form Logic
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('login-btn');
                 const usernameInput = document.getElementById('username').value.trim();
                 const passwordInput = document.getElementById('pass').value;
 
-                // 1. Admin Override Check
                 if (usernameInput === "jmcywellness" && passwordInput === "jmcy1234") {
                     window.location.href = "admin.html";
                     return;
@@ -93,14 +90,29 @@
                 btn.innerText = "Authenticating...";
                 btn.disabled = true;
 
-                // 2. Supabase Therapist Auth
                 try {
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email: `${usernameInput}@jmcywellness.com`,
+                    const emailAddr = `${usernameInput}@jmcywellness.com`;
+                    
+                    // 1. Authenticate
+                    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                        email: emailAddr,
                         password: passwordInput
                     });
 
-                    if (error) throw error;
+                    if (authError) throw authError;
+
+                    // 2. Fetch therapist name from database
+                    const { data: profile, error: profileError } = await supabase
+                        .from('therapist_applications')
+                        .select('full_name')
+                        .eq('email', emailAddr)
+                        .single();
+
+                    if (profile) {
+                        localStorage.setItem("jmcy_name", profile.full_name);
+                        localStorage.setItem("jmcy_email", emailAddr);
+                    }
+
                     window.location.href = "dashboard.html";
                 } catch (err) {
                     console.error("Auth Error:", err);

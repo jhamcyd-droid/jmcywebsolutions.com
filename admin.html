@@ -9,9 +9,8 @@
         :root { --primary: #1a365d; --accent: #2f855a; --border: #e2e8f0; --light: #f7fafc; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #edf2f7; margin: 0; padding: 20px; }
         .admin-container { max-width: 1400px; margin: 0 auto; }
-        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
         .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .timestamp { font-size: 0.8rem; color: #718096; }
         .table-responsive { overflow-x: auto; }
         .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .admin-table th { background: var(--light); padding: 12px; text-align: left; border-bottom: 2px solid var(--border); text-transform: uppercase; }
@@ -20,84 +19,68 @@
 </head>
 <body>
 
-    <div class="admin-container">
-        <main class="card">
-            <div class="header-section">
-                <h2>Recent Bookings</h2>
-                <div class="timestamp" id="lastUpdated">Initializing...</div>
-            </div>
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Services</th>
-                            <th>Duration</th>
-                            <th>City</th>
-                            <th>Address</th>
-                            <th>Total Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bookingsTableBody">
-                        <tr><td colspan="8" style="text-align:center;">Loading data...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+<div class="admin-container">
+    <main class="card">
+        <div class="header-section"><h2>Pending Bookings</h2></div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead><tr><th>Date</th><th>Name</th><th>Mobile</th><th>Services</th><th>Total Price</th></tr></thead>
+                <tbody id="pendingBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </main>
 
-    <script>
-        // Securely initialize client
-        if (!window.mySupabaseClient) {
-            window.mySupabaseClient = window.supabase.createClient(
-                'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
-            );
-        }
+    <main class="card">
+        <div class="header-section"><h2>Accepted Bookings & Assigned Therapists</h2></div>
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead><tr><th>Date</th><th>Name</th><th>Services</th><th>Assigned Therapist</th><th>Total Price</th></tr></thead>
+                <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+            </table>
+        </div>
+    </main>
+</div>
 
-        async function fetchBookings() {
-            const tableBody = document.getElementById('bookingsTableBody');
-            const timestamp = document.getElementById('lastUpdated');
-            
-            const { data, error } = await window.mySupabaseClient
-                .from('bookings')
-                .select('appointment_date, full_name, mobile_number, services, total_duration_hours, city, address, total_price, created_at')
-                .order('created_at', { ascending: false });
+<script>
+    if (!window.mySupabaseClient) {
+        window.mySupabaseClient = window.supabase.createClient(
+            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+        );
+    }
 
-            if (error) {
-                console.error("Supabase Error:", error);
-                tableBody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Error: ${error.message}</td></tr>`;
-                return;
-            }
+    async function fetchBookings() {
+        const { data, error } = await window.mySupabaseClient
+            .from('bookings')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No bookings found.</td></tr>`;
-                return;
-            }
+        if (error) { console.error(error); return; }
 
-            tableBody.innerHTML = data.map(b => `
-                <tr>
-                    <td>${b.appointment_date || ''}</td>
-                    <td style="font-weight:bold;">${b.full_name || ''}</td>
-                    <td>${b.mobile_number || ''}</td>
-                    <td>${b.services || ''}</td>
-                    <td>${b.total_duration_hours || 0} hrs</td>
-                    <td>${b.city || ''}</td>
-                    <td>${b.address || ''}</td>
-                    <td style="color:var(--accent); font-weight:bold;">₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
-                </tr>
-            `).join('');
-            
-            timestamp.textContent = "Last updated: " + new Date().toLocaleTimeString();
-        }
+        const pending = data.filter(b => b.status === 'pending');
+        const accepted = data.filter(b => b.status === 'accepted');
 
-        // Run immediately
-        fetchBookings();
+        document.getElementById('pendingBody').innerHTML = pending.map(b => `
+            <tr>
+                <td>${b.appointment_date || ''}</td>
+                <td>${b.full_name || ''}</td>
+                <td>${b.mobile_number || ''}</td>
+                <td>${b.services || ''}</td>
+                <td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
+            </tr>`).join('');
 
-        // Refresh every 60 seconds
-        setInterval(fetchBookings, 60000);
-    </script>
+        document.getElementById('acceptedBody').innerHTML = accepted.map(b => `
+            <tr>
+                <td>${b.appointment_date || ''}</td>
+                <td>${b.full_name || ''}</td>
+                <td>${b.services || ''}</td>
+                <td style="color: var(--accent); font-weight: bold;">${b.therapist_name || 'Unassigned'}</td>
+                <td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
+            </tr>`).join('');
+    }
+
+    fetchBookings();
+    setInterval(fetchBookings, 30000);
+</script>
 </body>
 </html>
