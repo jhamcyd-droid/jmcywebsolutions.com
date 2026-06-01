@@ -98,7 +98,6 @@
 
 <script>
     let currentUserProfileName = "";
-    let hasUnpaidCommission = false;
     window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
     function formatDate(dateStr) {
@@ -127,16 +126,17 @@
         const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
         const { data: history } = await window.supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
         
-        // Check for unpaid commissions (accepted status)
-        const unpaid = history.filter(h => h.status === 'accepted');
-        hasUnpaidCommission = unpaid.length > 0;
-
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
             <tr>
-                <td><button class="btn-accept" ${hasUnpaidCommission ? 'disabled onclick="alert(\'Please pay your pending commission first!\')"' : 'onclick="updateBookingStatus(\''+b.booking_id+'\')"'}>Accept</button></td>
+                <td>
+                    <button class="btn-accept" 
+                        ${accepted.length > 0 ? 'disabled onclick="alert(\'Please settle the commission for your current accepted booking first!\')"' : 'onclick="updateBookingStatus(\''+b.booking_id+'\')"'}>
+                        Accept
+                    </button>
+                </td>
                 <td>${b.booking_id}</td>
                 <td>${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
