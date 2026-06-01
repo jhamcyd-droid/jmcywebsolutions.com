@@ -88,7 +88,6 @@
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
                 
-                // Map array to string for input
                 document.getElementById('input-zones').value = Array.isArray(profile.locations) 
                     ? profile.locations.join(', ') 
                     : (profile.locations || '');
@@ -99,8 +98,8 @@
                     document.getElementById('avatar-placeholder').style.display = 'none';
                 }
 
-                // Robust matching logic for specialties
                 if (profile.specialties) {
+                    // Handle case where it might be a JSON string or already an array
                     let savedSpecialties = typeof profile.specialties === 'string' 
                         ? JSON.parse(profile.specialties) 
                         : profile.specialties;
@@ -109,7 +108,6 @@
                         const labelText = cb.nextElementSibling.innerText.trim().toLowerCase();
                         const checkboxValue = cb.value.toLowerCase();
                         
-                        // Check if the saved value matches either the value attribute OR the label text
                         const isMatch = savedSpecialties.some(s => 
                             s.toLowerCase() === checkboxValue || 
                             s.toLowerCase() === labelText
@@ -145,7 +143,7 @@
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
                 locations: locationsArray, 
-                specialties: JSON.stringify(checkedModalities)
+                specialties: checkedModalities // Removed JSON.stringify
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
 
