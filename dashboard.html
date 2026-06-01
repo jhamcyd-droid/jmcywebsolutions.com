@@ -25,7 +25,6 @@
         .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
         
         .btn-accept, .btn-view { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; }
-        .btn-accept:disabled { background: #cbd5e0; cursor: not-allowed; }
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
@@ -133,7 +132,7 @@
             <tr>
                 <td>
                     <button class="btn-accept" 
-                        ${accepted.length > 0 ? 'disabled onclick="alert(\'Please settle the commission for your current accepted booking first!\')"' : 'onclick="updateBookingStatus(\''+b.booking_id+'\')"'}>
+                        onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.booking_id+'\')'}">
                         Accept
                     </button>
                 </td>
