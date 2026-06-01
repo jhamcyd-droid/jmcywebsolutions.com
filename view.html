@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Review</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #edf2f7; padding: 20px; color: #2d3748; }
+        .card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-width: 500px; margin: 0 auto; }
+        h2 { color: #1a365d; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; text-align: center; }
+        .detail-group { margin-bottom: 15px; }
+        .label { font-weight: 800; color: #4a5568; display: block; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+        .value { font-size: 1rem; color: #1a365d; border-bottom: 1px solid #f7fafc; padding-bottom: 5px; }
+        .btn-back { width: 100%; padding: 12px; background: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Booking Details</h2>
+    <div id="booking-details">Loading details...</div>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
+</div>
+
+<script>
+    const supabaseClient = supabase.createClient(
+        'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+    );
+
+    async function fetchBookingDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('id');
+        const container = document.getElementById('booking-details');
+
+        if (!bookingId) {
+            container.innerHTML = "No booking selected.";
+            return;
+        }
+
+        const { data, error } = await supabaseClient
+            .from('bookings')
+            .select('*')
+            .eq('booking_id', bookingId) 
+            .single();
+
+        if (error) {
+            console.error("Supabase Error:", error);
+            container.innerHTML = "Error loading details: " + error.message;
+            return;
+        }
+
+        // Calculate 15% commission
+        const commission = (data.total_price * 0.15).toFixed(2);
+
+        // Populate the details in the requested format
+        container.innerHTML = `
+            <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id}</div></div>
+            <div class="detail-group"><span class="label">Date</span><div class="value">${data.appointment_date || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Mobile Number</span><div class="value">${data.mobile_number || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Services</span><div class="value">${data.services || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Duration</span><div class="value">${data.total_duration_hours || '0'} hours</div></div>
+            <div class="detail-group"><span class="label">City</span><div class="value">${data.city || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Address</span><div class="value">${data.address || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Total Price</span><div class="value">₱${data.total_price || '0'}</div></div>
+            <div class="detail-group"><span class="label">Commission (15%)</span><div class="value" style="color:#2f855a; font-weight:bold;">₱${commission}</div></div>
+        `;
+    }
+
+    fetchBookingDetails();
+</script>
+</body>
+</html>

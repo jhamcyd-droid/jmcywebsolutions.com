@@ -30,7 +30,6 @@
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         .copy-hint { cursor: pointer; border-bottom: 1px dashed #cbd5e0; }
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
-        /* Added styles for the instructional list */
         .payment-steps { font-size: 11px; color: #4a5568; padding-left: 20px; margin: 10px 0; }
         .payment-steps li { margin-bottom: 5px; }
     </style>
@@ -155,9 +154,10 @@
                 <td>₱${b.total_price}</td>
             </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
+        // Corrected the link from review.html to view.html
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
-                <td><button class="btn-view" onclick="window.location.href='review.html?id=${b.booking_id}'">VIEW</button></td>
+                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.booking_id}'">VIEW</button></td>
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
                 <td>₱${b.total_price}</td>
