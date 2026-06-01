@@ -19,13 +19,12 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .scroll-wrapper { width: 100%; overflow-x: auto; }
-        .ledger-table { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 12px; }
+        .ledger-table { width: 100%; min-width: 1200px; border-collapse: collapse; font-size: 12px; }
         .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
         .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
         .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-view { background: var(--secondary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .clickable-row { cursor: pointer; transition: background 0.2s; }
-        .clickable-row:hover { background: #f0f7f4; }
     </style>
 </head>
 <body>
@@ -45,19 +44,14 @@
         <h2 class="card-title">Live Booking Assignment</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>Action</th><th>Date</th><th>ID</th><th>Name</th><th>Service</th><th>Price</th></tr></thead>
-                <tbody id="pendingBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Service</th><th>Duration (Hrs)</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
+                <tbody id="pendingBody"><tr><td colspan="10">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
     
     <div class="fixed-mobile-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
-        <p style="font-size: 12px;">Please send commission to the account below:</p>
-        <div class="payment-box">
-            <strong>Account Name:</strong> JA**S D.<br>
-            <strong>Mobile No:</strong> 0931 041 0733
-        </div>
         <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
         <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
@@ -66,8 +60,8 @@
         <h2 class="card-title">Accepted Bookings</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>ID</th><th>Service</th><th>Therapist</th><th>Price</th><th>Comm. (15%)</th><th>Status</th></tr></thead>
-                <tbody id="acceptedBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+                <thead><tr><th>Action</th><th>ID</th><th>Service</th><th>Price</th><th>Comm. (15%)</th></tr></thead>
+                <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -94,15 +88,11 @@
 
 <script>
     let currentUserProfileName = "";
-
     if (!window.supabaseClient) {
         window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
     }
 
-    async function logout() {
-        await window.supabaseClient.auth.signOut();
-        window.location.href = "index.html";
-    }
+    async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
     async function init() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
@@ -124,30 +114,34 @@
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
-        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
+            <tr>
+                <td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td>
+                <td>${b.booking_id}</td>
+                <td>${b.appointment_date}</td>
+                <td>${b.full_name}</td>
+                <td>${b.mobile_number || 'N/A'}</td>
+                <td>${b.services}</td>
+                <td>${b.total_duration_hours || '0'}</td>
+                <td>${b.city || 'N/A'}</td>
+                <td>${b.address || 'N/A'}</td>
+                <td>₱${b.total_price}</td>
+            </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
-            <tr class="clickable-row" onclick="window.location.href='review.html?id=${b.booking_id}'">
+            <tr>
+                <td><button class="btn-view" onclick="window.location.href='review.html?id=${b.booking_id}'">VIEW</button></td>
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
-                <td>${b.therapist_name}</td>
                 <td>₱${b.total_price}</td>
                 <td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td>
-                <td>Accepted</td>
-            </tr>`).join('') : '<tr><td colspan="6">No accepted bookings.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
         
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
 
     async function updateBookingStatus(id) {
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
-        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
-        
-        await window.supabaseClient.from('bookings').update({ 
-            status: 'accepted',
-            therapist_name: profile.full_name 
-        }).eq('booking_id', id);
-        
+        await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('booking_id', id);
         fetchBookings();
     }
 
