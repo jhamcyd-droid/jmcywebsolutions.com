@@ -10,16 +10,16 @@
         .card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-width: 500px; margin: 0 auto; }
         h2 { color: #1a365d; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
         .detail-group { margin-bottom: 15px; }
-        .label { font-weight: 800; color: #4a5568; display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
-        .value { font-size: 1rem; color: #1a365d; }
+        .label { font-weight: 800; color: #4a5568; display: block; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+        .value { font-size: 1rem; color: #1a365d; border-bottom: 1px solid #f7fafc; padding-bottom: 5px; }
         .btn-back { width: 100%; padding: 12px; background: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Booking Information</h2>
-    <div id="booking-details">Loading details...</div>
+    <h2>Booking Details</h2>
+    <div id="booking-details">Loading...</div>
     <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
 </div>
 
@@ -34,14 +34,11 @@
         const bookingId = urlParams.get('id');
         const container = document.getElementById('booking-details');
 
-        console.log("Looking for ID:", bookingId); // Check this in your browser console (F12)
-
         if (!bookingId) {
             container.innerHTML = "No booking selected.";
             return;
         }
 
-        // IMPORTANT: Change 'booking_id' below if your column is named differently in Supabase
         const { data, error } = await supabaseClient
             .from('bookings')
             .select('*')
@@ -49,17 +46,26 @@
             .single();
 
         if (error) {
-            console.error("Supabase Error:", error);
-            container.innerHTML = "Error: " + error.message;
+            container.innerHTML = "Error loading details.";
             return;
         }
 
-        container.innerHTML = Object.entries(data).map(([key, value]) => `
-            <div class="detail-group">
-                <span class="label">${key.replace('_', ' ')}</span>
-                <div class="value">${value !== null ? value : 'N/A'}</div>
-            </div>
-        `).join('');
+        // Calculate commission
+        const commission = (data.total_price * 0.15).toFixed(2);
+
+        // Map the data to your requested format
+        container.innerHTML = `
+            <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id}</div></div>
+            <div class="detail-group"><span class="label">Date</span><div class="value">${data.appointment_date || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Mobile Number</span><div class="value">${data.mobile_number || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Services</span><div class="value">${data.services || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Duration</span><div class="value">${data.total_duration_hours || '0'} hours</div></div>
+            <div class="detail-group"><span class="label">City</span><div class="value">${data.city || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Address</span><div class="value">${data.address || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Total Price</span><div class="value">₱${data.total_price || '0'}</div></div>
+            <div class="detail-group"><span class="label">Commission (15%)</span><div class="value" style="color:var(--accent); font-weight:bold;">₱${commission}</div></div>
+        `;
     }
 
     fetchBookingDetails();
