@@ -24,36 +24,36 @@
 </div>
 
 <script>
-    // Initialize Supabase Client
     const supabaseClient = supabase.createClient(
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
     );
 
     async function fetchBookingDetails() {
-        // Get ID from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
         const container = document.getElementById('booking-details');
+
+        console.log("Looking for ID:", bookingId); // Check this in your browser console (F12)
 
         if (!bookingId) {
             container.innerHTML = "No booking selected.";
             return;
         }
 
-        // Fetch the specific row based on the booking_id
+        // IMPORTANT: Change 'booking_id' below if your column is named differently in Supabase
         const { data, error } = await supabaseClient
             .from('bookings')
             .select('*')
-            .eq('booking_id', bookingId)
+            .eq('booking_id', bookingId) 
             .single();
 
-        if (error || !data) {
-            container.innerHTML = "Error loading booking or booking not found.";
+        if (error) {
+            console.error("Supabase Error:", error);
+            container.innerHTML = "Error: " + error.message;
             return;
         }
 
-        // Render the details
         container.innerHTML = Object.entries(data).map(([key, value]) => `
             <div class="detail-group">
                 <span class="label">${key.replace('_', ' ')}</span>
@@ -62,7 +62,6 @@
         `).join('');
     }
 
-    // Execute fetch on load
     fetchBookingDetails();
 </script>
 </body>
