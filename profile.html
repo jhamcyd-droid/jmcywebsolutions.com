@@ -4,465 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Employee Profile Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { 
-            --primary: #1a365d; 
-            --secondary: #2c5282; 
-            --accent: #2f855a; 
-            --dark: #2d3748; 
-            --light: #f7fafc; 
-            --border: #e2e8f0;
-        }
-        
-        * {
-            box-sizing: border-box !important;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body { 
-            font-family: 'Segoe UI', -apple-system, sans-serif; 
-            color: var(--dark); 
-            background-color: #edf2f7; 
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: hidden !important;
-        }
-        
-        nav { 
-            display: block;
-            background: var(--primary); 
-            color: white; 
-            padding: 14px 16px;
-            width: 100%;
-            clear: both;
-        }
-        nav .back-btn { float: left; color: white; text-decoration: none; font-size: 14px; font-weight: bold; line-height: 26px; }
-        nav .title-header { text-align: center; font-size: 15px; font-weight: 800; line-height: 26px; letter-spacing: 0.5px; }
-
-        .workspace-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 12px !important;
-            display: block;
-            clear: both;
-            margin-bottom: 75px; /* Leave space for save button row */
-        }
-
-        .fixed-mobile-card { 
-            background: white; 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            padding: 18px; 
-            margin-bottom: 14px; 
-            width: 100% !important;
-            display: block;
-        }
-
-        .card-title { 
-            font-size: 14px; 
-            font-weight: 800; 
-            color: var(--primary); 
-            margin-bottom: 14px; 
-            border-bottom: 2px solid var(--border); 
-            padding-bottom: 8px; 
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .info-group {
-            margin-bottom: 14px;
-        }
-        .info-group .label {
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: 0.2px;
-        }
-        
-        .info-group .value-locked {
-            font-size: 14px;
-            color: #4a5568;
-            font-weight: 600;
-            background: #edf2f7;
-            padding: 10px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            position: relative;
-        }
-        
-        .lock-badge {
-            float: right;
-            font-size: 10px;
-            color: #a0aec0;
-            text-transform: uppercase;
-        }
-
-        /* Input Controls for Editable Fields */
-        .info-group input.edit-field {
-            width: 100%;
-            font-family: inherit;
-            font-size: 14px;
-            color: var(--dark);
-            font-weight: 600;
-            background: #ffffff;
-            padding: 11px 12px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e0;
-            outline: none;
-            transition: border-color 0.15s ease-in-out;
-        }
-        .info-group input.edit-field:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
-        }
-
-        /* Checkable Modality Grid Elements */
-        .modality-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 6px;
-        }
-
-        .modality-item {
-            position: relative;
-            display: block;
-        }
-
-        .modality-item input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .modality-label {
-            display: block;
-            background: #ffffff;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
-            padding: 12px 10px;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: var(--dark);
-            text-align: left;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.15s ease;
-            position: relative;
-            padding-left: 14px;
-        }
-
-        .modality-label::before {
-            content: '';
-            position: absolute;
-            left: 6px;
-            top: 25%;
-            height: 50%;
-            width: 3px;
-            background-color: #cbd5e0;
-            border-radius: 2px;
-            transition: background-color 0.15s ease;
-        }
-
-        .modality-item:hover .modality-label {
-            border-color: var(--secondary);
-            background: var(--light);
-        }
-
-        .modality-item input:checked + .modality-label {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            color: #ffffff;
-        }
-
-        .modality-item input:checked + .modality-label::before {
-            background-color: #ffffff;
-        }
-
-        /* AVATAR UPLOAD WRAPPER CONTROLS */
-        .avatar-container {
-            position: relative;
-            width: 76px;
-            height: 76px;
-            margin: 10px auto 8px auto;
-            cursor: pointer;
-        }
-        
-        .avatar-large {
-            width: 100%;
-            height: 100%;
-            background: #ebf8ff;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 76px;
-            font-weight: 800;
-            color: var(--secondary);
-            font-size: 24px;
-            overflow: hidden;
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .avatar-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none; /* Controlled via JS dynamically */
-        }
-
-        .avatar-overlay-badge {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: var(--secondary);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 12px;
-            line-height: 24px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            border: 2px solid white;
-        }
-
-        .upload-text-btn {
-            font-size: 11px;
-            color: var(--secondary);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .action-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            padding: 12px 16px;
-            border-top: 1px solid var(--border);
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-            z-index: 999;
-        }
-        .save-btn {
-            width: 100%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(47, 133, 90, 0.2);
-            transition: background 0.15s ease;
-        }
-        .save-btn:hover { background: #276749; }
-        .save-btn:active { transform: scale(0.99); }
+        :root { --primary: #1a365d; --secondary: #2c5282; --accent: #2f855a; --dark: #2d3748; --light: #f7fafc; --border: #e2e8f0; }
+        * { box-sizing: border-box !important; margin: 0; padding: 0; }
+        html, body { font-family: 'Segoe UI', sans-serif; color: var(--dark); background-color: #edf2f7; width: 100%; overflow-x: hidden; }
+        nav { background: var(--primary); color: white; padding: 14px 16px; width: 100%; }
+        nav .back-btn { float: left; color: white; text-decoration: none; font-size: 14px; font-weight: bold; }
+        nav .title-header { text-align: center; font-size: 15px; font-weight: 800; }
+        .workspace-wrapper { padding: 12px; margin-bottom: 75px; }
+        .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+        .card-title { font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 14px; border-bottom: 2px solid var(--border); padding-bottom: 8px; text-transform: uppercase; }
+        .info-group { margin-bottom: 14px; }
+        .info-group .label { font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 8px; }
+        .value-locked { font-size: 14px; color: #4a5568; font-weight: 600; background: #edf2f7; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border); }
+        .info-group input.edit-field { width: 100%; font-size: 14px; padding: 11px 12px; border-radius: 6px; border: 1px solid #cbd5e0; }
+        .action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px 16px; border-top: 1px solid var(--border); }
+        .save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="index.html" class="back-btn">⬅ Back</a>
+        <a href="dashboard.html" class="back-btn">⬅ Back</a>
         <div class="title-header">EMPLOYEE FILE</div>
     </nav>
 
     <div class="workspace-wrapper">
-
-        <section class="fixed-mobile-card" style="text-align: center;">
-            <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="previewAndProcessAvatar(this)">
-            
-            <div class="avatar-container" onclick="document.getElementById('avatar-file-input').click()">
-                <div class="avatar-large" id="avatar-view-box">
-                    <span id="prof-initials">--</span>
-                    <img id="prof-avatar-img" alt="Profile Image">
-                </div>
-                <div class="avatar-overlay-badge">📷</div>
-            </div>
-            <div class="upload-text-btn" onclick="document.getElementById('avatar-file-input').click()">Upload Photo</div>
-
-            <h3 id="prof-fullname" style="font-size:18px; font-weight: 800; color:var(--primary);">Loading Account...</h3>
-            <p id="prof-handle" style="font-size:13px; color:#718096; font-weight: 600; margin-top:2px;">@username</p>
+        <section class="fixed-mobile-card">
+            <h3 id="prof-fullname" style="font-size:18px; font-weight: 800; color:var(--primary);">Loading...</h3>
         </section>
 
         <section class="fixed-mobile-card">
             <h2 class="card-title">Personal Information</h2>
-            
             <div class="info-group">
-                <div class="label">Full Legal Name <span class="lock-badge">🔒 Locked</span></div>
-                <div class="value-locked" id="val-name">--</div>
+                <div class="label">Mobile Number</div>
+                <input type="text" class="edit-field" id="input-phone" placeholder="Enter mobile number">
             </div>
-            
-            <div class="info-group">
-                <div class="label">Mobile Number / WhatsApp</div>
-                <input type="text" class="edit-field" id="input-phone" placeholder="Enter mobile contact number">
-            </div>
-
             <div class="info-group">
                 <div class="label">Residential Address</div>
-                <input type="text" class="edit-field" id="input-address" placeholder="Enter complete residential address">
+                <input type="text" class="edit-field" id="input-address" placeholder="Enter address">
             </div>
         </section>
-
-        <section class="fixed-mobile-card">
-            <h2 class="card-title">Platform Identity</h2>
-            
-            <div class="info-group">
-                <div class="label">Account Handle Username <span class="lock-badge">🔒 Locked</span></div>
-                <div class="value-locked" id="val-user">--</div>
-            </div>
-        </section>
-
-        <section class="fixed-mobile-card">
-            <h2 class="card-title">Professional Profiling & Operations</h2>
-            
-            <div class="info-group">
-                <div class="label">Preferred Service Locations / Coverage Zones</div>
-                <input type="text" class="edit-field" id="input-zones" placeholder="e.g., Makati, Pasig, Quezon City">
-            </div>
-
-            <div class="info-group">
-                <div class="label">Massage Therapy Modalities & Specialties *</div>
-                
-                <div class="modality-grid">
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="swedish">
-                        <span class="modality-label">Swedish Massage</span>
-                    </label>
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="deeptissue">
-                        <span class="modality-label">Deep Tissue</span>
-                    </label>
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="shiatsu">
-                        <span class="modality-label">Shiatsu</span>
-                    </label>
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="thai">
-                        <span class="modality-label">Thai Massage</span>
-                    </label>
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="reflexology">
-                        <span class="modality-label">Reflexology / Foot</span>
-                    </label>
-                    <label class="modality-item">
-                        <input type="checkbox" name="modalities" value="aromatherapy">
-                        <span class="modality-label">Aromatherapy</span>
-                    </label>
-                </div>
-            </div>
-        </section>
-
     </div>
 
     <div class="action-bar">
-        <button type="button" class="save-btn" onclick="saveProfileChanges()">Save Changes</button>
+        <button type="button" class="save-btn" onclick="saveProfileChanges()">SAVE CHANGES</button>
     </div>
 
     <script>
-        // Global memory variable container to preserve image binary string data
-        let base64AvatarData = "";
+        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
-        window.onload = function() {
-            const savedUser = localStorage.getItem("jmcy_user");
-            const savedName = localStorage.getItem("jmcy_name");
-            const savedPhone = localStorage.getItem("jmcy_phone") || "";
-            const savedAddress = localStorage.getItem("jmcy_address") || "";
-            const savedZones = localStorage.getItem("jmcy_zones") || "";
-            const savedModalitiesArray = JSON.parse(localStorage.getItem("jmcy_checked_modalities")) || [];
-            const savedAvatar = localStorage.getItem("jmcy_avatar_data") || "";
-
-            if(savedUser) {
-                document.getElementById('prof-handle').innerText = "@" + savedUser;
-                document.getElementById('val-user').innerText = "@" + savedUser;
-            }
-            if(savedName) {
-                document.getElementById('prof-fullname').innerText = savedName;
-                document.getElementById('val-name').innerText = savedName;
-
-                const words = savedName.trim().split(' ');
-                let initials = words[0].charAt(0);
-                if (words.length > 1) initials += words[words.length - 1].charAt(0);
-                document.getElementById('prof-initials').innerText = initials.toUpperCase();
-            }
+        async function init() {
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (!user) { window.location.href = "login.html"; return; }
             
-            document.getElementById('input-phone').value = savedPhone;
-            document.getElementById('input-address').value = savedAddress;
-            document.getElementById('input-zones').value = savedZones;
+            const { data: profile } = await window.supabaseClient
+                .from('therapist_applications')
+                .select('full_name, phone, address')
+                .eq('auth_id', user.id)
+                .single();
 
-            // Restoring selected checkbox configuration states
-            const checkboxes = document.querySelectorAll('input[name="modalities"]');
-            checkboxes.forEach(checkbox => {
-                if(savedModalitiesArray.includes(checkbox.value)) {
-                    checkbox.checked = true;
-                }
-            });
-
-            // Load saved avatar picture state if it exists
-            if (savedAvatar) {
-                base64AvatarData = savedAvatar;
-                const imgElement = document.getElementById('prof-avatar-img');
-                const initialsElement = document.getElementById('prof-initials');
-                
-                imgElement.src = savedAvatar;
-                imgElement.style.display = 'block';
-                initialsElement.style.display = 'none';
+            if (profile) {
+                document.getElementById('prof-fullname').innerText = profile.full_name;
+                document.getElementById('input-phone').value = profile.phone || '';
+                document.getElementById('input-address').value = profile.address || '';
             }
         }
 
-        function previewAndProcessAvatar(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    base64AvatarData = e.target.result;
-                    const imgElement = document.getElementById('prof-avatar-img');
-                    const initialsElement = document.getElementById('prof-initials');
-                    
-                    // Render uploaded image immediately into target DOM Node view
-                    imgElement.src = base64AvatarData;
-                    imgElement.style.display = 'block';
-                    initialsElement.style.display = 'none';
-                };
-                
-                reader.readAsDataURL(input.files[0]);
-            }
+        async function saveProfileChanges() {
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { error } = await window.supabaseClient
+                .from('therapist_applications')
+                .update({
+                    phone: document.getElementById('input-phone').value,
+                    address: document.getElementById('input-address').value
+                })
+                .eq('auth_id', user.id);
+
+            if (error) { alert("Error saving: " + error.message); } 
+            else { alert("✅ Profile updated successfully!"); }
         }
 
-        function saveProfileChanges() {
-            const newPhone = document.getElementById('input-phone').value;
-            const newAddress = document.getElementById('input-address').value;
-            const newZones = document.getElementById('input-zones').value;
-
-            // Gather values of verified checkbox configurations
-            const checkedModalities = [];
-            const checkboxes = document.querySelectorAll('input[name="modalities"]:checked');
-            checkboxes.forEach(cb => {
-                checkedModalities.push(cb.value);
-            });
-
-            // Commit structured state data into local storage engine
-            localStorage.setItem("jmcy_phone", newPhone);
-            localStorage.setItem("jmcy_address", newAddress);
-            localStorage.setItem("jmcy_zones", newZones);
-            localStorage.setItem("jmcy_checked_modalities", JSON.stringify(checkedModalities));
-            localStorage.setItem("jmcy_avatar_data", base64AvatarData);
-
-            alert("✅ File updated successfully! Operational parameters saved.");
-        }
+        init();
     </script>
 </body>
 </html>
