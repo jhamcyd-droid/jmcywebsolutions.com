@@ -8,8 +8,9 @@
     <style>
         :root { --primary: #1a365d; --secondary: #2c5282; --accent: #2f855a; --dark: #1a202c; --light: #f7fafc; --border: #e2e8f0; --text-muted: #718096; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; background: radial-gradient(circle at top right, #f0f4f8, var(--light)); }
-        header { padding: 20px; background: white; border-bottom: 1px solid var(--border); text-align: center; }
+        header { padding: 15px 20px; background: white; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .back-btn { padding: 8px 16px; background: var(--border); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: var(--primary); text-decoration: none; font-size: 0.9rem; }
         .page-container { display: flex; flex: 1; width: 100%; }
         .image-side { flex: 1; background: linear-gradient(rgba(26, 54, 93, 0.85), rgba(26, 54, 93, 0.85)), url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: center; padding: 60px; color: #ffffff; }
         .form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -31,6 +32,7 @@
 
     <header>
         <a href="index.html" class="logo">JMCY WELLNESS</a>
+        <a href="index.html" class="back-btn">← Back to Home</a>
     </header>
 
     <div class="page-container">
@@ -62,9 +64,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialized with sessionStorage to isolate sessions between tabs
             const supabase = window.supabase.createClient(
                 'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
+                {
+                    auth: {
+                        storage: window.sessionStorage,
+                        autoRefreshToken: true,
+                        persistSession: true
+                    }
+                }
             );
 
             const toggleBtn = document.getElementById('toggleBtn');
@@ -93,7 +103,6 @@
                 try {
                     const emailAddr = `${usernameInput}@jmcywellness.com`;
                     
-                    // 1. Authenticate with Supabase Auth
                     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                         email: emailAddr,
                         password: passwordInput
@@ -101,17 +110,16 @@
 
                     if (authError) throw authError;
 
-                    // 2. Fetch the therapist's full_name from the database
-                    const { data: profile, error: profileError } = await supabase
+                    // Fetching profile and storing in sessionStorage for consistency
+                    const { data: profile } = await supabase
                         .from('therapist_applications')
                         .select('full_name')
                         .eq('email', emailAddr)
                         .single();
 
                     if (profile) {
-                        // 3. Store name in localStorage for use in dashboard.html
-                        localStorage.setItem("jmcy_name", profile.full_name);
-                        localStorage.setItem("jmcy_email", emailAddr);
+                        sessionStorage.setItem("jmcy_name", profile.full_name);
+                        sessionStorage.setItem("jmcy_email", emailAddr);
                     }
 
                     window.location.href = "dashboard.html";
