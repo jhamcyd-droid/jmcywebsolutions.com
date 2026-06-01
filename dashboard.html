@@ -10,6 +10,7 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
+        .gcash-number { font-size: 24px; font-weight: bold; color: var(--secondary); text-align: center; margin: 10px 0; display: block; }
         .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
@@ -24,6 +25,7 @@
         .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
         
         .btn-accept, .btn-view { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; }
+        .btn-accept:disabled { background: #cbd5e0; cursor: not-allowed; }
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
@@ -58,7 +60,8 @@
     
     <div class="fixed-mobile-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
-        <p style="font-size: 11px;">Upon submitting, kindly chat JMCY Support for commission confirmation.</p>
+        <span class="gcash-number" onclick="copyText('09310410733')">09310410733</span>
+        <p style="font-size: 11px; text-align: center;">Click number to copy. Upon submitting, chat JMCY Support.</p>
         <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
         <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
@@ -95,6 +98,7 @@
 
 <script>
     let currentUserProfileName = "";
+    let hasUnpaidCommission = false;
     window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
     function formatDate(dateStr) {
@@ -103,7 +107,7 @@
         return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     }
 
-    function copyText(text) { navigator.clipboard.writeText(text); alert("Copied: " + text); }
+    function copyText(text) { navigator.clipboard.writeText(text); alert("Copied to clipboard: " + text); }
     async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
     async function init() {
@@ -123,12 +127,16 @@
         const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
         const { data: history } = await window.supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
         
+        // Check for unpaid commissions (accepted status)
+        const unpaid = history.filter(h => h.status === 'accepted');
+        hasUnpaidCommission = unpaid.length > 0;
+
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
             <tr>
-                <td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td>
+                <td><button class="btn-accept" ${hasUnpaidCommission ? 'disabled onclick="alert(\'Please pay your pending commission first!\')"' : 'onclick="updateBookingStatus(\''+b.booking_id+'\')"'}>Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td>${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
@@ -159,7 +167,18 @@
     }
 
     async function updateBookingStatus(id) {
+        const { data: booking } = await window.supabaseClient.from('bookings').select('*').eq('booking_id', id).single();
+        if (!booking) return;
+
         await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('booking_id', id);
+        await window.supabaseClient.from('transaction_history').insert([{
+            booking_id: booking.booking_id,
+            service: booking.services,
+            total_price: booking.total_price,
+            commission_paid: (booking.total_price * 0.15).toFixed(2),
+            status: 'accepted'
+        }]);
+
         fetchBookings();
     }
 
