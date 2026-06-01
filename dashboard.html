@@ -44,8 +44,8 @@
 </div>
 
 <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('dispatch', event)">Dispatches</button>
-    <button class="tab-btn" onclick="switchTab('profile', event)">My Profile</button>
+    <button class="tab-btn active">Dispatches</button>
+    <button class="tab-btn" onclick="window.location.href='profile.html'">My Profile</button>
 </div>
 
 <div id="dispatch-tab" class="tab-content active">
@@ -92,15 +92,6 @@
     </div>
 </div>
 
-<div id="profile-tab" class="tab-content">
-    <div class="fixed-mobile-card">
-        <h2 class="card-title">Edit Profile Information</h2>
-        <input type="text" id="input-phone" placeholder="Mobile" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input type="text" id="input-address" placeholder="Address" style="width:100%; padding:10px; margin-bottom:10px;">
-        <button onclick="saveProfileChanges()" style="width:100%; padding:12px; background:var(--accent); color:white; border:none;">SAVE CHANGES</button>
-    </div>
-</div>
-
 <script>
     let currentUserProfileName = "";
     window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
@@ -117,12 +108,10 @@
     async function init() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) { window.location.href = "login.html"; return; }
-        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name, phone, address').eq('auth_id', user.id).single();
+        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
         if (profile) {
             currentUserProfileName = profile.full_name;
             document.getElementById('display-name').innerText = profile.full_name;
-            document.getElementById('input-phone').value = profile.phone || '';
-            document.getElementById('input-address').value = profile.address || '';
         }
         fetchBookings();
     }
@@ -181,22 +170,6 @@
         if (!ref) { alert("Please enter a reference number."); return; }
         const message = encodeURIComponent("Hi JMCY Support, I have sent the commission payment. Here is my GCash Reference Number: " + ref);
         window.open("https://wa.me/639091297422?text=" + message, "_blank");
-    }
-
-    async function saveProfileChanges() {
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
-        await window.supabaseClient.from('therapist_applications').update({
-            phone: document.getElementById('input-phone').value,
-            address: document.getElementById('input-address').value
-        }).eq('auth_id', user.id);
-        alert("Profile Updated!");
-    }
-
-    function switchTab(tab, event) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tab + '-tab').classList.add('active');
-        event.target.classList.add('active');
     }
 
     init();
