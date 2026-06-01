@@ -87,8 +87,11 @@
                 document.getElementById('prof-fullname').innerText = profile.full_name || '';
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
-                // Mapped to your 'locations' column
-                document.getElementById('input-zones').value = profile.locations || '';
+                
+                // Map array to string for input
+                document.getElementById('input-zones').value = Array.isArray(profile.locations) 
+                    ? profile.locations.join(', ') 
+                    : (profile.locations || '');
                 
                 if(profile.avatar_url) {
                     document.getElementById('avatar-preview').src = profile.avatar_url;
@@ -96,14 +99,14 @@
                     document.getElementById('avatar-placeholder').style.display = 'none';
                 }
 
+                // Robust check for specialties
                 if (profile.specialties) {
                     let savedSpecialties = [];
-                    try {
-                        savedSpecialties = typeof profile.specialties === 'string' 
-                            ? JSON.parse(profile.specialties) 
-                            : profile.specialties;
-                    } catch(e) {
-                        savedSpecialties = profile.specialties.split(',').map(s => s.trim());
+                    if (typeof profile.specialties === 'string') {
+                        try { savedSpecialties = JSON.parse(profile.specialties); } 
+                        catch(e) { savedSpecialties = profile.specialties.split(',').map(s => s.trim()); }
+                    } else {
+                        savedSpecialties = profile.specialties;
                     }
                     
                     document.querySelectorAll('input[name="modalities"]').forEach(cb => {
@@ -127,13 +130,16 @@
         async function saveProfileChanges() {
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             
+            const rawLocs = document.getElementById('input-zones').value;
+            const locationsArray = rawLocs ? rawLocs.split(',').map(s => s.trim()) : [];
+            
             const checkedModalities = Array.from(document.querySelectorAll('input[name="modalities"]:checked'))
                 .map(cb => cb.value);
 
             const updateData = {
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
-                locations: document.getElementById('input-zones').value, // Matches column 'locations'
+                locations: locationsArray,
                 specialties: JSON.stringify(checkedModalities)
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
