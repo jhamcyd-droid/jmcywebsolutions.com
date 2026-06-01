@@ -18,7 +18,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Updated Table Styles for 1-row view and no-wrap */
         .scroll-wrapper { width: 100%; overflow-x: auto; }
         .ledger-table { width: 100%; min-width: 1400px; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
         .ledger-table th, .ledger-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -59,7 +58,6 @@
     
     <div class="fixed-mobile-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
-        <p style="font-size: 11px;">Upon submitting, kindly chat JMCY Support for commission confirmation.</p>
         <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
         <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
@@ -98,7 +96,14 @@
     let currentUserProfileName = "";
     window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
     function copyText(text) { navigator.clipboard.writeText(text); alert("Copied: " + text); }
+    async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
     async function init() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
@@ -124,7 +129,7 @@
             <tr>
                 <td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td>
                 <td>${b.booking_id}</td>
-                <td>${b.appointment_date}</td>
+                <td>${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.mobile_number}')">${b.mobile_number || 'N/A'}</td>
                 <td>${b.services}</td>
@@ -143,7 +148,13 @@
                 <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td>
             </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
         
-        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
+        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `
+            <tr>
+                <td>${h.booking_id}</td>
+                <td>${h.service}</td>
+                <td>₱${h.commission_paid}</td>
+                <td>${formatDate(h.created_at)}</td>
+            </tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
 
     async function updateBookingStatus(id) {
