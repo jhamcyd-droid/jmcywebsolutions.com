@@ -23,6 +23,8 @@
         .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
         .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .clickable-row { cursor: pointer; transition: background 0.2s; }
+        .clickable-row:hover { background: #f0f7f4; }
     </style>
 </head>
 <body>
@@ -87,6 +89,8 @@
 </div>
 
 <script>
+    let currentUserProfileName = "";
+
     if (!window.supabaseClient) {
         window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
     }
@@ -96,6 +100,7 @@
         if (!user) { window.location.href = "login.html"; return; }
         const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name, phone, address').eq('auth_id', user.id).single();
         if (profile) {
+            currentUserProfileName = profile.full_name;
             document.getElementById('display-name').innerText = profile.full_name;
             document.getElementById('input-phone').value = profile.phone || '';
             document.getElementById('input-address').value = profile.address || '';
@@ -108,18 +113,20 @@
         const { data: history } = await window.supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
         
         const pending = bookings.filter(b => b.status === 'pending');
-        const accepted = bookings.filter(b => b.status === 'accepted');
+        const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
         
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr>
-            <td>${b.booking_id}</td>
-            <td>${b.services}</td>
-            <td>${b.therapist_name || 'Assigned'}</td>
-            <td>₱${b.total_price}</td>
-            <td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td>
-            <td>Accepted</td>
-        </tr>`).join('') : '<tr><td colspan="6">No accepted bookings.</td></tr>';
+        // Updated row to be clickable and pass the specific ID
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
+            <tr class="clickable-row" onclick="window.location.href='review.html?id=${b.booking_id}'">
+                <td>${b.booking_id}</td>
+                <td>${b.services}</td>
+                <td>${b.therapist_name}</td>
+                <td>₱${b.total_price}</td>
+                <td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td>
+                <td>Accepted</td>
+            </tr>`).join('') : '<tr><td colspan="6">No accepted bookings.</td></tr>';
         
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
     }
