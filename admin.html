@@ -54,16 +54,14 @@
 </div>
 
 <script>
-    if (!window.mySupabaseClient) {
-        window.mySupabaseClient = window.supabase.createClient(
-            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
-        );
-    }
+    const supabaseClient = supabase.createClient(
+        'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+    );
 
     async function markAsPaid(booking) {
         // 1. Insert into history
-        const { error: insertError } = await window.mySupabaseClient.from('transaction_history').insert([{
+        const { error: insertError } = await supabaseClient.from('transaction_history').insert([{
             booking_id: booking.booking_id,
             service: booking.services,
             commission_paid: (booking.total_price * 0.15).toFixed(2)
@@ -71,11 +69,11 @@
 
         if (insertError) { alert("Error recording history: " + insertError.message); return; }
 
-        // 2. Update booking status to 'completed' so it moves out of the 'accepted' list
-        const { error: updateError } = await window.mySupabaseClient
+        // 2. Update booking status using the Primary Key 'id'
+        const { error: updateError } = await supabaseClient
             .from('bookings')
             .update({ status: 'completed' })
-            .eq('booking_id', booking.booking_id);
+            .eq('id', booking.id); 
         
         if (updateError) { alert("Error updating status: " + updateError.message); return; }
         
@@ -84,17 +82,32 @@
     }
 
     async function fetchBookings() {
-        const { data: bookings } = await window.mySupabaseClient.from('bookings').select('*').order('created_at', { ascending: false });
-        const { data: history } = await window.mySupabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
+        const { data: bookings } = await supabaseClient.from('bookings').select('*').order('created_at', { ascending: false });
+        const { data: history } = await supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
 
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted');
 
-        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td>${b.appointment_date || '-'}</td><td>${b.full_name || '-'}</td><td>${b.mobile_number || '-'}</td><td>${b.services || '-'}</td><td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td></tr>`).join('') : '<tr><td colspan="5">No pending bookings.</td></tr>';
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
+            <tr><td>${b.appointment_date || '-'}</td><td>${b.full_name || '-'}</td><td>${b.mobile_number || '-'}</td><td>${b.services || '-'}</td><td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td></tr>
+        `).join('') : '<tr><td colspan="5">No pending bookings.</td></tr>';
 
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td>${b.appointment_date || '-'}</td><td>${b.full_name || '-'}</td><td>${b.services || '-'}</td><td class="assigned-name">${b.therapist_name || 'Unassigned'}</td><td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td><td>₱${(b.total_price * 0.15).toFixed(2)}</td><td><button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b)})'>Mark Paid</button></td></tr>`).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
+        // We use encodeURIComponent to safely pass the object to the function
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
+            <tr>
+                <td>${b.appointment_date || '-'}</td>
+                <td>${b.full_name || '-'}</td>
+                <td>${b.services || '-'}</td>
+                <td class="assigned-name">${b.therapist_name || 'Unassigned'}</td>
+                <td>₱${parseFloat(b.total_price || 0).toLocaleString()}</td>
+                <td>₱${(b.total_price * 0.15).toFixed(2)}</td>
+                <td><button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b).replace(/'/g, "&apos;")})'>Mark Paid</button></td>
+            </tr>
+        `).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
 
-        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
+        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `
+            <tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>
+        `).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
     }
 
     fetchBookings();

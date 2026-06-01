@@ -154,7 +154,6 @@
                 <td>₱${b.total_price}</td>
             </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
-        // Updated to pass b.id (Primary Key) to view.html
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
                 <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
@@ -174,17 +173,21 @@
     }
 
     async function updateBookingStatus(id) {
-        const { data: booking } = await window.supabaseClient.from('bookings').select('*').eq('id', id).single();
-        if (!booking) return;
+        // Updated: Removed transaction_history insertion. 
+        // This is now handled exclusively by the admin.html page.
+        const { error } = await window.supabaseClient
+            .from('bookings')
+            .update({ 
+                status: 'accepted', 
+                therapist_name: currentUserProfileName 
+            })
+            .eq('id', id);
 
-        await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('id', id);
-        await window.supabaseClient.from('transaction_history').insert([{
-            booking_id: booking.booking_id,
-            service: booking.services,
-            total_price: booking.total_price,
-            commission_paid: (booking.total_price * 0.15).toFixed(2),
-            status: 'accepted'
-        }]);
+        if (error) {
+            console.error("Error updating status:", error);
+            alert("Failed to accept booking.");
+            return;
+        }
 
         fetchBookings();
     }
