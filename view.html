@@ -31,7 +31,7 @@
 
     async function fetchBookingDetails() {
         const urlParams = new URLSearchParams(window.location.search);
-        const bookingId = urlParams.get('id');
+        const bookingId = urlParams.get('id'); // This is the 'id' (Primary Key)
         const container = document.getElementById('booking-details');
 
         if (!bookingId) {
@@ -39,10 +39,11 @@
             return;
         }
 
+        // Updated to search by 'id' (Primary Key)
         const { data, error } = await supabaseClient
             .from('bookings')
             .select('*')
-            .eq('booking_id', bookingId) 
+            .eq('id', bookingId) 
             .single();
 
         if (error) {
@@ -51,12 +52,10 @@
             return;
         }
 
-        // Calculate 15% commission
         const commission = (data.total_price * 0.15).toFixed(2);
 
-        // Populate the details in the requested format
         container.innerHTML = `
-            <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id}</div></div>
+            <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Date</span><div class="value">${data.appointment_date || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Mobile Number</span><div class="value">${data.mobile_number || 'N/A'}</div></div>

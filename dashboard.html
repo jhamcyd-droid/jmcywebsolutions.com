@@ -139,7 +139,7 @@
             <tr>
                 <td>
                     <button class="btn-accept" 
-                        onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.booking_id+'\')'}">
+                        onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.id+'\')'}">
                         Accept
                     </button>
                 </td>
@@ -154,10 +154,10 @@
                 <td>₱${b.total_price}</td>
             </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
-        // Corrected the link from review.html to view.html
+        // Updated to pass b.id (Primary Key) to view.html
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
-                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.booking_id}'">VIEW</button></td>
+                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
                 <td>₱${b.total_price}</td>
@@ -174,10 +174,10 @@
     }
 
     async function updateBookingStatus(id) {
-        const { data: booking } = await window.supabaseClient.from('bookings').select('*').eq('booking_id', id).single();
+        const { data: booking } = await window.supabaseClient.from('bookings').select('*').eq('id', id).single();
         if (!booking) return;
 
-        await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('booking_id', id);
+        await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('id', id);
         await window.supabaseClient.from('transaction_history').insert([{
             booking_id: booking.booking_id,
             service: booking.services,
