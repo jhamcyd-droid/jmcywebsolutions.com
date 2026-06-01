@@ -6,12 +6,13 @@
     <title>JMCY Dispatch & Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --light: #f7fafc; --accent: #2f855a; }
+        :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --light: #f7fafc; --accent: #2f855a; --danger: #e53e3e; }
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
         .payment-box { background: #ebf8ff; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem; }
-        .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; }
+        .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+        .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 10px; border: none; background: #cbd5e0; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .tab-btn.active { background: var(--primary); }
@@ -29,7 +30,10 @@
 </head>
 <body>
 
-<div class="user-banner">Logged in as: <span id="display-name" style="font-weight: bold;">Authenticating...</span></div>
+<div class="user-banner">
+    <span>Logged in as: <span id="display-name" style="font-weight: bold;">Authenticating...</span></span>
+    <button class="btn-logout" onclick="logout()">LOGOUT</button>
+</div>
 
 <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('dispatch', event)">Dispatches</button>
@@ -95,6 +99,11 @@
         window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
     }
 
+    async function logout() {
+        await window.supabaseClient.auth.signOut();
+        window.location.href = "index.html";
+    }
+
     async function init() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) { window.location.href = "login.html"; return; }
@@ -117,7 +126,6 @@
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `<tr><td><button class="btn-accept" onclick="updateBookingStatus('${b.booking_id}')">Accept</button></td><td>${b.appointment_date}</td><td>${b.booking_id}</td><td>${b.full_name}</td><td>${b.services}</td><td>₱${b.total_price}</td></tr>`).join('') : '<tr><td colspan="6">No pending bookings.</td></tr>';
         
-        // Updated row to be clickable and pass the specific ID
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr class="clickable-row" onclick="window.location.href='review.html?id=${b.booking_id}'">
                 <td>${b.booking_id}</td>
