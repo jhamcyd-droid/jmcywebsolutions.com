@@ -10,7 +10,6 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
-        .payment-box { background: #ebf8ff; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem; }
         .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
@@ -19,15 +18,20 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .scroll-wrapper { width: 100%; overflow-x: auto; }
-        .ledger-table { width: 100%; min-width: 1200px; border-collapse: collapse; font-size: 12px; }
-        .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .ledger-table { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 11px; }
+        .ledger-table th, .ledger-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; }
         .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
-        .btn-accept { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .btn-view { background: var(--secondary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-accept, .btn-view { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; }
+        .btn-accept { background: var(--accent); }
+        .btn-view { background: var(--secondary); }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .copy-hint { cursor: pointer; border-bottom: 1px dashed #cbd5e0; }
+        .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
     </style>
 </head>
 <body>
+
+<a href="https://wa.me/639091297422" class="float-support" target="_blank">JMCY Support</a>
 
 <div class="user-banner">
     <span>Logged in as: <span id="display-name" style="font-weight: bold;">Authenticating...</span></span>
@@ -44,7 +48,7 @@
         <h2 class="card-title">Live Booking Assignment</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Service</th><th>Duration (Hrs)</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
+                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Service</th><th>Hrs</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
                 <tbody id="pendingBody"><tr><td colspan="10">Loading...</td></tr></tbody>
             </table>
         </div>
@@ -52,6 +56,7 @@
     
     <div class="fixed-mobile-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
+        <p style="font-size: 11px;">Upon submitting, kindly chat JMCY Support for commission confirmation.</p>
         <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
         <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
@@ -88,8 +93,11 @@
 
 <script>
     let currentUserProfileName = "";
-    if (!window.supabaseClient) {
-        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+    window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+
+    function copyText(text) {
+        navigator.clipboard.writeText(text);
+        alert("Copied to clipboard: " + text);
     }
 
     async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
@@ -120,11 +128,11 @@
                 <td>${b.booking_id}</td>
                 <td>${b.appointment_date}</td>
                 <td>${b.full_name}</td>
-                <td>${b.mobile_number || 'N/A'}</td>
+                <td class="copy-hint" ondblclick="copyText('${b.mobile_number}')">${b.mobile_number || 'N/A'}</td>
                 <td>${b.services}</td>
                 <td>${b.total_duration_hours || '0'}</td>
                 <td>${b.city || 'N/A'}</td>
-                <td>${b.address || 'N/A'}</td>
+                <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
             </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
@@ -134,7 +142,7 @@
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
                 <td>₱${b.total_price}</td>
-                <td style="color:var(--accent)">₱${(b.total_price * 0.15).toFixed(2)}</td>
+                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td>
             </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
         
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `<tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${new Date(h.created_at).toLocaleDateString()}</td></tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
