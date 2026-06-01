@@ -54,10 +54,13 @@
         <section class="fixed-mobile-card">
             <h2 class="card-title">Specialties</h2>
             <div class="modality-grid" id="modalities-grid">
-                <label class="modality-item"><input type="checkbox" name="modalities" value="swedish"> <span>Swedish</span></label>
-                <label class="modality-item"><input type="checkbox" name="modalities" value="deeptissue"> <span>Deep Tissue</span></label>
-                <label class="modality-item"><input type="checkbox" name="modalities" value="shiatsu"> <span>Shiatsu</span></label>
-                <label class="modality-item"><input type="checkbox" name="modalities" value="thai"> <span>Thai</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="swedish"> <span>Swedish Massage</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="shiatsu"> <span>Shiatsu Massage</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="thai"> <span>Thai Massage</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="reflexology"> <span>Reflexology / Foot</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="aromatherapy"> <span>Aromatherapy</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="deeptissue"> <span>Deep Tissue Massage</span></label>
+                <label class="modality-item"><input type="checkbox" name="modalities" value="combination"> <span>Combination Massage</span></label>
             </div>
         </section>
     </div>
@@ -74,17 +77,18 @@
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             if (!user) { window.location.href = "login.html"; return; }
             
-            const { data: profile, error } = await window.supabaseClient
+            const { data: profile } = await window.supabaseClient
                 .from('therapist_applications')
                 .select('*')
                 .eq('auth_id', user.id)
                 .single();
             
             if (profile) {
-                document.getElementById('prof-fullname').innerText = profile.full_name;
+                document.getElementById('prof-fullname').innerText = profile.full_name || '';
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
-                document.getElementById('input-zones').value = profile.service_zones || '';
+                // Mapped to your 'locations' column
+                document.getElementById('input-zones').value = profile.locations || '';
                 
                 if(profile.avatar_url) {
                     document.getElementById('avatar-preview').src = profile.avatar_url;
@@ -93,9 +97,17 @@
                 }
 
                 if (profile.specialties) {
-                    const specialties = JSON.parse(profile.specialties);
+                    let savedSpecialties = [];
+                    try {
+                        savedSpecialties = typeof profile.specialties === 'string' 
+                            ? JSON.parse(profile.specialties) 
+                            : profile.specialties;
+                    } catch(e) {
+                        savedSpecialties = profile.specialties.split(',').map(s => s.trim());
+                    }
+                    
                     document.querySelectorAll('input[name="modalities"]').forEach(cb => {
-                        if(specialties.includes(cb.value)) cb.checked = true;
+                        if(savedSpecialties.includes(cb.value)) cb.checked = true;
                     });
                 }
             }
@@ -121,7 +133,7 @@
             const updateData = {
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
-                service_zones: document.getElementById('input-zones').value,
+                locations: document.getElementById('input-zones').value, // Matches column 'locations'
                 specialties: JSON.stringify(checkedModalities)
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
