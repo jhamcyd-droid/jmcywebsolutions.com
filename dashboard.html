@@ -64,9 +64,8 @@
         <span class="gcash-number" onclick="copyText('09310410733')">09310410733</span>
         <ol class="payment-steps">
             <li>Copy and paste the mobile number to your Gcash to pay your commission.</li>
-            <li>Check the amount of the commision on Accepted Bookings.</li>
-            <li>Upon sending the payment, copy the Gcash Reference number as proof of payment then "Submit".</li>
-            <li>Chat the JMCY Support for the payment confirmation.</li>
+            <li>Check the amount of the commission on Accepted Bookings.</li>
+            <li>Upon sending the payment, enter your GCash Reference number below and click "Submit".</li>
         </ol>
         <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
         <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
@@ -137,12 +136,7 @@
 
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
             <tr>
-                <td>
-                    <button class="btn-accept" 
-                        onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.id+'\')'}">
-                        Accept
-                    </button>
-                </td>
+                <td><button class="btn-accept" onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.id+'\')'}">Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td>${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
@@ -173,29 +167,20 @@
     }
 
     async function updateBookingStatus(id) {
-        // Updated: Removed transaction_history insertion. 
-        // This is now handled exclusively by the admin.html page.
         const { error } = await window.supabaseClient
             .from('bookings')
-            .update({ 
-                status: 'accepted', 
-                therapist_name: currentUserProfileName 
-            })
+            .update({ status: 'accepted', therapist_name: currentUserProfileName })
             .eq('id', id);
 
-        if (error) {
-            console.error("Error updating status:", error);
-            alert("Failed to accept booking.");
-            return;
-        }
-
+        if (error) { console.error("Error updating status:", error); alert("Failed to accept booking."); return; }
         fetchBookings();
     }
 
     function submitReference() {
         const ref = document.getElementById('ref-number').value;
         if (!ref) { alert("Please enter a reference number."); return; }
-        alert("Reference submitted: " + ref + ". Pending admin verification.");
+        const message = encodeURIComponent("Hi JMCY Support, I have sent the commission payment. Here is my GCash Reference Number: " + ref);
+        window.open("https://wa.me/639091297422?text=" + message, "_blank");
     }
 
     async function saveProfileChanges() {
