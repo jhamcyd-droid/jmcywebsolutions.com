@@ -32,6 +32,7 @@
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
         .payment-steps { font-size: 11px; color: #4a5568; padding-left: 20px; margin: 10px 0; }
         .payment-steps li { margin-bottom: 5px; }
+        .date-emph { color: var(--secondary); font-weight: 800; }
     </style>
 </head>
 <body>
@@ -53,8 +54,8 @@
         <h2 class="card-title">Live Booking Assignment</h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Service</th><th>Hrs</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
-                <tbody id="pendingBody"><tr><td colspan="10">Loading...</td></tr></tbody>
+                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Service</th><th>Hrs</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
+                <tbody id="pendingBody"><tr><td colspan="9">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -137,7 +138,6 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Check for any accepted booking that is NOT in the future (today or past)
         const needsSettlement = accepted.some(b => {
             const apptDate = new Date(b.appointment_date);
             apptDate.setHours(0, 0, 0, 0);
@@ -164,16 +164,15 @@
             <tr>
                 <td><button class="btn-accept" onclick="${onClickAction}">Accept</button></td>
                 <td>${b.booking_id}</td>
-                <td>${formatDate(b.appointment_date)}</td>
+                <td class="date-emph">${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
-                <td class="copy-hint" ondblclick="copyText('${b.mobile_number}')">${b.mobile_number || 'N/A'}</td>
                 <td>${b.services}</td>
                 <td>${b.total_duration_hours || '0'}</td>
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
             </tr>`;
-        }).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
+        }).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
         
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
