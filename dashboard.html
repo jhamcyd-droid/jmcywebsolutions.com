@@ -95,7 +95,6 @@
 <script>
     let currentUserProfileName = "";
     
-    // Updated to use sessionStorage to isolate tab sessions
     window.supabaseClient = supabase.createClient(
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
@@ -135,9 +134,29 @@
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
-        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => `
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => {
+            const apptDate = new Date(b.appointment_date);
+            apptDate.setHours(0, 0, 0, 0);
+            
+            const isDateValid = apptDate > today;
+            const hasAcceptedBooking = accepted.length > 0;
+            
+            let onClickAction = "";
+
+            if (hasAcceptedBooking) {
+                onClickAction = "alert('Please settle the commission for your current accepted booking first!')";
+            } else if (!isDateValid) {
+                onClickAction = "alert('You can only accept bookings scheduled for future dates.')";
+            } else {
+                onClickAction = "updateBookingStatus('" + b.id + "')";
+            }
+
+            return `
             <tr>
-                <td><button class="btn-accept" onclick="${accepted.length > 0 ? 'alert(\'Please settle the commission for your current accepted booking first!\')' : 'updateBookingStatus(\''+b.id+'\')'}">Accept</button></td>
+                <td><button class="btn-accept" onclick="${onClickAction}">Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td>${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
@@ -147,7 +166,8 @@
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
+            </tr>`;
+        }).join('') : '<tr><td colspan="10">No pending bookings.</td></tr>';
         
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
