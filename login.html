@@ -86,11 +86,12 @@
             { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
         );
 
-        document.getElementById('toggleBtn').addEventListener('click', (e) => {
-            const passInput = document.getElementById('pass');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const passInput = document.getElementById('pass');
+        toggleBtn.addEventListener('click', () => {
             const isPassword = passInput.type === "password";
             passInput.type = isPassword ? "text" : "password";
-            e.target.innerText = isPassword ? "HIDE" : "SHOW";
+            toggleBtn.innerText = isPassword ? "HIDE" : "SHOW";
         });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -109,32 +110,17 @@
 
             try {
                 const emailAddr = `${usernameInput}@jmcywellness.com`;
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ 
-                    email: emailAddr, 
-                    password: passwordInput 
-                });
-                
-                if (authError) throw authError;
+                const { error } = await supabase.auth.signInWithPassword({ email: emailAddr, password: passwordInput });
+                if (error) throw error;
 
-                const { data: profile, error: profileError } = await supabase
-                    .from('therapist_applications')
-                    .select('full_name, status')
-                    .eq('auth_id', authData.user.id)
-                    .single();
-
-                if (profileError || !profile) {
-                    throw new Error("No profile record found for this account.");
-                }
-
-                if (String(profile.status).toLowerCase() !== 'approved') {
-                    window.location.href = "pending.html";
-                } else {
+                const { data: profile } = await supabase.from('therapist_applications').select('full_name').eq('email', emailAddr).single();
+                if (profile) {
                     sessionStorage.setItem("jmcy_name", profile.full_name);
-                    window.location.href = "dashboard.html";
+                    sessionStorage.setItem("jmcy_email", emailAddr);
                 }
+                window.location.href = "dashboard.html";
             } catch (err) {
-                console.error("DEBUG ERROR:", err);
-                alert("Login Error: " + err.message);
+                alert("Authentication failed. Please check your credentials.");
                 btn.innerText = "Sign In";
                 btn.disabled = false;
             }
