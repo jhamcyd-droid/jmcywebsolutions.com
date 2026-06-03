@@ -75,7 +75,7 @@
 
         async function init() {
             const { data: { user } } = await window.supabaseClient.auth.getUser();
-            if (!user) { window.location.href = "login.html"; return; }
+            if (!user) { window.location.href = "dashboard.html"; return; }
             
             const { data: profile } = await window.supabaseClient
                 .from('therapist_applications')
