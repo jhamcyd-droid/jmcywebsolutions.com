@@ -42,7 +42,6 @@
             </div>
             <input type="file" id="avatar-input" hidden accept="image/*" onchange="handleImage(this)">
             <h3 id="prof-fullname" style="margin-bottom: 0;">Loading...</h3>
-            <!-- Added status display -->
             <p id="prof-status" style="font-size: 12px; font-weight: bold; color: var(--accent); margin: 5px 0 0; text-transform: uppercase;"></p>
         </section>
 
@@ -86,8 +85,13 @@
                 .single();
             
             if (profile) {
+                // Security Check: Redirect if not approved
+                if (profile.status !== 'approved') {
+                    window.location.href = "pending.html";
+                    return;
+                }
+
                 document.getElementById('prof-fullname').innerText = profile.full_name || '';
-                // Set status from database
                 document.getElementById('prof-status').innerText = profile.status || 'Pending';
                 
                 document.getElementById('input-phone').value = profile.phone || '';
@@ -120,6 +124,8 @@
                         if(isMatch) cb.checked = true;
                     });
                 }
+            } else {
+                window.location.href = "login.html";
             }
         }
 
