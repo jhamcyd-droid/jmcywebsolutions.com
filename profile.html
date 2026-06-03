@@ -71,7 +71,12 @@
     </div>
 
     <script>
-        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+        // Updated: Added auth storage configuration for session persistence
+        window.supabaseClient = supabase.createClient(
+            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
+            { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
+        );
         let avatarBase64 = "";
 
         async function init() {
@@ -85,8 +90,8 @@
                 .single();
             
             if (profile) {
-                // Security Check: Redirect if not approved
-                if (profile.status !== 'approved') {
+                // Updated: Case-insensitive status check
+                if (String(profile.status).toLowerCase() !== 'approved') {
                     window.location.href = "pending.html";
                     return;
                 }
