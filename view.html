@@ -12,7 +12,9 @@
         .detail-group { margin-bottom: 15px; }
         .label { font-weight: 800; color: #4a5568; display: block; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
         .value { font-size: 1rem; color: #1a365d; border-bottom: 1px solid #f7fafc; padding-bottom: 5px; }
-        .btn-back { width: 100%; padding: 12px; background: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .btn-contact { width: 100%; padding: 12px; background: #2f855a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; text-decoration: none; display: block; text-align: center; }
+        .btn-back { width: 100%; padding: 12px; background: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .notice { font-size: 0.8rem; background: #fffaf0; border: 1px solid #feebc8; padding: 10px; border-radius: 6px; color: #744210; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -20,6 +22,7 @@
 <div class="card">
     <h2>Booking Details</h2>
     <div id="booking-details">Loading details...</div>
+    <div id="action-buttons"></div>
     <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
 </div>
 
@@ -31,15 +34,15 @@
 
     async function fetchBookingDetails() {
         const urlParams = new URLSearchParams(window.location.search);
-        const bookingId = urlParams.get('id'); // This is the 'id' (Primary Key)
+        const bookingId = urlParams.get('id');
         const container = document.getElementById('booking-details');
+        const actionContainer = document.getElementById('action-buttons');
 
         if (!bookingId) {
             container.innerHTML = "No booking selected.";
             return;
         }
 
-        // Updated to search by 'id' (Primary Key)
         const { data, error } = await supabaseClient
             .from('bookings')
             .select('*')
@@ -47,14 +50,14 @@
             .single();
 
         if (error) {
-            console.error("Supabase Error:", error);
-            container.innerHTML = "Error loading details: " + error.message;
+            container.innerHTML = "Error loading details.";
             return;
         }
 
         const commission = (data.total_price * 0.15).toFixed(2);
 
         container.innerHTML = `
+            <div class="notice"><strong>Action Required:</strong> Please call or text the client at the number below to confirm the appointment acceptance.</div>
             <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Date</span><div class="value">${data.appointment_date || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
@@ -66,6 +69,11 @@
             <div class="detail-group"><span class="label">Total Price</span><div class="value">₱${data.total_price || '0'}</div></div>
             <div class="detail-group"><span class="label">Commission (15%)</span><div class="value" style="color:#2f855a; font-weight:bold;">₱${commission}</div></div>
         `;
+
+        // Add the contact button if a mobile number exists
+        if (data.mobile_number) {
+            actionContainer.innerHTML = `<a href="tel:${data.mobile_number}" class="btn-contact">CALL CUSTOMER TO CONFIRM</a>`;
+        }
     }
 
     fetchBookingDetails();
