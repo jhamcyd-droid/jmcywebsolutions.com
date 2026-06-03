@@ -82,7 +82,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const supabase = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
             { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
         );
 
@@ -110,15 +110,29 @@
 
             try {
                 const emailAddr = `${usernameInput}@jmcywellness.com`;
-                const { error } = await supabase.auth.signInWithPassword({ email: emailAddr, password: passwordInput });
-                if (error) throw error;
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ 
+                    email: emailAddr, 
+                    password: passwordInput 
+                });
+                
+                if (authError) throw authError;
 
-                const { data: profile } = await supabase.from('therapist_applications').select('full_name').eq('email', emailAddr).single();
-                if (profile) {
+                // Fetch user profile to check approval status
+                const { data: profile, error: profileError } = await supabase
+                    .from('therapist_applications')
+                    .select('full_name, status')
+                    .eq('auth_id', authData.user.id)
+                    .single();
+
+                if (profileError || profile.status !== 'approved') {
+                    // Redirect unapproved users to pending.html
+                    window.location.href = "pending.html";
+                } else {
+                    // Store session data and go to dashboard
                     sessionStorage.setItem("jmcy_name", profile.full_name);
                     sessionStorage.setItem("jmcy_email", emailAddr);
+                    window.location.href = "dashboard.html";
                 }
-                window.location.href = "dashboard.html";
             } catch (err) {
                 alert("Authentication failed. Please check your credentials.");
                 btn.innerText = "Sign In";

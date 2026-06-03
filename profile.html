@@ -42,7 +42,6 @@
             </div>
             <input type="file" id="avatar-input" hidden accept="image/*" onchange="handleImage(this)">
             <h3 id="prof-fullname" style="margin-bottom: 0;">Loading...</h3>
-            <p id="prof-status" style="font-size: 12px; font-weight: bold; color: var(--accent); margin: 5px 0 0; text-transform: uppercase;"></p>
         </section>
 
         <section class="fixed-mobile-card">
@@ -71,11 +70,10 @@
     </div>
 
     <script>
-        // Updated: Added auth storage configuration for session persistence
         window.supabaseClient = supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
-            { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
+            { auth: { storage: window.sessionStorage, persistSession: true } }
         );
         let avatarBase64 = "";
 
@@ -90,15 +88,7 @@
                 .single();
             
             if (profile) {
-                // Updated: Case-insensitive status check
-                if (String(profile.status).toLowerCase() !== 'approved') {
-                    window.location.href = "pending.html";
-                    return;
-                }
-
                 document.getElementById('prof-fullname').innerText = profile.full_name || '';
-                document.getElementById('prof-status').innerText = profile.status || 'Pending';
-                
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
                 
