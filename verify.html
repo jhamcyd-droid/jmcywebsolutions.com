@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Applicants | JMCY Wellness Network</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #2d3748; --accent: #319795; --danger: #e53e3e; --bg: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); padding: 15px; color: var(--primary); }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table td, .admin-table th { padding: 12px; border-bottom: 1px solid #edf2f7; text-align: left; }
+        .clickable-name { color: var(--accent); cursor: pointer; font-weight: 600; text-decoration: underline; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 500; }
+        .modal-content { background: #fff; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        .thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; margin: 5px; cursor: pointer; border: 1px solid #ddd; }
+        
+        /* Action Group Layout */
+        .action-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn { border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: 600; width: 100%; }
+        .btn-approve { background: #48bb78; color: white; }
+        .btn-disapprove { background: #ecc94b; color: #000; }
+        .btn-ban { background: var(--danger); color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>Applicants (<span id="count">0</span>)</h1>
+        <a href="admin.html" style="text-decoration:none; color:#718096;">Back</a>
+    </div>
+    <table class="admin-table">
+        <thead><tr><th>#</th><th>Name</th><th>Status</th></tr></thead>
+        <tbody id="applicantBody"><tr><td colspan="3">Loading...</td></tr></tbody>
+    </table>
+</div>
+
+<!-- Details Modal -->
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalName"></h2>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <img id="modalId" class="thumb" onclick="showFullImage(this.src)">
+            <img id="modalSelfie" class="thumb" onclick="showFullImage(this.src)">
+            <img id="modalCert" class="thumb" onclick="showFullImage(this.src)">
+        </div>
+        <div class="action-group">
+            <button class="btn btn-approve" onclick="updateStatus('Approved')">Approved</button>
+            <button class="btn btn-disapprove" onclick="updateStatus('Disapproved')">Disapproved</button>
+            <button class="btn btn-ban" onclick="updateStatus('Banned')">Ban Application</button>
+        </div>
+        <button style="width:100%; margin-top:10px; background:#ddd; border:none; padding:8px; cursor:pointer;" onclick="closeModal()">Close Details</button>
+    </div>
+</div>
+
+<!-- Full Screen Image Viewer -->
+<div id="imageViewer" class="modal" style="z-index: 1000; background: rgba(0,0,0,0.9);">
+    <button onclick="closeImageViewer()" style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; cursor: pointer; font-weight: bold;">Back to Details</button>
+    <img id="fullImage" style="max-width: 90%; max-height: 80%; border: 2px solid white;">
+</div>
+
+<script>
+    const supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+    let currentApp = null;
+
+    async function fetchApplicants() {
+        const { data } = await supabaseClient.from('therapist_applications').select('*');
+        document.getElementById('count').innerText = data ? data.length : 0;
+        document.getElementById('applicantBody').innerHTML = data ? data.map((a, i) => `
+            <tr><td>${i+1}</td>
+            <td class="clickable-name" onclick="openModal(${JSON.stringify(a).replace(/"/g, '&quot;')})">${a.full_name}</td>
+            <td>${a.status || 'pending'}</td></tr>
+        `).join('') : '<tr><td colspan="3">No records.</td></tr>';
+    }
+
+    function openModal(app) {
+        currentApp = app;
+        document.getElementById('modalName').innerText = app.full_name;
+        document.getElementById('modalStatus').innerText = app.status || 'pending';
+        document.getElementById('modalId').src = app.gov_id_url;
+        document.getElementById('modalSelfie').src = app.selfie_url;
+        document.getElementById('modalCert').src = app.cert_url;
+        document.getElementById('detailModal').style.display = 'flex';
+    }
+
+    function showFullImage(src) {
+        document.getElementById('fullImage').src = src;
+        document.getElementById('imageViewer').style.display = 'flex';
+    }
+
+    function closeImageViewer() { document.getElementById('imageViewer').style.display = 'none'; }
+    function closeModal() { document.getElementById('detailModal').style.display = 'none'; closeImageViewer(); }
+
+    async function updateStatus(status) {
+        if (!confirm(`Mark as ${status}?`)) return;
+        await supabaseClient.from('therapist_applications').update({ status: status }).eq('id', currentApp.id);
+        closeModal();
+        fetchApplicants();
+    }
+
+    fetchApplicants();
+</script>
+</body>
+</html>
