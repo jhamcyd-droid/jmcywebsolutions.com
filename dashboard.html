@@ -137,19 +137,25 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        // Check for any accepted booking that is NOT in the future (today or past)
+        const needsSettlement = accepted.some(b => {
+            const apptDate = new Date(b.appointment_date);
+            apptDate.setHours(0, 0, 0, 0);
+            return apptDate <= today;
+        });
+
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => {
             const apptDate = new Date(b.appointment_date);
             apptDate.setHours(0, 0, 0, 0);
             
-            const isDateValid = apptDate > today;
-            const hasAcceptedBooking = accepted.length > 0;
+            const isDateValid = apptDate >= today;
             
             let onClickAction = "";
 
-            if (hasAcceptedBooking) {
-                onClickAction = "alert('Please settle the commission for your current accepted booking first!')";
+            if (needsSettlement) {
+                onClickAction = "alert('You have an existing booking due today or in the past that needs commission settlement first.')";
             } else if (!isDateValid) {
-                onClickAction = "alert('You can only accept bookings scheduled for future dates.')";
+                onClickAction = "alert('You can only accept bookings scheduled for today or in the future.')";
             } else {
                 onClickAction = "updateBookingStatus('" + b.id + "')";
             }
