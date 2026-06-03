@@ -86,12 +86,11 @@
             { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
         );
 
-        const toggleBtn = document.getElementById('toggleBtn');
-        const passInput = document.getElementById('pass');
-        toggleBtn.addEventListener('click', () => {
+        document.getElementById('toggleBtn').addEventListener('click', (e) => {
+            const passInput = document.getElementById('pass');
             const isPassword = passInput.type === "password";
             passInput.type = isPassword ? "text" : "password";
-            toggleBtn.innerText = isPassword ? "HIDE" : "SHOW";
+            e.target.innerText = isPassword ? "HIDE" : "SHOW";
         });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -115,26 +114,26 @@
                     password: passwordInput 
                 });
                 
-                if (authError) throw authError;
+                if (authError) throw new Error("Invalid username or password.");
 
-                // Fetch user profile to check approval status
                 const { data: profile, error: profileError } = await supabase
                     .from('therapist_applications')
                     .select('full_name, status')
                     .eq('auth_id', authData.user.id)
                     .single();
 
-                if (profileError || profile.status !== 'approved') {
-                    // Redirect unapproved users to pending.html
+                if (profileError || !profile) {
+                    throw new Error("Profile not found. Please contact support.");
+                }
+
+                if (String(profile.status).toLowerCase() !== 'approved') {
                     window.location.href = "pending.html";
                 } else {
-                    // Store session data and go to dashboard
                     sessionStorage.setItem("jmcy_name", profile.full_name);
-                    sessionStorage.setItem("jmcy_email", emailAddr);
                     window.location.href = "dashboard.html";
                 }
             } catch (err) {
-                alert("Authentication failed. Please check your credentials.");
+                alert(err.message);
                 btn.innerText = "Sign In";
                 btn.disabled = false;
             }
