@@ -21,9 +21,8 @@
         .stat-card h3 { margin: 0; font-size: 0.75rem; text-transform: uppercase; opacity: 0.8; letter-spacing: 0.05em; }
         .stat-card p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 700; }
 
-        /* New button styles */
-        .btn-applicants { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; text-decoration: none; display: block; text-align: center; }
-        .btn-applicants:hover { opacity: 0.9; }
+        .btn-applicants { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 1rem; }
+        .btn-applicants:hover { background: var(--secondary); }
 
         .table-container { overflow-x: auto; }
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -48,8 +47,9 @@
             <h3>Weekly Commission</h3>
             <p id="weeklyComm">₱0.00</p>
         </div>
-        <!-- Shortcut to verify applicants -->
-        <a href="verify.html" class="btn-applicants">Therapist Applicants</a>
+        <div class="stat-card" style="background: var(--accent);">
+            <button class="btn-applicants" onclick="window.location.href='verify.html'">Therapist Applicants</button>
+        </div>
     </div>
 
     <main class="card">
@@ -87,13 +87,7 @@
     const supabaseClient = supabase.createClient(
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
-        {
-            auth: {
-                storage: window.sessionStorage,
-                autoRefreshToken: true,
-                persistSession: true
-            }
-        }
+        { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
     );
 
     async function logout() { await supabaseClient.auth.signOut(); window.location.href = "index.html"; }
@@ -106,10 +100,10 @@
         }]);
         if (error) { alert("Error: " + error.message); return; }
         await supabaseClient.from('bookings').update({ status: 'completed' }).eq('id', booking.id); 
-        fetchBookings();
+        fetchData();
     }
 
-    async function fetchBookings() {
+    async function fetchData() {
         const { data: bookings } = await supabaseClient.from('bookings').select('*').order('created_at', { ascending: false });
         const { data: history } = await supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
 
@@ -140,8 +134,8 @@
         `).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
     }
 
-    fetchBookings();
-    setInterval(fetchBookings, 30000);
+    fetchData();
+    setInterval(fetchData, 30000);
 </script>
 </body>
 </html>
