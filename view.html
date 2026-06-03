@@ -13,7 +13,6 @@
         .label { font-weight: 800; color: #4a5568; display: block; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
         .value { font-size: 1rem; color: #1a365d; border-bottom: 1px solid #f7fafc; padding-bottom: 5px; }
         
-        /* Fixed button styles to prevent overflow */
         .btn-contact { display: block; width: 100%; padding: 12px; background: #2f855a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; text-decoration: none; text-align: center; box-sizing: border-box; }
         .btn-back { display: block; width: 100%; padding: 12px; background: #1a365d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; box-sizing: border-box; }
         
@@ -34,6 +33,13 @@
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
     );
+
+    // Helper to format date as Jan. 01, 2026
+    function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
 
     async function fetchBookingDetails() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -62,7 +68,7 @@
         container.innerHTML = `
             <div class="notice"><strong>Action Required:</strong> Please call or text the client at the number below to confirm the appointment acceptance.</div>
             <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id || 'N/A'}</div></div>
-            <div class="detail-group"><span class="label">Date</span><div class="value">${data.appointment_date || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Date</span><div class="value">${formatDate(data.appointment_date)}</div></div>
             <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Mobile Number</span><div class="value">${data.mobile_number || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Services</span><div class="value">${data.services || 'N/A'}</div></div>
