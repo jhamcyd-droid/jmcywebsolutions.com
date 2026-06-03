@@ -41,7 +41,9 @@
                 <span id="avatar-placeholder">Upload</span>
             </div>
             <input type="file" id="avatar-input" hidden accept="image/*" onchange="handleImage(this)">
-            <h3 id="prof-fullname">Loading...</h3>
+            <h3 id="prof-fullname" style="margin-bottom: 0;">Loading...</h3>
+            <!-- Added status display -->
+            <p id="prof-status" style="font-size: 12px; font-weight: bold; color: var(--accent); margin: 5px 0 0; text-transform: uppercase;"></p>
         </section>
 
         <section class="fixed-mobile-card">
@@ -70,7 +72,7 @@
     </div>
 
     <script>
-        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
         let avatarBase64 = "";
 
         async function init() {
@@ -85,6 +87,9 @@
             
             if (profile) {
                 document.getElementById('prof-fullname').innerText = profile.full_name || '';
+                // Set status from database
+                document.getElementById('prof-status').innerText = profile.status || 'Pending';
+                
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
                 
@@ -99,7 +104,6 @@
                 }
 
                 if (profile.specialties) {
-                    // Handle case where it might be a JSON string or already an array
                     let savedSpecialties = typeof profile.specialties === 'string' 
                         ? JSON.parse(profile.specialties) 
                         : profile.specialties;
@@ -143,7 +147,7 @@
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
                 locations: locationsArray, 
-                specialties: checkedModalities // Removed JSON.stringify
+                specialties: checkedModalities
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
 
