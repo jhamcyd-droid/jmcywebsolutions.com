@@ -40,15 +40,19 @@
             const title = document.getElementById('statusTitle');
             const msg = document.getElementById('statusMessage');
 
+            // Logic using lowercase values to match your DB and Admin portal
             if (!app || app.status === 'pending') {
                 title.innerText = "Account Pending";
                 msg.innerHTML = "Your therapist application is currently under review by our admin team. You will be able to access your dashboard once your account has been <strong>approved</strong>.";
-            } else if (app.status === 'Approved') {
-                window.location.href = "dashboard.html"; // Redirect if already approved
-            } else if (app.status === 'Disapproved') {
+            } 
+            else if (app.status === 'approved') {
+                window.location.href = "dashboard.html";
+            } 
+            else if (app.status === 'disapproved') {
                 title.innerText = "Application Disapproved";
                 msg.innerHTML = "We regret to inform you that your application was not approved. For more information, please contact our admin support via WhatsApp: <strong>09091297422</strong>.";
-            } else if (app.status === 'Banned') {
+            } 
+            else if (app.status === 'banned') {
                 title.innerText = "Account Restricted";
                 msg.innerHTML = "Your account has been banned due to a violation of our terms. You cannot apply again to JMCY.";
             }
