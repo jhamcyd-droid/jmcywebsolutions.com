@@ -118,8 +118,19 @@
     async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
     async function init() {
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        
+        // Resilience: wait a moment if session is missing to allow storage sync
+        if (!session) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const { data: { session: retrySession } } = await window.supabaseClient.auth.getSession();
+            if (!retrySession) { window.location.href = "login.html"; return; }
+        }
+
+        const user = session ? session.user : (await window.supabaseClient.auth.getUser()).data.user;
+        
         if (!user) { window.location.href = "login.html"; return; }
+
         const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
         if (profile) {
             currentUserProfileName = profile.full_name;
@@ -149,7 +160,6 @@
             apptDate.setHours(0, 0, 0, 0);
             
             const isDateValid = apptDate >= today;
-            
             let onClickAction = "";
 
             if (needsSettlement) {
