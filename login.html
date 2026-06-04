@@ -79,12 +79,29 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         const supabase = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
             { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
         );
+
+        // Global Session Guard: Redirect if already logged in
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            const { data: app } = await supabase
+                .from('therapist_applications')
+                .select('status')
+                .eq('auth_id', session.user.id)
+                .single();
+
+            if (app && app.status === 'approved') {
+                window.location.href = "dashboard.html";
+            } else {
+                window.location.href = "pending.html";
+            }
+            return; 
+        }
 
         const toggleBtn = document.getElementById('toggleBtn');
         const passInput = document.getElementById('pass');
@@ -128,11 +145,9 @@
                 sessionStorage.setItem("jmcy_name", application.full_name);
                 sessionStorage.setItem("jmcy_email", emailAddr);
 
-                // Redirect based on lowercase status values
                 if (application.status === 'approved') {
                     window.location.href = "dashboard.html";
                 } else {
-                    // Catches pending, disapproved, banned, or null
                     window.location.href = "pending.html";
                 }
 
