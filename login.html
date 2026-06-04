@@ -110,17 +110,37 @@
 
             try {
                 const emailAddr = `${usernameInput}@jmcywellness.com`;
-                const { error } = await supabase.auth.signInWithPassword({ email: emailAddr, password: passwordInput });
-                if (error) throw error;
+                const { error: authError } = await supabase.auth.signInWithPassword({ 
+                    email: emailAddr, 
+                    password: passwordInput 
+                });
+                
+                if (authError) throw authError;
 
-                const { data: profile } = await supabase.from('therapist_applications').select('full_name').eq('email', emailAddr).single();
-                if (profile) {
-                    sessionStorage.setItem("jmcy_name", profile.full_name);
-                    sessionStorage.setItem("jmcy_email", emailAddr);
+                // Fetch status and name from the database
+                const { data: application, error: dbError } = await supabase
+                    .from('therapist_applications')
+                    .select('full_name, status')
+                    .eq('email', emailAddr)
+                    .single();
+
+                if (dbError) throw new Error("Could not retrieve user status.");
+
+                // Save session info
+                sessionStorage.setItem("jmcy_name", application.full_name);
+                sessionStorage.setItem("jmcy_email", emailAddr);
+
+                // Redirect based on status
+                if (application.status === 'accepted') {
+                    window.location.href = "dashboard.html";
+                } else {
+                    // Redirects to pending.html if status is 'pending' or null
+                    window.location.href = "pending.html";
                 }
-                window.location.href = "dashboard.html";
+
             } catch (err) {
-                alert("Authentication failed. Please check your credentials.");
+                console.error(err);
+                alert("Authentication failed: " + err.message);
                 btn.innerText = "Sign In";
                 btn.disabled = false;
             }
