@@ -40,7 +40,6 @@
     </table>
 </div>
 
-<!-- Details Modal -->
 <div id="detailModal" class="modal">
     <div class="modal-content">
         <h2 id="modalName"></h2>
@@ -51,15 +50,14 @@
             <img id="modalCert" class="thumb" onclick="showFullImage(this.src)">
         </div>
         <div class="action-group">
-            <button class="btn btn-approve" onclick="updateStatus('Approved')">Approved</button>
-            <button class="btn btn-disapprove" onclick="updateStatus('Disapproved')">Disapproved</button>
+            <button class="btn btn-approve" onclick="updateStatus('Approved')">Approve</button>
+            <button class="btn btn-disapprove" onclick="updateStatus('Disapproved')">Disapprove</button>
             <button class="btn btn-ban" onclick="updateStatus('Banned')">Ban Application</button>
         </div>
         <button style="width:100%; margin-top:10px; background:#ddd; border:none; padding:8px; cursor:pointer;" onclick="closeModal()">Close Details</button>
     </div>
 </div>
 
-<!-- Full Screen Image Viewer -->
 <div id="imageViewer" class="modal" style="z-index: 1000; background: rgba(0,0,0,0.9);">
     <button onclick="closeImageViewer()" style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; cursor: pointer; font-weight: bold;">Back to Details</button>
     <img id="fullImage" style="max-width: 90%; max-height: 80%; border: 2px solid white;">
@@ -70,7 +68,9 @@
     let currentApp = null;
 
     async function fetchApplicants() {
-        const { data } = await supabaseClient.from('therapist_applications').select('*');
+        const { data, error } = await supabaseClient.from('therapist_applications').select('*');
+        if (error) { console.error("Error fetching:", error); return; }
+        
         document.getElementById('count').innerText = data ? data.length : 0;
         document.getElementById('applicantBody').innerHTML = data ? data.map((a, i) => `
             <tr><td>${i+1}</td>
@@ -83,13 +83,14 @@
         currentApp = app;
         document.getElementById('modalName').innerText = app.full_name;
         document.getElementById('modalStatus').innerText = app.status || 'pending';
-        document.getElementById('modalId').src = app.gov_id_url;
-        document.getElementById('modalSelfie').src = app.selfie_url;
-        document.getElementById('modalCert').src = app.cert_url;
+        document.getElementById('modalId').src = app.gov_id_url || '';
+        document.getElementById('modalSelfie').src = app.selfie_url || '';
+        document.getElementById('modalCert').src = app.cert_url || '';
         document.getElementById('detailModal').style.display = 'flex';
     }
 
     function showFullImage(src) {
+        if (!src) return;
         document.getElementById('fullImage').src = src;
         document.getElementById('imageViewer').style.display = 'flex';
     }
@@ -99,9 +100,20 @@
 
     async function updateStatus(status) {
         if (!confirm(`Mark as ${status}?`)) return;
-        await supabaseClient.from('therapist_applications').update({ status: status }).eq('id', currentApp.id);
-        closeModal();
-        fetchApplicants();
+        
+        const { error } = await supabaseClient
+            .from('therapist_applications')
+            .update({ status: status })
+            .eq('id', currentApp.id);
+        
+        if (error) {
+            console.error("Update Error:", error);
+            alert("Error updating status: " + error.message);
+        } else {
+            alert("Status updated successfully!");
+            closeModal();
+            fetchApplicants();
+        }
     }
 
     fetchApplicants();
