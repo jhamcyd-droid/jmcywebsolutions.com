@@ -70,17 +70,24 @@
     </div>
 
     <script>
-        window.supabaseClient = supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+        // Use exact same config as login.html
+        window.supabaseClient = supabase.createClient(
+            'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
+            { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
+        );
+
         let avatarBase64 = "";
 
         async function init() {
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
-            if (!user) { window.location.href = "login.html"; return; }
+            // Use getSession for immediate check of storage
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (!session) { window.location.href = "login.html"; return; }
             
             const { data: profile } = await window.supabaseClient
                 .from('therapist_applications')
                 .select('*')
-                .eq('auth_id', user.id)
+                .eq('auth_id', session.user.id)
                 .single();
             
             if (profile) {
@@ -99,7 +106,6 @@
                 }
 
                 if (profile.specialties) {
-                    // Handle case where it might be a JSON string or already an array
                     let savedSpecialties = typeof profile.specialties === 'string' 
                         ? JSON.parse(profile.specialties) 
                         : profile.specialties;
@@ -112,7 +118,6 @@
                             s.toLowerCase() === checkboxValue || 
                             s.toLowerCase() === labelText
                         );
-
                         if(isMatch) cb.checked = true;
                     });
                 }
@@ -131,7 +136,8 @@
         }
 
         async function saveProfileChanges() {
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (!session) return;
             
             const rawLocs = document.getElementById('input-zones').value;
             const locationsArray = rawLocs ? rawLocs.split(',').map(s => s.trim()) : [];
@@ -143,14 +149,14 @@
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
                 locations: locationsArray, 
-                specialties: checkedModalities // Removed JSON.stringify
+                specialties: checkedModalities
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
 
             const { error } = await window.supabaseClient
                 .from('therapist_applications')
                 .update(updateData)
-                .eq('auth_id', user.id);
+                .eq('auth_id', session.user.id);
                 
             alert(error ? "Error: " + error.message : "✅ Saved!");
         }
