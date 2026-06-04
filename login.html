@@ -110,36 +110,33 @@
 
             try {
                 const emailAddr = `${usernameInput}@jmcywellness.com`;
-                const { error: authError } = await supabase.auth.signInWithPassword({ 
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ 
                     email: emailAddr, 
                     password: passwordInput 
                 });
                 
                 if (authError) throw authError;
 
-                // Fetch status and name from the database
+                // Query using auth_id since your table does not contain email
                 const { data: application, error: dbError } = await supabase
                     .from('therapist_applications')
                     .select('full_name, status')
-                    .eq('email', emailAddr)
+                    .eq('auth_id', authData.user.id)
                     .single();
 
                 if (dbError) throw new Error("Could not retrieve user status.");
 
-                // Save session info
                 sessionStorage.setItem("jmcy_name", application.full_name);
                 sessionStorage.setItem("jmcy_email", emailAddr);
 
-                // Redirect based on status
                 if (application.status === 'accepted') {
                     window.location.href = "dashboard.html";
                 } else {
-                    // Redirects to pending.html if status is 'pending' or null
                     window.location.href = "pending.html";
                 }
 
             } catch (err) {
-                console.error(err);
+                console.error("Auth Error:", err);
                 alert("Authentication failed: " + err.message);
                 btn.innerText = "Sign In";
                 btn.disabled = false;
