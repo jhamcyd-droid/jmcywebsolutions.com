@@ -28,19 +28,38 @@
         );
 
         async function checkStatus() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) { window.location.href = "login.html"; return; }
+            // 1. Get session and wait if necessary to avoid race conditions
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            let currentUser = session ? session.user : null;
+            if (!currentUser) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const { data: { session: retrySession } } = await supabaseClient.auth.getSession();
+                currentUser = retrySession ? retrySession.user : null;
+            }
 
-            const { data: app } = await supabaseClient
+            // 2. If still no user, redirect to login
+            if (!currentUser) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // 3. Fetch application status
+            const { data: app, error } = await supabaseClient
                 .from('therapist_applications')
                 .select('status')
-                .eq('auth_id', user.id)
+                .eq('auth_id', currentUser.id)
                 .single();
+
+            if (error) {
+                console.error("Fetch error:", error);
+                return;
+            }
 
             const title = document.getElementById('statusTitle');
             const msg = document.getElementById('statusMessage');
 
-            // Logic using lowercase values to match your DB and Admin portal
+            // 4. Update UI based on lowercase status
             if (!app || app.status === 'pending') {
                 title.innerText = "Account Pending";
                 msg.innerHTML = "Your therapist application is currently under review by our admin team. You will be able to access your dashboard once your account has been <strong>approved</strong>.";
