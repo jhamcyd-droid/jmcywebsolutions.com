@@ -8,7 +8,7 @@
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
         .card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); text-align: center; max-width: 400px; width: 100%; }
-        h1 { color: #2d3748; margin-top: 0; }
+        h1 { color: #2d3748; margin-top: 0; font-size: 1.5rem; }
         p { color: #4a5568; line-height: 1.6; margin-bottom: 30px; }
         .btn-logout { background: #e53e3e; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; }
     </style>
@@ -16,64 +16,56 @@
 <body>
 
     <div class="card">
-        <h1 id="statusTitle">Checking Status...</h1>
-        <p id="statusMessage">Please wait while we check your application...</p>
+        <h1 id="statusTitle">Loading...</h1>
+        <p id="statusMessage">Verifying your account status.</p>
         <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
 
     <script>
-        const supabaseClient = supabase.createClient(
+        const supabaseClient = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amC4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
+            { auth: { storage: window.sessionStorage, persistSession: true } }
         );
 
         async function checkStatus() {
-            // 1. Get session and wait if necessary to avoid race conditions
             const { data: { session } } = await supabaseClient.auth.getSession();
-            
-            let currentUser = session ? session.user : null;
-            if (!currentUser) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                const { data: { session: retrySession } } = await supabaseClient.auth.getSession();
-                currentUser = retrySession ? retrySession.user : null;
-            }
 
-            // 2. If still no user, redirect to login
-            if (!currentUser) {
+            // 1. If no session, redirect to login
+            if (!session) {
                 window.location.href = "login.html";
                 return;
             }
 
-            // 3. Fetch application status
+            // 2. Fetch app status
             const { data: app, error } = await supabaseClient
                 .from('therapist_applications')
                 .select('status')
-                .eq('auth_id', currentUser.id)
+                .eq('auth_id', session.user.id)
                 .single();
-
-            if (error) {
-                console.error("Fetch error:", error);
-                return;
-            }
 
             const title = document.getElementById('statusTitle');
             const msg = document.getElementById('statusMessage');
 
-            // 4. Update UI based on lowercase status
-            if (!app || app.status === 'pending') {
-                title.innerText = "Account Pending";
-                msg.innerHTML = "Your therapist application is currently under review by our admin team. You will be able to access your dashboard once your account has been <strong>approved</strong>.";
-            } 
-            else if (app.status === 'approved') {
+            if (error || !app) {
+                title.innerText = "Error";
+                msg.innerText = "Could not verify your status. Please try logging in again.";
+                return;
+            }
+
+            // 3. Logic: Only redirect if approved. Otherwise, display the status.
+            if (app.status === 'approved') {
                 window.location.href = "dashboard.html";
-            } 
-            else if (app.status === 'disapproved') {
+            } else if (app.status === 'disapproved') {
                 title.innerText = "Application Disapproved";
-                msg.innerHTML = "We regret to inform you that your application was not approved. For more information, please contact our admin support via WhatsApp: <strong>09091297422</strong>.";
-            } 
-            else if (app.status === 'banned') {
+                msg.innerHTML = "We regret to inform you that your application was not approved. Contact admin at <strong>09091297422</strong>.";
+            } else if (app.status === 'banned') {
                 title.innerText = "Account Restricted";
-                msg.innerHTML = "Your account has been banned due to a violation of our terms. You cannot apply again to JMCY.";
+                msg.innerHTML = "Your account has been banned due to a violation of our terms.";
+            } else {
+                // Default: Pending
+                title.innerText = "Account Pending";
+                msg.innerHTML = "Your application is under review. Please wait for an admin to approve your account.";
             }
         }
 
@@ -82,7 +74,8 @@
             window.location.href = "index.html"; 
         }
 
-        checkStatus();
+        // Run once on load
+        window.onload = checkStatus;
     </script>
 </body>
 </html>
