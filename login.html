@@ -125,8 +125,11 @@
 
                 if (dbError) throw new Error("Status could not be verified.");
 
-                // Redirect based on status
-                if (profile?.status === "Accepted") {
+                // Normalize status to handle different cases (e.g., "Accepted", "accepted", "APPROVED")
+                const status = profile?.status ? profile.status.toString().trim().toLowerCase() : "";
+                console.log("User status fetched:", status); // Check F12 Console if it's still not working
+
+                if (status === "accepted" || status === "approved") {
                     window.location.href = "dashboard.html";
                 } else {
                     window.location.href = "pending.html";
