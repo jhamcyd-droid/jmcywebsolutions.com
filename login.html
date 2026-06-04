@@ -128,10 +128,11 @@
                 sessionStorage.setItem("jmcy_name", application.full_name);
                 sessionStorage.setItem("jmcy_email", emailAddr);
 
-                // Check for 'accepted' or 'approved'
-                if (application.status === 'accepted' || application.status === 'approved') {
+                // Redirect based on lowercase status values
+                if (application.status === 'approved') {
                     window.location.href = "dashboard.html";
                 } else {
+                    // Catches pending, disapproved, banned, or null
                     window.location.href = "pending.html";
                 }
 
