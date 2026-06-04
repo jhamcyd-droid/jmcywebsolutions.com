@@ -117,7 +117,6 @@
                 
                 if (authError) throw authError;
 
-                // Query using auth_id since your table does not contain email
                 const { data: application, error: dbError } = await supabase
                     .from('therapist_applications')
                     .select('full_name, status')
@@ -129,7 +128,8 @@
                 sessionStorage.setItem("jmcy_name", application.full_name);
                 sessionStorage.setItem("jmcy_email", emailAddr);
 
-                if (application.status === 'accepted') {
+                // Check for 'accepted' or 'approved'
+                if (application.status === 'accepted' || application.status === 'approved') {
                     window.location.href = "dashboard.html";
                 } else {
                     window.location.href = "pending.html";
