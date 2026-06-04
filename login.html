@@ -82,8 +82,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const supabase = window.supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
-            { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
         );
 
         const toggleBtn = document.getElementById('toggleBtn');
@@ -110,17 +109,31 @@
 
             try {
                 const emailAddr = `${usernameInput}@jmcywellness.com`;
-                const { error } = await supabase.auth.signInWithPassword({ email: emailAddr, password: passwordInput });
-                if (error) throw error;
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ 
+                    email: emailAddr, 
+                    password: passwordInput 
+                });
+                
+                if (authError) throw authError;
 
-                const { data: profile } = await supabase.from('therapist_applications').select('full_name').eq('email', emailAddr).single();
-                if (profile) {
-                    sessionStorage.setItem("jmcy_name", profile.full_name);
-                    sessionStorage.setItem("jmcy_email", emailAddr);
+                // Verify status in therapist_applications
+                const { data: profile, error: dbError } = await supabase
+                    .from('therapist_applications')
+                    .select('status')
+                    .eq('auth_id', authData.user.id)
+                    .single();
+
+                if (dbError) throw new Error("Status could not be verified.");
+
+                // Redirect based on status
+                if (profile?.status === "Accepted") {
+                    window.location.href = "dashboard.html";
+                } else {
+                    window.location.href = "pending.html";
                 }
-                window.location.href = "dashboard.html";
+
             } catch (err) {
-                alert("Authentication failed. Please check your credentials.");
+                alert("Authentication failed: " + err.message);
                 btn.innerText = "Sign In";
                 btn.disabled = false;
             }

@@ -74,17 +74,26 @@
         let avatarBase64 = "";
 
         async function init() {
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
-            if (!user) { window.location.href = "dashboard.html"; return; }
+            const { data: { user }, error: authError } = await window.supabaseClient.auth.getUser();
             
-            const { data: profile } = await window.supabaseClient
+            console.log("Auth Status Check:", { user, authError });
+
+            if (!user) {
+                console.warn("Redirecting: No active user session.");
+                // window.location.href = "dashboard.html"; // Commented out so you can see the log
+                return; 
+            }
+            
+            const { data: profile, error: dbError } = await window.supabaseClient
                 .from('therapist_applications')
                 .select('*')
                 .eq('auth_id', user.id)
                 .single();
             
+            if (dbError) console.error("Database fetch error:", dbError);
+
             if (profile) {
-                document.getElementById('prof-fullname').innerText = profile.full_name || '';
+                document.getElementById('prof-fullname').innerText = profile.full_name || 'No Name';
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
                 
@@ -99,21 +108,12 @@
                 }
 
                 if (profile.specialties) {
-                    // Handle case where it might be a JSON string or already an array
-                    let savedSpecialties = typeof profile.specialties === 'string' 
-                        ? JSON.parse(profile.specialties) 
-                        : profile.specialties;
+                    let savedSpecialties = Array.isArray(profile.specialties) 
+                        ? profile.specialties 
+                        : (typeof profile.specialties === 'string' ? JSON.parse(profile.specialties) : []);
                     
                     document.querySelectorAll('input[name="modalities"]').forEach(cb => {
-                        const labelText = cb.nextElementSibling.innerText.trim().toLowerCase();
-                        const checkboxValue = cb.value.toLowerCase();
-                        
-                        const isMatch = savedSpecialties.some(s => 
-                            s.toLowerCase() === checkboxValue || 
-                            s.toLowerCase() === labelText
-                        );
-
-                        if(isMatch) cb.checked = true;
+                        if(savedSpecialties.includes(cb.value)) cb.checked = true;
                     });
                 }
             }
@@ -132,10 +132,10 @@
 
         async function saveProfileChanges() {
             const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (!user) { alert("Session expired. Please login again."); return; }
             
             const rawLocs = document.getElementById('input-zones').value;
             const locationsArray = rawLocs ? rawLocs.split(',').map(s => s.trim()) : [];
-            
             const checkedModalities = Array.from(document.querySelectorAll('input[name="modalities"]:checked'))
                 .map(cb => cb.value);
 
@@ -143,7 +143,7 @@
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
                 locations: locationsArray, 
-                specialties: checkedModalities // Removed JSON.stringify
+                specialties: checkedModalities
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
 
@@ -152,7 +152,12 @@
                 .update(updateData)
                 .eq('auth_id', user.id);
                 
-            alert(error ? "Error: " + error.message : "✅ Saved!");
+            if (error) {
+                console.error("Save Error:", error);
+                alert("Database Error: " + error.message);
+            } else {
+                alert("✅ Saved successfully!");
+            }
         }
 
         init();
