@@ -46,7 +46,6 @@
         <div class="form-group">
             <label>Username</label>
             <input type="text" id="username" required />
-            <small id="usernameWarning" style="color: #e53e3e; display: none; font-size: 0.75rem; font-weight: bold;">Please do not include "@" or email suffixes.</small>
         </div>
         <div class="form-group">
             <label>Password</label>
@@ -120,17 +119,6 @@
 <script>
     const client = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
-    document.getElementById('username').addEventListener('input', function(e) {
-        const warning = document.getElementById('usernameWarning');
-        const value = e.target.value.toLowerCase();
-        if (value.includes('@') || value.includes('.com')) {
-            warning.style.display = 'block';
-            e.target.value = value.replace(/@/g, '').replace(/\.com/g, '');
-        } else {
-            warning.style.display = 'none';
-        }
-    });
-
     document.getElementById('togglePass').addEventListener('click', function() {
         const pw = document.getElementById('password');
         pw.type = pw.type === 'password' ? 'text' : 'password';
@@ -152,6 +140,7 @@
         btn.disabled = true;
 
         try {
+            // 1. Sign Up
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -159,9 +148,14 @@
             });
             if (authError) throw authError;
 
-            // Wait for the DB trigger to finish creating the row
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // 2. IMPORTANT: Automatically sign in the user
+            const { error: signInError } = await client.auth.signInWithPassword({
+                email: `${username}@jmcywellness.com`,
+                password: password
+            });
+            if (signInError) throw signInError;
 
+            // 3. Upload Files
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
                 if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
@@ -174,7 +168,7 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // Update the row the trigger created
+            // 4. Update the record created by the database trigger
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .update({
