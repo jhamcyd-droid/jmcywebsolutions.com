@@ -20,13 +20,10 @@
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #2d3748; }
         input[type="text"], input[type="password"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: rgba(255,255,255,0.5); }
-        
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
-        
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         .submit-btn:disabled { background: #a0aec0; }
         .password-wrapper { position: relative; display: flex; align-items: center; }
@@ -46,7 +43,7 @@
         <div class="form-group">
             <label>Username</label>
             <input type="text" id="username" required />
-            <small id="usernameWarning" style="color: #e53e3e; display: none; font-size: 0.75rem; font-weight: bold;">Please do not include "@" or email suffixes (like .com).</small>
+            <small id="usernameWarning" style="color: #e53e3e; display: none; font-size: 0.75rem; font-weight: bold;">Please do not include "@" or email suffixes.</small>
         </div>
         <div class="form-group">
             <label>Password</label>
@@ -118,16 +115,13 @@
 </div>
 
 <script>
-    const client = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
+    const client = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'YOUR_ANON_KEY');
 
-    // Username Validation
     document.getElementById('username').addEventListener('input', function(e) {
         const warning = document.getElementById('usernameWarning');
         const value = e.target.value.toLowerCase();
-        
         if (value.includes('@') || value.includes('.com')) {
             warning.style.display = 'block';
-            // Automatically remove the invalid characters
             e.target.value = value.replace(/@/g, '').replace(/\.com/g, '');
         } else {
             warning.style.display = 'none';
@@ -162,12 +156,11 @@
             });
             if (authError) throw authError;
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
+            // Give the trigger a moment to create the database row
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
-                if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
                 const fileExt = fileInput.files[0].name.split('.').pop();
                 const filePath = `${authData.user.id}/${id}.${fileExt}`;
                 const { error: uploadError } = await client.storage.from('applications').upload(filePath, fileInput.files[0]);
@@ -177,11 +170,10 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
+            // Update the existing row instead of inserting
             const { error: dbError } = await client
                 .from('therapist_applications')
-                .insert([{
-                    auth_id: authData.user.id,
-                    username: username,
+                .update({
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     locations: locations,
@@ -190,8 +182,8 @@
                     gov_id_url: gov, 
                     selfie_url: selfie, 
                     cert_url: cert
-                }])
-                .select(null);
+                })
+                .eq('auth_id', authData.user.id);
 
             if (dbError) throw dbError;
             
