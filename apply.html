@@ -6,7 +6,7 @@
     <title>Therapist Application | JMCY Wellness Network</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; --border: #cbd5e0; --danger: #e53e3e; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        :root { --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; --border: #cbd5e0; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(rgba(247, 250, 252, 0.6), rgba(247, 250, 252, 0.6)), url('background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; padding: 40px 20px; color: #2d3748; line-height: 1.6; }
         .form-container { max-width: 600px; margin: 0 auto; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.3); }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(0,0,0,0.1); }
@@ -116,19 +116,22 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            const { error: updateError } = await client
+            // CHANGED: Using .insert() instead of .update()
+            const { error: insertError } = await client
                 .from('therapist_applications')
-                .update({
+                .insert({
+                    auth_id: authData.user.id, // Linked to the new user
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     locations: locations,
                     specialties: specialties,
                     phone: document.getElementById('phone').value,
-                    gov_id_url: gov, selfie_url: selfie, cert_url: cert
-                })
-                .eq('auth_id', authData.user.id);
+                    gov_id_url: gov, 
+                    selfie_url: selfie, 
+                    cert_url: cert
+                });
 
-            if (updateError) throw updateError;
+            if (insertError) throw insertError;
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
