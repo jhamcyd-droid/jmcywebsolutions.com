@@ -6,18 +6,27 @@
     <title>Therapist Application | JMCY Wellness Network</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; --border: #cbd5e0; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        :root { 
+            --primary: #1a365d; --accent: #2f855a; --bg: #f7fafc; 
+            --border: #cbd5e0; --danger: #e53e3e; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(rgba(247, 250, 252, 0.6), rgba(247, 250, 252, 0.6)), url('background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; padding: 40px 20px; color: #2d3748; line-height: 1.6; }
         .form-container { max-width: 600px; margin: 0 auto; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 40px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, 0.3); }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(0,0,0,0.1); }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .nav-link { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border: 1px solid var(--primary); border-radius: 6px; transition: all 0.2s; }
+        .nav-link:hover { background: var(--primary); color: white; }
         h2 { margin-bottom: 30px; color: var(--primary); text-align: center; font-weight: 700; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #2d3748; }
         input[type="text"], input[type="password"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: rgba(255,255,255,0.5); }
+        
+        .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
+        .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
+        
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         .submit-btn:disabled { background: #a0aec0; }
         .password-wrapper { position: relative; display: flex; align-items: center; }
@@ -27,16 +36,30 @@
 <body>
 
 <div class="form-container">
-    <nav class="navbar"><a href="index.html" class="logo">JMCY</a><a href="index.html" class="nav-link">&larr; Back</a></nav>
+    <nav class="navbar">
+        <a href="index.html" class="logo">JMCY</a>
+        <a href="index.html" class="nav-link">&larr; Back to Home</a>
+    </nav>
+
     <h2>Therapist Application</h2>
     <form id="hireForm">
-        <div class="form-group"><label>Username</label><input type="text" id="username" required /></div>
-        <div class="form-group"><label>Password</label>
-            <div class="password-wrapper"><input type="password" id="password" required minlength="8" /><button type="button" id="togglePass" class="toggle-password-btn">Show</button></div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" required />
+            <small id="usernameWarning" style="color: #e53e3e; display: none; font-size: 0.75rem; font-weight: bold;">Please do not include "@" or email suffixes (like .com).</small>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <div class="password-wrapper">
+                <input type="password" id="password" required minlength="8" />
+                <button type="button" id="togglePass" class="toggle-password-btn">Show</button>
+            </div>
         </div>
         <div class="form-group"><label>Full Legal Name</label><input type="text" id="fullName" required /></div>
         <div class="form-group"><label>Address</label><input type="text" id="address" required /></div>
-        <div class="form-group"><label>Preferred Locations (Select 1-3)</label>
+        
+        <div class="form-group">
+            <label>Preferred Locations (Select 1-3)</label>
             <div class="checkbox-group">
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Quezon City"> Quezon City</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Manila"> Manila</label>
@@ -48,25 +71,48 @@
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
             </div>
         </div>
-        <div class="form-group"><label>Massage Specialties</label>
+
+        <div class="form-group">
+            <label>Massage Specialties (Select all that apply)</label>
             <div class="checkbox-group">
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Swedish Massage"> Swedish Massage</label>
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Shiatsu Massage"> Shiatsu Massage</label>
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Thai Massage"> Thai Massage</label>
-                <label class="checkbox-item"><input type="checkbox" name="specialty" value="Reflexology"> Reflexology</label>
+                <label class="checkbox-item"><input type="checkbox" name="specialty" value="Reflexology / Foot"> Reflexology / Foot Massage</label>
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Aromatherapy"> Aromatherapy</label>
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Deep Tissue Massage"> Deep Tissue Massage</label>
                 <label class="checkbox-item"><input type="checkbox" name="specialty" value="Combination Massage"> Combination Massage</label>
             </div>
         </div>
+
         <div class="form-group"><label>Contact Number</label><input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}" required /></div>
-        <div class="form-group"><label>Government ID</label><input type="file" id="govId" accept="image/*" required /></div>
-        <div class="form-group"><label>Selfie with Gov. ID</label><input type="file" id="selfieId" accept="image/*" required /></div>
-        <div class="form-group"><label>Massage Certificate</label><input type="file" id="cert" accept="image/*,.pdf" required /></div>
+        
+        <div class="form-group">
+            <label>Government ID</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="govId" accept="image/*" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('govId').value=''">X</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Selfie with Gov. ID</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="selfieId" accept="image/*" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('selfieId').value=''">X</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Massage Certificate</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="cert" accept="image/*,.pdf" required />
+                <button type="button" class="delete-btn" onclick="document.getElementById('cert').value=''">X</button>
+            </div>
+        </div>
+
         <button type="submit" class="submit-btn" id="btn-submit">Submit Application</button>
     </form>
 </div>
@@ -74,10 +120,17 @@
 <script>
     const client = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
-    document.getElementById('username').addEventListener('input', function() {
-        if (/[@. ]/.test(this.value)) {
-            alert("Username cannot contain '@', '.', or spaces.");
-            this.value = this.value.replace(/[@. ]/g, '');
+    // Username Validation
+    document.getElementById('username').addEventListener('input', function(e) {
+        const warning = document.getElementById('usernameWarning');
+        const value = e.target.value.toLowerCase();
+        
+        if (value.includes('@') || value.includes('.com')) {
+            warning.style.display = 'block';
+            // Automatically remove the invalid characters
+            e.target.value = value.replace(/@/g, '').replace(/\.com/g, '');
+        } else {
+            warning.style.display = 'none';
         }
     });
 
@@ -90,36 +143,45 @@
     document.getElementById('hireForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-submit');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
         const locations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
         const specialties = Array.from(document.querySelectorAll('input[name="specialty"]:checked')).map(cb => cb.value);
         
         if (locations.length === 0 || locations.length > 3) return alert("Select 1-3 locations.");
-        if (specialties.length === 0) return alert("Please select at least one specialty.");
+        if (specialties.length === 0) return alert("Please select at least one massage specialty.");
 
-        btn.textContent = "Processing..."; btn.disabled = true;
+        btn.textContent = "Processing...";
+        btn.disabled = true;
 
         try {
-            const username = document.getElementById('username').value.trim();
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
-                password: document.getElementById('password').value
+                password: password,
+                options: { data: { username: username } }
             });
             if (authError) throw authError;
 
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
+
             const uploadFile = async (id) => {
-                const file = document.getElementById(id).files[0];
-                const path = `${authData.user.id}/${id}.${file.name.split('.').pop()}`;
-                const { error } = await client.storage.from('applications').upload(path, file);
-                if (error) throw error;
-                return client.storage.from('applications').getPublicUrl(path).data.publicUrl;
+                const fileInput = document.getElementById(id);
+                if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
+                const fileExt = fileInput.files[0].name.split('.').pop();
+                const filePath = `${authData.user.id}/${id}.${fileExt}`;
+                const { error: uploadError } = await client.storage.from('applications').upload(filePath, fileInput.files[0]);
+                if (uploadError) throw uploadError;
+                return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            const { error: insertError } = await client
+            const { error: dbError } = await client
                 .from('therapist_applications')
-                .insert({
+                .insert([{
                     auth_id: authData.user.id,
+                    username: username,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     locations: locations,
@@ -127,19 +189,19 @@
                     phone: document.getElementById('phone').value,
                     gov_id_url: gov, 
                     selfie_url: selfie, 
-                    cert_url: cert,
-                    status: 'pending',
-                    avatar_url: 'none',
-                    created_at: new Date().toISOString() // Included for safety
-                });
+                    cert_url: cert
+                }])
+                .select(null);
 
-            if (insertError) throw insertError;
+            if (dbError) throw dbError;
+            
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
-            console.error("Submission error:", err); // Check console for details
-            alert("Submission failed: " + (err.message || err));
-            btn.textContent = "Submit Application"; btn.disabled = false;
+            console.error("Submission Error:", err);
+            alert("Submission failed: " + err.message);
+            btn.textContent = "Submit Application";
+            btn.disabled = false;
         }
     });
 </script>
