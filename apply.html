@@ -116,11 +116,10 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // CHANGED: Using .insert() instead of .update()
             const { error: insertError } = await client
                 .from('therapist_applications')
                 .insert({
-                    auth_id: authData.user.id, // Linked to the new user
+                    auth_id: authData.user.id,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     locations: locations,
@@ -128,7 +127,9 @@
                     phone: document.getElementById('phone').value,
                     gov_id_url: gov, 
                     selfie_url: selfie, 
-                    cert_url: cert
+                    cert_url: cert,
+                    status: 'pending',        // Default added
+                    avatar_url: 'none'        // Default added
                 });
 
             if (insertError) throw insertError;
