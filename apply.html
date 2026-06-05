@@ -128,15 +128,17 @@
                     gov_id_url: gov, 
                     selfie_url: selfie, 
                     cert_url: cert,
-                    status: 'pending',        // Default added
-                    avatar_url: 'none'        // Default added
+                    status: 'pending',
+                    avatar_url: 'none',
+                    created_at: new Date().toISOString() // Included for safety
                 });
 
             if (insertError) throw insertError;
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
-            alert("Submission failed: " + err.message);
+            console.error("Submission error:", err); // Check console for details
+            alert("Submission failed: " + (err.message || err));
             btn.textContent = "Submit Application"; btn.disabled = false;
         }
     });
