@@ -24,7 +24,6 @@
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        /* Updated: Single column layout to fix text overflow seen in 1000017084.png */
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         
@@ -44,7 +43,11 @@
 
     <h2>Therapist Application</h2>
     <form id="hireForm">
-        <div class="form-group"><label>Username</label><input type="text" id="username" required /></div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" required />
+            <small id="usernameWarning" style="color: #e53e3e; display: none; font-size: 0.75rem; font-weight: bold;">Please do not include "@" or email suffixes.</small>
+        </div>
         <div class="form-group">
             <label>Password</label>
             <div class="password-wrapper">
@@ -68,7 +71,7 @@
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
-           <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
             </div>
         </div>
@@ -117,6 +120,17 @@
 <script>
     const client = window.supabase.createClient('https://ovzcjjekmekgxtjcxjbf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08');
 
+    document.getElementById('username').addEventListener('input', function(e) {
+        const warning = document.getElementById('usernameWarning');
+        const value = e.target.value.toLowerCase();
+        if (value.includes('@') || value.includes('.com')) {
+            warning.style.display = 'block';
+            e.target.value = value.replace(/@/g, '').replace(/\.com/g, '');
+        } else {
+            warning.style.display = 'none';
+        }
+    });
+
     document.getElementById('togglePass').addEventListener('click', function() {
         const pw = document.getElementById('password');
         pw.type = pw.type === 'password' ? 'text' : 'password';
@@ -145,8 +159,8 @@
             });
             if (authError) throw authError;
 
+            // Wait for the DB trigger to finish creating the row
             await new Promise(resolve => setTimeout(resolve, 2000));
-            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
 
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
@@ -160,11 +174,10 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
+            // Update the row the trigger created
             const { error: dbError } = await client
                 .from('therapist_applications')
-                .insert([{
-                    auth_id: authData.user.id,
-                    username: username,
+                .update({
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
                     locations: locations,
@@ -173,8 +186,8 @@
                     gov_id_url: gov, 
                     selfie_url: selfie, 
                     cert_url: cert
-                }])
-                .select(null);
+                })
+                .eq('auth_id', authData.user.id);
 
             if (dbError) throw dbError;
             
