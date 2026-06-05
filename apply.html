@@ -159,8 +159,8 @@
             });
             if (authError) throw authError;
 
-            // Wait for database trigger to create row
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Wait for the DB trigger to finish creating the row
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
@@ -174,7 +174,7 @@
 
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
-            // Update existing row (created by trigger) instead of insert
+            // Update the row the trigger created
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .update({
