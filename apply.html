@@ -166,8 +166,8 @@
                     username: username,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
-                    locations: locations,
-                    specialties: specialties,
+                    locations: locations,   // Back to native arrays matching text[]
+                    specialties: specialties, // Back to native arrays matching text[]
                     phone: document.getElementById('phone').value,
                     gov_id_url: gov, 
                     selfie_url: selfie, 
@@ -180,8 +180,9 @@
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
-            console.error("Submission Error:", err);
-            alert("Submission failed: " + err.message);
+            console.error("Submission Error Details:", err);
+            // This alert will display exact PostgreSQL error message detailed info if it still trips up
+            alert("Submission failed: " + (err.details || err.message || JSON.stringify(err)));
             btn.textContent = "Submit Application";
             btn.disabled = false;
         }
