@@ -127,20 +127,17 @@
         const btn = document.getElementById('btn-submit');
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
-        const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
-        const selectedSpecialties = Array.from(document.querySelectorAll('input[name="specialty"]:checked')).map(cb => cb.value);
+        const locations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+        const specialties = Array.from(document.querySelectorAll('input[name="specialty"]:checked')).map(cb => cb.value);
         
-        if (selectedLocations.length === 0 || selectedLocations.length > 3) return alert("Select 1-3 locations.");
-        if (selectedSpecialties.length === 0) return alert("Please select at least one massage specialty.");
-
-        // Convert data into a comma-separated text string to match database type 'text'
-        const locationsString = selectedLocations.join(', ');
-        const specialtiesString = selectedSpecialties.join(', ');
+        if (locations.length === 0 || locations.length > 3) return alert("Select 1-3 locations.");
+        if (specialties.length === 0) return alert("Please select at least one massage specialty.");
 
         btn.textContent = "Processing...";
         btn.disabled = true;
 
         try {
+            // 1. Sign up user
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -148,9 +145,7 @@
             });
             if (authError) throw authError;
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
-
+            // 2. Define scoped file uploader function
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
                 if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
@@ -161,8 +156,10 @@
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
+            // 3. Process the storage uploads asynchronously
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
+            // 4. Record insert block
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .insert([{
@@ -170,8 +167,8 @@
                     username: username,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
-                    locations: locationsString,   
-                    specialties: specialtiesString, 
+                    locations: locations,   
+                    specialties: specialties, 
                     phone: document.getElementById('phone').value,
                     gov_id_url: gov, 
                     selfie_url: selfie, 
@@ -184,8 +181,15 @@
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
-            console.error("Submission Error Details:", err);
-            alert("Submission failed: " + (err.details || err.message || JSON.stringify(err)));
+            console.error("Detailed Error Logs:", err);
+            
+            // Extract cleanly formatted string descriptors from error components
+            let errorText = err.message || err.error_description || "Unknown runtime exception";
+            if (err.details) {
+                errorText += ` (${err.details})`;
+            }
+            
+            alert("Submission failed: " + errorText);
             btn.textContent = "Submit Application";
             btn.disabled = false;
         }
