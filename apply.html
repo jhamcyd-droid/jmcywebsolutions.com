@@ -24,7 +24,6 @@
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        /* Updated: Single column layout to fix text overflow seen in 1000017084.png */
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         
@@ -62,11 +61,13 @@
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Manila"> Manila</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="San Juan"> San Juan</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Mandaluyong"> Mandaluyong</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Pasay"> Pasay</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Pasig"> Pasig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Makati"> Makati</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
             </div>
         </div>
@@ -126,16 +127,19 @@
         const btn = document.getElementById('btn-submit');
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
-        const locations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
-        const specialties = Array.from(document.querySelectorAll('input[name="specialty"]:checked')).map(cb => cb.value);
         
-        if (locations.length === 0 || locations.length > 3) return alert("Select 1-3 locations.");
-        if (specialties.length === 0) return alert("Please select at least one massage specialty.");
+        // Correctly gather items as a JavaScript Array mapping to text[]
+        const selectedLocations = Array.from(document.querySelectorAll('input[name="location"]:checked')).map(cb => cb.value);
+        const selectedSpecialties = Array.from(document.querySelectorAll('input[name="specialty"]:checked')).map(cb => cb.value);
+        
+        if (selectedLocations.length === 0 || selectedLocations.length > 3) return alert("Select 1-3 locations.");
+        if (selectedSpecialties.length === 0) return alert("Please select at least one massage specialty.");
 
         btn.textContent = "Processing...";
         btn.disabled = true;
 
         try {
+            // 1. Sign up user
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -143,9 +147,7 @@
             });
             if (authError) throw authError;
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
-
+            // 2. Define storage upload handler
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
                 if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
@@ -156,8 +158,10 @@
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
+            // 3. Process uploads asynchronously
             const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
 
+            // 4. Record insert block utilizing correct array types and column spells
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .insert([{
@@ -165,22 +169,30 @@
                     username: username,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
-                    locations: locations,
-                    specialties: specialties,
+                    locations: selectedLocations,      // Fixed: Kept as Array to match text[]
+                    specialties: selectedSpecialties,  // Fixed: Kept as Array to match text[]
                     phone: document.getElementById('phone').value,
                     gov_id_url: gov, 
                     selfie_url: selfie, 
-                    cert_url: cert
+                    cert_url: cert,
+                    avatar_url: 'none',                // Fixed: Correct column name spelling
+                    status: 'pending'                  // Fixed: Correct column name spelling
                 }])
-                .select(null);
+                .select();
 
             if (dbError) throw dbError;
             
             alert("Application successful!");
             window.location.href = "login.html";
         } catch (err) {
-            console.error("Submission Error:", err);
-            alert("Submission failed: " + err.message);
+            console.error("Detailed Error Logs:", err);
+            
+            let errorText = err.message || err.error_description || "Unknown runtime exception";
+            if (err.details) {
+                errorText += ` (${err.details})`;
+            }
+            
+            alert("Submission failed: " + errorText);
             btn.textContent = "Submit Application";
             btn.disabled = false;
         }
