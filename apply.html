@@ -24,7 +24,6 @@
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        /* Updated: Single column layout to fix text overflow seen in 1000017084.png */
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         
@@ -68,7 +67,7 @@
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
-           <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>    
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
             </div>
         </div>
@@ -174,7 +173,7 @@
                     selfie_url: selfie, 
                     cert_url: cert
                 }])
-                .select(null);
+                .select();
 
             if (dbError) throw dbError;
             
