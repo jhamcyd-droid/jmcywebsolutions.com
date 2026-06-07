@@ -82,7 +82,7 @@
         /* Layout Actions Configuration */
         .nav-actions { display: flex; align-items: center; gap: 15px; }
         
-        /* Desktop Secondary Navigation Link Styling (UPDATED TO GREEN MATCHING LOOK) */
+        /* Desktop Secondary Navigation Link Styling */
         .nav-portal-btn { 
             background-color: var(--accent); 
             color: white; 
@@ -187,7 +187,7 @@
            ========================================================================== */
         .rates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             max-width: 1200px;
             margin: 0 auto;
@@ -212,9 +212,6 @@
             padding-bottom: 10px;
         }
         .tier-block {
-            margin-bottom: 18px;
-        }
-        .tier-block:last-child {
             margin-bottom: 0;
         }
         .duration-badge {
@@ -233,6 +230,10 @@
             background-color: var(--light);
             border-radius: 6px;
             padding: 12px 15px;
+        }
+        .gradient-highlight {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border: 1px solid #b2f5ea;
         }
         .metric-row {
             display: flex;
@@ -601,8 +602,8 @@
                 <p>Eliminate manual bidding. Our centralized logistics system instantly assigns localized therapeutic bookings straight to your dashboard portal device.</p>
             </div>
             <div class="card">
-                <h3>Keep 85% of Your Rates</h3>
-                <p>Retain the overwhelming majority of your professional work rate value. Partners only owe a simple 15% platform fee balance per completed appointment.</p>
+                <h3>Keep 80% of Your Rates</h3>
+                <p>Retain the overwhelming majority of your professional work rate value. Partners only owe a simple 20% platform fee balance per completed appointment.</p>
             </div>
         </div>
     </section>
@@ -618,217 +619,84 @@
         <div class="rates-grid" id="rates-matrix-container">
             <div class="rate-card">
                 <h3 id="rate-t1">Swedish Massage</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱500.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱75.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱425.00</span></div>
-                    </div>
-                </div>
-
                 <div class="tier-block">
                     <span class="duration-badge d-2h">2 Hours</span>
                     <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱950.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱142.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱807.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,400.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱210.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,190.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t1-c">₱1,000.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t1-f">₱200.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t1-t">₱800.00</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="rate-card">
                 <h3 id="rate-t2">Shiatsu Massage</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱550.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱82.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱467.50</span></div>
-                    </div>
-                </div>
-
                 <div class="tier-block">
                     <span class="duration-badge d-2h">2 Hours</span>
                     <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,050.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱157.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱892.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,550.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱232.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,317.50</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t2-c">₱1,100.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t2-f">₱220.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t2-t">₱880.00</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="rate-card">
                 <h3 id="rate-t3">Thai Massage</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱550.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱82.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱467.50</span></div>
-                    </div>
-                </div>
-
                 <div class="tier-block">
                     <span class="duration-badge d-2h">2 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,050.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱157.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱892.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,550.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱232.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,317.50</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rate-card">
-                <h3 id="rate-t4">Reflexology / Foot</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱500.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱75.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱425.00</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-2h">2 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱950.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱142.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱807.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,400.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱210.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,190.00</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rate-card">
-                <h3 id="rate-t5">Aromatherapy</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱650.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱97.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱552.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-2h">2 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,250.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱187.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,062.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,850.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱277.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,572.50</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rate-card">
-                <h3 id="rate-t6">Deep Tissue Massage</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱700.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱105.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱595.00</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-2h">2 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,350.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱202.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,147.50</span></div>
-                    </div>
-                </div>
-
-                <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱2,000.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱300.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,700.00</span></div>
+                    <div class="rate-metrics gradient-highlight">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t3-c">₱1,100.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t3-f">₱220.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t3-t">₱880.00</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="rate-card">
                 <h3 id="rate-t7">Combination Massage</h3>
-                
-                <div class="tier-block">
-                    <span class="duration-badge d-1h">1 Hour</span>
-                    <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱600.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱90.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱510.00</span></div>
-                    </div>
-                </div>
-
                 <div class="tier-block">
                     <span class="duration-badge d-2h">2 Hours</span>
                     <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,150.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱172.50</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱977.50</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t7-c">₱1,000.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t7-f">₱200.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t7-t">₱800.00</span></div>
                     </div>
                 </div>
+            </div>
 
+            <div class="rate-card">
+                <h3 id="rate-t6">Deep Tissue Massage</h3>
                 <div class="tier-block">
-                    <span class="duration-badge d-3h">3 Hours</span>
+                    <span class="duration-badge d-2h">2 Hours</span>
                     <div class="rate-metrics">
-                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val">₱1,700.00</span></div>
-                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (15%):</span><span class="metric-val">₱255.00</span></div>
-                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val">₱1,445.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t6-c">₱1,300.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t6-f">₱260.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t6-t">₱1,040.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3 id="rate-t4">Reflexology / Foot</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t4-c">₱1,200.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t4-f">₱240.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t4-t">₱960.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3 id="rate-t5">Aromatherapy</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t5-c">₱1,400.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t5-f">₱280.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t5-t">₱1,120.00</span></div>
                     </div>
                 </div>
             </div>
@@ -852,7 +720,7 @@
                 <div class="step-node">
                     <div class="step-number">3</div>
                     <h4>Collect & Remit</h4>
-                    <p>Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash payment, then send the 15% commission slice to JMCY.</p>
+                    <p>Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash payment, then send the 20% commission slice to JMCY.</p>
                 </div>
             </div>
             <div class="pipeline-dots">
@@ -878,7 +746,7 @@
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question" id="q2">What is required to return to active status and receive new bookings after a session? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a2">Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 15% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.</div>
+                <div class="faq-answer" id="a2">Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 20% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question" id="q3">What are the core requirements to join the platform? <span class="faq-icon"></span></div>
@@ -886,7 +754,7 @@
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
                 <div class="faq-question" id="q4">How does the payout mechanism distribute earnings? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a4">There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash or GCash upon arrival or service completion. Afterwards, you remit the 15% network commission allocation to JMCY in accordance with terms.</div>
+                <div class="faq-answer" id="a4">There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash or GCash upon arrival or service completion. Afterwards, you remit the 20% network commission allocation to JMCY in accordance with terms.</div>
             </div>
         </div>
     </section>
@@ -898,9 +766,9 @@
             <p id="terms-p1">By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:</p>
             <ul id="terms-list">
                 <li><strong>Direct Client Remittance:</strong> All customer payments are sent directly to the assigned therapist via GCash or standard physical Cash at the point of service delivery.</li>
-                <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 15% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
-                <li><strong>System Maintenances:</strong> This 15% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
-                <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 15% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+                <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 20% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
+                <li><strong>System Maintenances:</strong> This 20% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
+                <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 20% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
             </ul>
         </div>
     </section>
@@ -968,11 +836,9 @@
         const totalSteps = 3;
 
         function updatePipelineSlider() {
-            // Shift offset ratio percentage calculation per slider index block
             const offset = -(activeStep * 33.333);
             track.style.transform = `translateX(${offset}%)`;
             
-            // Sync dot indicators styles
             dots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === activeStep);
             });
@@ -981,10 +847,9 @@
         function goToStep(index) {
             activeStep = index;
             updatePipelineSlider();
-            resetPipelineTimer(); // Resets timer loop upon manual client dot hit
+            resetPipelineTimer(); 
         }
 
-        // Auto Animation Shift Rail Processing Loop
         let pipelineInterval = setInterval(() => {
             activeStep = (activeStep + 1) % totalSteps;
             updatePipelineSlider();
@@ -1030,28 +895,36 @@
                 promoAction: "Apply Now &rarr;",
                 ratesTitle: "Standard Service Rates & Therapist Earnings",
                 lblCustomer: "Customer Pays:",
-                lblFee: "JMCY Fee (15%):",
+                lblFee: "JMCY Fee (20%):",
                 lblTakeHome: "Your Take-Home:",
-                h1: "1 Hour",
                 h2: "2 Hours",
-                h3: "3 Hours",
+                titleT3: "Thai Massage",
+                titleT7: "Combination Massage",
+                // Structured Tier Price Mapping Data (English Strings)
+                t1C: "₱1,000.00", t1F: "₱200.00", t1T: "₱800.00",
+                t2C: "₱1,100.00", t2F: "₱220.00", t2T: "₱880.00",
+                t3C: "₱1,100.00", t3F: "₱220.00", t3T: "₱880.00",
+                t7C: "₱1,000.00", t7F: "₱200.00", t7T: "₱800.00",
+                t6C: "₱1,300.00", t6F: "₱260.00", t6T: "₱1,040.00",
+                t4C: "₱1,200.00", t4F: "₱240.00", t4T: "₱960.00",
+                t5C: "₱1,400.00", t5F: "₱280.00", t5T: "₱1,120.00",
                 faqTitle: "Frequently Asked Questions",
                 q1: "How do freelancers receive a client booking? <span class='faq-icon'></span>",
                 a1: "When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.",
                 q2: "What is required to return to active status and receive new bookings after a session? <span class='faq-icon'></span>",
-                a2: "Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 15% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.",
+                a2: "Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 20% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.",
                 q3: "What are the core requirements to join the platform? <span class='faq-icon'></span>",
                 a3: "Applicants must present a valid government-issued ID and proof of massage therapy training or certification.",
                 q4: "How does the payout mechanism distribute earnings? <span class='faq-icon'></span>",
-                a4: "There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash or GCash upon arrival or service completion. Afterwards, you remit the 15% network commission allocation to JMCY in accordance with terms.",
+                a4: "There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash or GCash upon arrival or service completion. Afterwards, you remit the 20% network commission allocation to JMCY in accordance with terms.",
                 termsTitle: "Platform Operations & Commission Policy",
                 termsSubtitle: "Revenue Split Framework",
                 termsP1: "By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:",
                 termsList: `
                     <li><strong>Direct Client Remittance:</strong> All customer payments are sent directly to the assigned therapist via GCash or standard physical Cash at the point of service delivery.</li>
-                    <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 15% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
-                    <li><strong>System Maintenances:</strong> This 15% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
-                    <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 15% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+                    <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 20% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
+                    <li><strong>System Maintenances:</strong> This 20% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
+                    <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 20% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
                 `
             },
             tl: {
@@ -1060,35 +933,42 @@
                 promoAction: "Mag-apply Ngayon &rarr;",
                 ratesTitle: "Presyo ng Serbisyo at Kita ng Therapist",
                 lblCustomer: "Bayad ng Customer:",
-                lblFee: "Kaltas ng JMCY (15%):",
+                lblFee: "Kaltas ng JMCY (20%):",
                 lblTakeHome: "Sariwang Kita Mo:",
-                h1: "1 Oras",
                 h2: "2 Oras",
-                h3: "3 Oras",
+                titleT3: "Thai Massage",
+                titleT7: "Combination Massage",
+                // Structured Tier Price Mapping Data (Tagalog Strings matching currency standard)
+                t1C: "₱1,000.00", t1F: "₱200.00", t1T: "₱800.00",
+                t2C: "₱1,100.00", t2F: "₱220.00", t2T: "₱880.00",
+                t3C: "₱1,100.00", t3F: "₱220.00", t3T: "₱880.00",
+                t7C: "₱1,000.00", t7F: "₱200.00", t7T: "₱800.00",
+                t6C: "₱1,300.00", t6F: "₱260.00", t6T: "₱1,040.00",
+                t4C: "₱1,200.00", t4F: "₱240.00", t4T: "₱960.00",
+                t5C: "₱1,400.00", t5F: "₱280.00", t5T: "₱1,120.00",
                 faqTitle: "Mga Madalas Itanong (FAQs)",
                 q1: "Paano nakakatanggap ang mga freelancer ng booking mula sa kliyente? <span class='faq-icon'></span>",
                 a1: "Kapag nag-book ang isang customer sa aming mga channel, titingnan ng algorithm ng JMCY kung sinong mga therapist ang malapit sa lugar. Ang mga mapipiling professional ay makakatanggap agad ng push notification alert sa kanilang network web dashboard na naglalaman ng petsa, oras, at lokasyon ng booking.",
                 q2: "Ano ang kailangang gawin para maging 'Active' muli at makatanggap ng bagong booking pagkatapos ng massage session? <span class='faq-icon'></span>",
-                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click the button na 'Mark Service as Completed'. Ito ang magtatala ng 15% platform fee na dapat mong i-remit, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking.",
+                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click the button na 'Mark Service as Completed'. Ito ang magtatala ng 20% platform fee na dapat mong i-remit, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking.",
                 q3: "Ano ang mga pangunahing kinakailangan para sumali sa platform? <span class='faq-icon'></span>",
                 a3: "Ang mga aplikante ay kailangang magsumite ng balidong government-issued ID at sertipiko o patunay ng pagsasanay sa massage therapy.",
                 q4: "Paano ipinapadala ang kita o payout sa mga therapist? <span class='faq-icon'></span>",
-                a4: "Walang waiting period o antala sa sahod. Ang customer ay direktang magbabayad sa iyo ng buong halaga gamit ang Cash o GCash pagdating o pagkatapos ng serbisyo. Pagkatapos nito, ipadadala o ire-remit mo ang 15% komisyon sa JMCY alinsunod sa kasunduan.",
+                a4: "Walang waiting period o antala sa sahod. Ang customer ay direktang magbabayad sa iyo ng buong halaga gamit ang Cash o GCash pagdating o pagkatapos ng serbisyo. Pagkatapos nito, ipadadala o ire-remit mo ang 20% komisyon sa JMCY alinsunod sa kasunduan.",
                 termsTitle: "Operasyon ng Platform & Patakaran sa Komisyon",
                 termsSubtitle: "Kasunduan sa Paghahati ng Kita",
                 termsP1: "Sa pagpaparehistro sa JMCY Freelance Network, ang mga independent contractor ay sumasang-ayon sa aming patakaran sa transaksyon:",
                 termsList: `
                     <li><strong>Direktang Bayad sa Therapist:</strong> Lahat ng bayad ng customer ay direktang ibinibigay sa nakatalagang therapist sa pamamagitan ng GCash o pisikal na Cash sa oras ng serbisyo.</li>
-                    <li><strong>Kaltas o Komisyon:</strong> Ang mga independent therapist ay sumasang-ayon na magpadala ng fixed 15% platform commission ng bawat matagumpay na booking sa JMCY alinsunod sa mga tuntunin at kondisyon ng system.</li>
-                    <li><strong>Pagpapanatili ng System:</strong> Ang 15% na porsyentong ito ay ginagamit para sa pagpapanatili ng app/website, server upkeep, pamamahala sa operasyon, at patuloy na marketing para magkaroon ng mga bagong customer.</li>
-                    <li><strong>Prinsipyo ng Transparency:</strong> Makikita mo nang malinaw ang buong breakdown at ang eksaktong halaga ng 15% komisyon na dapat i-remit sa iyong dashboard bago mo tanggapin ang anumang papasok na booking.</li>
+                    <li><strong>Kaltas o Komisyon:</strong> Ang mga independent therapist ay sumasang-ayon na magpadala ng fixed 20% platform commission ng bawat matagumpay na booking sa JMCY alinsunod sa mga tuntunin at kondisyon ng system.</li>
+                    <li><strong>Pagpapanatili ng System:</strong> Ang 20% na porsyentong ito ay ginagamit para sa pagpapanatili ng app/website, server upkeep, pamamahala sa operasyon, at patuloy na marketing para magkaroon ng mga bagong customer.</li>
+                    <li><strong>Prinsipyo ng Transparency:</strong> Makikita mo nang malinaw ang buong breakdown at ang eksaktong halaga ng 20% komisyon na dapat i-remit sa iyong dashboard bago mo tanggapin ang anumang papasok na booking.</li>
                 `
             }
         };
 
         // UI Language Switch Engine Logic
         function changeLanguage(lang) {
-            // Update Active Buttons styles across both sets
             document.getElementById('lang-en').classList.remove('active');
             document.getElementById('lang-tl').classList.remove('active');
             document.getElementById('lang-en-faq').classList.remove('active');
@@ -1102,18 +982,47 @@
             document.getElementById('promo-msg').innerText = translations[lang].promoMsg;
             document.getElementById('promo-action').innerHTML = translations[lang].promoAction;
 
-            // Rates Section Dynamic Labels Translation (Handles tiered labels by class lookup)
+            // Rates Section Title and Base Labels
             document.getElementById('rates-section-title').innerText = translations[lang].ratesTitle;
-            
             document.querySelectorAll('.lbl-customer').forEach(el => el.innerText = translations[lang].lblCustomer);
             document.querySelectorAll('.lbl-fee').forEach(el => el.innerText = translations[lang].lblFee);
             document.querySelectorAll('.lbl-takehome').forEach(el => el.innerText = translations[lang].lblTakeHome);
-
-            // Dynamic Time Duration Badges translation injection loops
-            document.querySelectorAll('.d-1h').forEach(el => el.innerText = translations[lang].h1);
             document.querySelectorAll('.d-2h').forEach(el => el.innerText = translations[lang].h2);
-            document.querySelectorAll('.d-3h').forEach(el => el.innerText = translations[lang].h3);
 
+            // Re-assign service names properly
+            document.getElementById('rate-t3').innerText = translations[lang].titleT3;
+            document.getElementById('rate-t7').innerText = translations[lang].titleT7;
+
+            // Inject Mutated Structured Hourly Pricing Metrics
+            document.getElementById('val-t1-c').innerText = translations[lang].t1C;
+            document.getElementById('val-t1-f').innerText = translations[lang].t1F;
+            document.getElementById('val-t1-t').innerText = translations[lang].t1T;
+
+            document.getElementById('val-t2-c').innerText = translations[lang].t2C;
+            document.getElementById('val-t2-f').innerText = translations[lang].t2F;
+            document.getElementById('val-t2-t').innerText = translations[lang].t2T;
+
+            document.getElementById('val-t3-c').innerText = translations[lang].t3C;
+            document.getElementById('val-t3-f').innerText = translations[lang].t3F;
+            document.getElementById('val-t3-t').innerText = translations[lang].t3T;
+
+            document.getElementById('val-t7-c').innerText = translations[lang].t7C;
+            document.getElementById('val-t7-f').innerText = translations[lang].t7F;
+            document.getElementById('val-t7-t').innerText = translations[lang].t7T;
+
+            document.getElementById('val-t6-c').innerText = translations[lang].t6C;
+            document.getElementById('val-t6-f').innerText = translations[lang].t6F;
+            document.getElementById('val-t6-t').innerText = translations[lang].t6T;
+
+            document.getElementById('val-t4-c').innerText = translations[lang].t4C;
+            document.getElementById('val-t4-f').innerText = translations[lang].t4F;
+            document.getElementById('val-t4-t').innerText = translations[lang].t4T;
+
+            document.getElementById('val-t5-c').innerText = translations[lang].t5C;
+            document.getElementById('val-t5-f').innerText = translations[lang].t5F;
+            document.getElementById('val-t5-t').innerText = translations[lang].t5T;
+
+            // FAQ Component Elements
             document.getElementById('faq-title').innerText = translations[lang].faqTitle;
             document.getElementById('q1').innerHTML = translations[lang].q1;
             document.getElementById('a1').innerHTML = translations[lang].a1;
@@ -1124,12 +1033,13 @@
             document.getElementById('q4').innerHTML = translations[lang].q4;
             document.getElementById('a4').innerHTML = translations[lang].a4;
             
+            // Operational Policy Terms
             document.getElementById('terms-title').innerText = translations[lang].termsTitle;
             document.getElementById('terms-subtitle').innerText = translations[lang].termsSubtitle;
             document.getElementById('terms-p1').innerText = translations[lang].termsP1;
             document.getElementById('terms-list').innerHTML = translations[lang].termsList;
 
-            // Collapse open tabs
+            // Collapse open accordion tabs
             document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
         }
     </script>
