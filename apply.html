@@ -24,7 +24,6 @@
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        /* Updated: Single column layout to fix text overflow seen in 1000017084.png */
         .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         
@@ -136,6 +135,7 @@
         btn.disabled = true;
 
         try {
+            // 1. Authenticate user registration structure
             const { data: authData, error: authError } = await client.auth.signUp({
                 email: `${username}@jmcywellness.com`,
                 password: password,
@@ -143,25 +143,35 @@
             });
             if (authError) throw authError;
 
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            await client.auth.signInWithPassword({ email: `${username}@jmcywellness.com`, password: password });
+            const userId = authData?.user?.id;
+            if (!userId) throw new Error("Could not fetch unique User authentication registration instance ID.");
 
+            // 2. Storage file handling framework
             const uploadFile = async (id) => {
                 const fileInput = document.getElementById(id);
                 if (!fileInput.files[0]) throw new Error(`Missing file: ${id}`);
                 const fileExt = fileInput.files[0].name.split('.').pop();
-                const filePath = `${authData.user.id}/${id}.${fileExt}`;
-                const { error: uploadError } = await client.storage.from('applications').upload(filePath, fileInput.files[0]);
+                const filePath = `${userId}/${id}.${fileExt}`;
+                
+                const { error: uploadError } = await client.storage.from('applications').upload(filePath, fileInput.files[0], {
+                    upsert: true
+                });
                 if (uploadError) throw uploadError;
+                
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
-            const [gov, selfie, cert] = await Promise.all([uploadFile('govId'), uploadFile('selfieId'), uploadFile('cert')]);
+            const [gov, selfie, cert] = await Promise.all([
+                uploadFile('govId'), 
+                uploadFile('selfieId'), 
+                uploadFile('cert')
+            ]);
 
+            // 3. Database mapping execution pipeline
             const { error: dbError } = await client
                 .from('therapist_applications')
                 .insert([{
-                    auth_id: authData.user.id,
+                    auth_id: userId,
                     username: username,
                     full_name: document.getElementById('fullName').value,
                     address: document.getElementById('address').value,
@@ -171,8 +181,7 @@
                     gov_id_url: gov, 
                     selfie_url: selfie, 
                     cert_url: cert
-                }])
-                .select(null);
+                }]);
 
             if (dbError) throw dbError;
             
@@ -180,7 +189,7 @@
             window.location.href = "login.html";
         } catch (err) {
             console.error("Submission Error:", err);
-            alert("Submission failed: " + err.message);
+            alert("Submission failed: " + (err.message || "Unknown database validation issue."));
             btn.textContent = "Submit Application";
             btn.disabled = false;
         }
