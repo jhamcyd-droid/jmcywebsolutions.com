@@ -108,7 +108,7 @@
         <div class="form-group">
             <label>Massage Certificate <small style="color:#718096;">(Max size: 2MB)</small></label>
             <div class="file-input-wrapper">
-                <input type="file" id="cert" accept="image/*,.pdf" required />
+                <input type="file" id="cert" accept="image/*" required />
                 <button type="button" class="delete-btn" onclick="document.getElementById('cert').value=''">X</button>
             </div>
         </div>
@@ -124,7 +124,6 @@
     const usernameError = document.getElementById('usernameError');
     const btnSubmit = document.getElementById('btn-submit');
 
-    // Live Lowercase Filter & Strict Symbol/Space Stripper Engine
     usernameInput.addEventListener('input', function() {
         let originalValue = this.value;
         let cleanedValue = originalValue.toLowerCase().replace(/[^a-z0-9_]/g, '');
@@ -156,8 +155,8 @@
             return alert("Invalid username format. Please avoid using spaces, uppercase letters, or special characters.");
         }
 
-        // --- NEW: STRICT 2MB FILE SIZE CHECK ---
-        const MAX_SIZE_2MB = 2 * 1024 * 1024; // 2 Megabytes in bytes
+        // STRICT 2MB FILE SIZE CHECK FOR ALL THREE IMAGES
+        const MAX_SIZE_2MB = 2 * 1024 * 1024;
         
         const fileFields = [
             { id: 'govId', label: 'Government ID' },
@@ -168,10 +167,9 @@
         for (const fileField of fileFields) {
             const fileInput = document.getElementById(fileField.id);
             if (fileInput.files[0] && fileInput.files[0].size > MAX_SIZE_2MB) {
-                return alert(`⚠️ Submission Blocked!\n\nYour "${fileField.label}" file is larger than 2MB. Supabase cannot accept files larger than 2MB on this free plan.\n\nPlease compress the image or take a smaller screenshot before uploading.`);
+                return alert(`⚠️ Submission Blocked!\n\nYour "${fileField.label}" file is larger than 2MB.\n\nPlease compress the image or take a screenshot to make the file smaller before uploading.`);
             }
         }
-        // ---------------------------------------
 
         btnSubmit.textContent = "Uploading assets... Please do not close or refresh this page.";
         btnSubmit.disabled = true;
@@ -221,6 +219,7 @@
                 return client.storage.from('applications').getPublicUrl(filePath).data.publicUrl;
             };
 
+            // This now executes all three file uploads under identical image-only rules
             const [gov, selfie, cert] = await Promise.all([
                 uploadFile('govId'), 
                 uploadFile('selfieId'), 
