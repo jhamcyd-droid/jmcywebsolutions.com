@@ -49,7 +49,7 @@
         <div class="form-group">
             <label>Username</label>
             <input type="text" id="username" placeholder="e.g. juan_delacruz" required />
-            <div id="usernameError" class="error-note">⚠️ Please enter a simple username only. Do not include "@" symbols or email extensions.</div>
+            <div id="usernameError" class="error-note">⚠️ Email characters removed! Please enter a simple username only, without "@" or domains.</div>
         </div>
         <div class="form-group">
             <label>Password</label>
@@ -125,18 +125,34 @@
     const usernameError = document.getElementById('usernameError');
     const btnSubmit = document.getElementById('btn-submit');
 
-    // Live Email and Special Character Filter
+    // Live Email Cleaner and Filter
     usernameInput.addEventListener('input', function() {
-        const value = this.value;
-        const hasAtSymbol = value.includes('@');
-        const hasDomain = value.includes('.com') || value.includes('.net') || value.includes('.org');
+        let value = this.value;
+        let detailsAltered = false;
 
-        if (hasAtSymbol || hasDomain) {
+        // Clean out @ symbols instantly
+        if (value.includes('@')) {
+            value = value.replace(/@/g, '');
+            detailsAltered = true;
+        }
+
+        // Clean out explicit standard email extensions
+        const domains = [/\.com/gi, /\.net/gi, /\.org/gi, /\.edu/gi, /\.ph/gi];
+        domains.forEach(domainReg => {
+            if (domainReg.test(value)) {
+                value = value.replace(domainReg, '');
+                detailsAltered = true;
+            }
+        });
+
+        if (detailsAltered) {
+            this.value = value; // Update the actual UI text input field box directly
             usernameError.style.display = 'block';
-            btnSubmit.disabled = true;
-        } else {
-            usernameError.style.display = 'none';
-            btnSubmit.disabled = false;
+            
+            // Brief visual warning effect, hides notice banner after 4 seconds
+            setTimeout(() => {
+                usernameError.style.display = 'none';
+            }, 4000);
         }
     });
 
@@ -156,9 +172,9 @@
         if (locations.length === 0 || locations.length > 3) return alert("Select 1-3 locations.");
         if (specialties.length === 0) return alert("Please select at least one massage specialty.");
 
-        // Fallback validation guard clause
+        // Fallback protection check
         if (username.includes('@') || username.includes('.com')) {
-            return alert("Invalid Username. Remove email characters before proceeding.");
+            return alert("Invalid Username style format detected.");
         }
 
         btnSubmit.textContent = "Processing...";
