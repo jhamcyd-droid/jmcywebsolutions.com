@@ -80,17 +80,20 @@
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-decoration: none; }
         
         /* Layout Actions Configuration */
-        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
         
-        /* Desktop Secondary Navigation Link Styling */
-        .nav-link { 
-            text-decoration: none; 
-            color: var(--dark); 
-            font-weight: 600; 
-            font-size: 0.95rem; 
-            transition: color 0.2s; 
+        /* Desktop Secondary Navigation Link Styling (UPDATED TO GREEN MATCHING LOOK) */
+        .nav-portal-btn { 
+            background-color: var(--accent); 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; border-radius: 4px; 
+            font-size: 0.9rem; font-weight: 600; 
+            text-decoration: none; display: inline-block; 
+            transition: background-color 0.2s, transform 0.2s; 
+            letter-spacing: 0.5px;
         }
-        .nav-link:hover { color: var(--secondary); }
+        .nav-portal-btn:hover { background-color: #276749; transform: translateY(-1px); }
 
         /* Hamburger Toggle Button Styling */
         .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 5px; flex-direction: column; gap: 5px; z-index: 110; }
@@ -133,6 +136,9 @@
         }
         .hero-content h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
         .hero-content p { font-size: 1.1rem; margin: 0 0 30px 0; opacity: 0.9; font-weight: 300; max-width: 600px; }
+        
+        /* Hero buttons container placement grouping wrapper */
+        .hero-btn-group { display: flex; gap: 15px; flex-wrap: wrap; }
 
         /* Unified Button Component */
         .cta-btn { 
@@ -146,6 +152,10 @@
             letter-spacing: 0.5px;
         }
         .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
+        
+        /* Explicit Dark Accent layout style overrides for distinct hero button layout spacing */
+        .cta-btn-dark { background-color: transparent; border: 2px solid white; }
+        .cta-btn-dark:hover { background-color: white; color: var(--primary); }
 
         /* Structural Page Sections */
         section { 
@@ -259,7 +269,7 @@
 
         /* ==========================================================================
            RECRUITMENT PIPELINE 1-BY-1 SLIDESHOW CAROUSEL
-           ========================================================================== */
+           ========================================================================= */
         .pipeline-wrapper {
             max-width: 550px;
             margin: 0 auto;
@@ -483,6 +493,7 @@
                 z-index: 105; 
             }
             .nav-link { font-size: 1.15rem; width: 100%; padding: 5px 0; display: block; }
+            .nav-portal-btn { width: 100%; box-sizing: border-box; text-align: center; }
             .cta-btn { width: 100%; box-sizing: border-box; text-align: center; }
             
             /* Mobile Drawer Toggle Execution States */
@@ -494,11 +505,12 @@
             section { padding: 50px 5%; }
             section h2 { font-size: 1.65rem; margin-bottom: 30px; }
             
-            .hero-slider { height: 320px; }
+            .hero-slider { height: 360px; }
             .slide::before { background: linear-gradient(to bottom, rgba(26, 54, 93, 0.95), rgba(42, 67, 101, 0.8)); }
             .hero-content { padding: 0 5%; text-align: center; }
             .hero-content h1 { font-size: 1.6rem; }
             .hero-content p { font-size: 0.95rem; }
+            .hero-btn-group { justify-content: center; gap: 10px; }
 
             .grid, .about-split { flex-direction: column; gap: 30px; }
             .card { max-width: 100%; width: 100%; box-sizing: border-box; }
@@ -538,7 +550,7 @@
         </button>
 
         <div class="nav-actions" id="nav-actions-container">
-            <a href="login.html" class="nav-link">Login Portal</a>
+            <a href="login.html" class="nav-portal-btn">Login Portal</a>
             <a href="apply.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Apply Now</a>
         </div>
     </header>
@@ -548,14 +560,20 @@
             <div class="hero-content">
                 <h1>Maximize Your Revenue as a Licensed Massage Therapist</h1>
                 <p>Join the JMCY Wellness Network. Receive direct client payments via GCash or Cash and enjoy unmatched operational freelance flexibility.</p>
-                <a href="apply.html" class="cta-btn">Submit Application</a>
+                <div class="hero-btn-group">
+                    <a href="apply.html" class="cta-btn">Submit Application</a>
+                    <a href="login.html" class="cta-btn cta-btn-dark">Login Portal</a>
+                </div>
             </div>
         </div>
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
                 <h1>Flexible Scheduling. Total Control.</h1>
                 <p>Manage your own hours and choose your localized coverage zones. Our smart backend logic routes appointments dynamically to match your availability.</p>
-                <a href="apply.html" class="cta-btn">Begin Registration</a>
+                <div class="hero-btn-group">
+                    <a href="apply.html" class="cta-btn">Begin Registration</a>
+                    <a href="login.html" class="cta-btn cta-btn-dark">Login Portal</a>
+                </div>
             </div>
         </div>
     </section>
