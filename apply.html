@@ -21,7 +21,6 @@
         label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; color: #2d3748; }
         input[type="text"], input[type="password"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; background: rgba(255,255,255,0.5); }
         
-        /* Error text style for Username Validation */
         .error-note { color: var(--danger); font-size: 0.8rem; font-weight: 600; margin-top: 6px; display: none; }
         
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
@@ -93,21 +92,21 @@
         <div class="form-group"><label>Contact Number</label><input type="tel" id="phone" placeholder="09XXXXXXXXX" pattern="^(09)\d{9}" required /></div>
         
         <div class="form-group">
-            <label>Government ID</label>
+            <label>Government ID <small style="color:#718096;">(Max size: 2MB)</small></label>
             <div class="file-input-wrapper">
                 <input type="file" id="govId" accept="image/*" required />
                 <button type="button" class="delete-btn" onclick="document.getElementById('govId').value=''">X</button>
             </div>
         </div>
         <div class="form-group">
-            <label>Selfie with Gov. ID</label>
+            <label>Selfie with Gov. ID <small style="color:#718096;">(Max size: 2MB)</small></label>
             <div class="file-input-wrapper">
                 <input type="file" id="selfieId" accept="image/*" required />
                 <button type="button" class="delete-btn" onclick="document.getElementById('selfieId').value=''">X</button>
             </div>
         </div>
         <div class="form-group">
-            <label>Massage Certificate</label>
+            <label>Massage Certificate <small style="color:#718096;">(Max size: 2MB)</small></label>
             <div class="file-input-wrapper">
                 <input type="file" id="cert" accept="image/*,.pdf" required />
                 <button type="button" class="delete-btn" onclick="document.getElementById('cert').value=''">X</button>
@@ -128,22 +127,12 @@
     // Live Lowercase Filter & Strict Symbol/Space Stripper Engine
     usernameInput.addEventListener('input', function() {
         let originalValue = this.value;
-        
-        // 1. Force lowercase string values
-        let cleanedValue = originalValue.toLowerCase();
+        let cleanedValue = originalValue.toLowerCase().replace(/[^a-z0-9_]/g, '');
 
-        // 2. Regex checks to strip out any characters that are NOT a-z, 0-9, or underscores (_)
-        cleanedValue = cleanedValue.replace(/[^a-z0-9_]/g, '');
-
-        // If characters or cases were altered/scrubbed, apply clean string values to input field layout
         if (originalValue !== cleanedValue) {
             this.value = cleanedValue;
             usernameError.style.display = 'block';
-            
-            // Auto-hide the error notification note banner cleanly after 4 seconds
-            setTimeout(() => { 
-                usernameError.style.display = 'none'; 
-            }, 4000);
+            setTimeout(() => { usernameError.style.display = 'none'; }, 4000);
         }
     });
 
@@ -163,10 +152,26 @@
         if (locations.length === 0 || locations.length > 3) return alert("Select 1-3 locations.");
         if (specialties.length === 0) return alert("Please select at least one massage specialty.");
 
-        // Clean safety guard confirmation check
         if (/[^a-z0-9_]/.test(username)) {
-            return alert("Invalid username style structure format. Please avoid using spaces, uppercase letters, or special characters.");
+            return alert("Invalid username format. Please avoid using spaces, uppercase letters, or special characters.");
         }
+
+        // --- NEW: STRICT 2MB FILE SIZE CHECK ---
+        const MAX_SIZE_2MB = 2 * 1024 * 1024; // 2 Megabytes in bytes
+        
+        const fileFields = [
+            { id: 'govId', label: 'Government ID' },
+            { id: 'selfieId', label: 'Selfie with Gov. ID' },
+            { id: 'cert', label: 'Massage Certificate' }
+        ];
+        
+        for (const fileField of fileFields) {
+            const fileInput = document.getElementById(fileField.id);
+            if (fileInput.files[0] && fileInput.files[0].size > MAX_SIZE_2MB) {
+                return alert(`⚠️ Submission Blocked!\n\nYour "${fileField.label}" file is larger than 2MB. Supabase cannot accept files larger than 2MB on this free plan.\n\nPlease compress the image or take a smaller screenshot before uploading.`);
+            }
+        }
+        // ---------------------------------------
 
         btnSubmit.textContent = "Uploading assets... Please do not close or refresh this page.";
         btnSubmit.disabled = true;
