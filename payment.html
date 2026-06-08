@@ -50,6 +50,7 @@
     );
 
     let commissionAmount = 0;
+    let displayBookingId = ""; // Store string version
 
     async function loadPayment() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -67,8 +68,9 @@
         }
 
         commissionAmount = (data.total_price * 0.20).toFixed(2);
+        displayBookingId = data.booking_id; // Capture the string ID
         document.getElementById('payment-details').innerHTML = `
-            <div class="label">Booking ID</div><div class="value">${data.booking_id}</div>
+            <div class="label">Booking ID</div><div class="value">${displayBookingId}</div>
             <div class="label">Commission Amount Due</div><div class="value">₱${commissionAmount}</div>
         `;
     }
@@ -76,8 +78,6 @@
     async function submitPayment() {
         const ref = document.getElementById('ref-number').value.trim();
         const fileInput = document.getElementById('receipt-photo');
-        const urlParams = new URLSearchParams(window.location.search);
-        const bookingId = urlParams.get('id');
 
         if (!ref || fileInput.files.length === 0) {
             alert("Submission Incomplete: Both the GCash Reference Number and the Receipt Photo are required.");
@@ -87,19 +87,16 @@
         const file = fileInput.files[0];
         const fileName = `${Date.now()}_${file.name}`;
 
-        // 1. Upload file to storage
         const { error: uploadError } = await supabaseClient.storage
             .from('payment-receipts')
             .upload(fileName, file);
 
         if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
 
-        // 2. Get Public URL
         const { data: { publicUrl } } = supabaseClient.storage
             .from('payment-receipts')
             .getPublicUrl(fileName);
 
-        // 3. Get Therapist Info
         const { data: { user } } = await supabaseClient.auth.getUser();
         const { data: profile } = await supabaseClient
             .from('therapist_applications')
@@ -107,11 +104,11 @@
             .eq('auth_id', user.id)
             .single();
 
-        // 4. Save record to 'payments' table
+        // Using displayBookingId (string) instead of internal ID
         const { error: dbError } = await supabaseClient
             .from('payments')
             .insert([{ 
-                booking_id: bookingId,
+                booking_id: displayBookingId, 
                 therapist_auth_id: user.id,
                 therapist_name: profile.full_name,
                 amount: commissionAmount,
