@@ -9,7 +9,7 @@
         :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --accent: #2f855a; --danger: #e53e3e; }
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .card-title { font-size: 16px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
+        .card-title { font-size: 18px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
         .gcash-number { font-size: 24px; font-weight: bold; color: var(--secondary); text-align: center; margin: 10px 0; display: block; }
         .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
@@ -19,19 +19,23 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .scroll-wrapper { width: 100%; overflow-x: auto; }
-        .ledger-table { width: 100%; min-width: 1400px; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
-        .ledger-table th, .ledger-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
-        .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; }
+        /* Updated scroll wrappers with vertical scrolling */
+        .scroll-wrapper { width: 100%; overflow-x: auto; max-height: 450px; overflow-y: auto; border: 1px solid var(--border); }
+        .ledger-table { width: 100%; min-width: 1400px; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
+        .ledger-table th, .ledger-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+        .ledger-table th { background: #f7fafc; color: var(--primary); text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
         
-        .btn-accept, .btn-view { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 5px; }
+        .btn-nav { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: var(--secondary); color: white; font-weight: bold; }
+        .btn-nav:disabled { background: #cbd5e0; cursor: not-allowed; }
+        
+        .btn-accept, .btn-view { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         .copy-hint { cursor: pointer; border-bottom: 1px dashed #cbd5e0; }
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
-        .payment-steps { font-size: 11px; color: #4a5568; padding-left: 20px; margin: 10px 0; }
-        .payment-steps li { margin-bottom: 5px; }
+        .payment-steps { font-size: 12px; color: #4a5568; padding-left: 20px; margin: 10px 0; }
         .date-emph { color: var(--secondary); font-weight: 800; }
     </style>
 </head>
@@ -57,6 +61,11 @@
                 <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Service</th><th>Hrs</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
                 <tbody id="pendingBody"><tr><td colspan="9">Loading...</td></tr></tbody>
             </table>
+        </div>
+        <div class="pagination">
+            <button class="btn-nav" id="prevBtn" onclick="changePage(-1)">Previous</button>
+            <span id="pageInfo" style="font-size: 14px; font-weight: bold;">Page 1</span>
+            <button class="btn-nav" id="nextBtn" onclick="changePage(1)">Next</button>
         </div>
     </div>
     
@@ -85,17 +94,14 @@
 
 <script>
     let currentUserProfileName = "";
+    let allPendingBookings = [];
+    let currentPage = 1;
+    const rowsPerPage = 10;
     
     window.supabaseClient = supabase.createClient(
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
-        {
-            auth: {
-                storage: window.sessionStorage,
-                autoRefreshToken: true,
-                persistSession: true
-            }
-        }
+        { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
     );
 
     function formatDate(dateStr) {
@@ -109,15 +115,12 @@
 
     async function init() {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
-        
         if (!session) {
             await new Promise(resolve => setTimeout(resolve, 500));
             const { data: { session: retrySession } } = await window.supabaseClient.auth.getSession();
             if (!retrySession) { window.location.href = "login.html"; return; }
         }
-
         const user = session ? session.user : (await window.supabaseClient.auth.getUser()).data.user;
-        
         if (!user) { window.location.href = "login.html"; return; }
 
         const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
@@ -130,37 +133,31 @@
 
     async function fetchBookings() {
         const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
-        
-        const pending = bookings.filter(b => b.status === 'pending');
+        allPendingBookings = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
+        
+        renderPending();
+        
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
+            <tr>
+                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
+                <td>${b.booking_id}</td>
+                <td>${b.services}</td>
+                <td>₱${b.total_price}</td>
+                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td>
+            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+    }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const needsSettlement = accepted.some(b => {
-            const apptDate = new Date(b.appointment_date);
-            apptDate.setHours(0, 0, 0, 0);
-            return apptDate <= today;
-        });
-
-        document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => {
-            const apptDate = new Date(b.appointment_date);
-            apptDate.setHours(0, 0, 0, 0);
-            
-            const isDateValid = apptDate >= today;
-            let onClickAction = "";
-
-            if (needsSettlement) {
-                onClickAction = "alert('You have an existing booking due today or in the past that needs commission settlement first.')";
-            } else if (!isDateValid) {
-                onClickAction = "alert('You can only accept bookings scheduled for today or in the future.')";
-            } else {
-                onClickAction = "updateBookingStatus('" + b.id + "')";
-            }
-
+    function renderPending() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const pageData = allPendingBookings.slice(start, start + rowsPerPage);
+        
+        const today = new Date(); today.setHours(0,0,0,0);
+        
+        document.getElementById('pendingBody').innerHTML = pageData.length ? pageData.map(b => {
             return `
             <tr>
-                <td><button class="btn-accept" onclick="${onClickAction}">Accept</button></td>
+                <td><button class="btn-accept" onclick="updateBookingStatus('${b.id}')">Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td class="date-emph">${formatDate(b.appointment_date)}</td>
                 <td>${b.full_name}</td>
@@ -171,15 +168,15 @@
                 <td>₱${b.total_price}</td>
             </tr>`;
         }).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
-        
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
-            <tr>
-                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
-                <td>${b.booking_id}</td>
-                <td>${b.services}</td>
-                <td>₱${b.total_price}</td>
-                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td>
-            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+
+        document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = (currentPage * rowsPerPage) >= allPendingBookings.length;
+    }
+
+    function changePage(dir) {
+        currentPage += dir;
+        renderPending();
     }
 
     async function updateBookingStatus(id) {
