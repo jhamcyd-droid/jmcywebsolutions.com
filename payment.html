@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Payment</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #edf2f7; padding: 20px; color: #2d3748; }
+        .card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; max-width: 500px; margin: 0 auto; }
+        h2 { color: #1a365d; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; text-align: center; }
+        .label { font-weight: 800; color: #4a5568; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+        .value { font-size: 1.2rem; color: #2c5282; margin-bottom: 15px; font-weight: bold; }
+        .btn-submit { width: 100%; padding: 12px; background: #2c5282; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-back { width: 100%; padding: 12px; background: #718096; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .gcash-box { background: #f7fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; border: 1px dashed #cbd5e0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Commission Payment</h2>
+    <div id="payment-details">Loading...</div>
+    
+    <div class="gcash-box">
+        <div class="label">Send GCash To:</div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #2f855a;">09310410733</div>
+    </div>
+
+    <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:10px; box-sizing:border-box; border: 1px solid #cbd5e0; border-radius: 4px;">
+    <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
+    <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
+</div>
+
+<script>
+    const supabaseClient = supabase.createClient(
+        'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
+    );
+
+    async function loadPayment() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('id');
+        
+        const { data, error } = await supabaseClient
+            .from('bookings')
+            .select('booking_id, total_price')
+            .eq('id', bookingId)
+            .single();
+
+        if (error || !data) {
+            document.getElementById('payment-details').innerHTML = "Error loading booking.";
+            return;
+        }
+
+        const commission = (data.total_price * 0.15).toFixed(2);
+        document.getElementById('payment-details').innerHTML = `
+            <div class="label">Booking ID</div><div class="value">${data.booking_id}</div>
+            <div class="label">Commission Amount Due</div><div class="value">₱${commission}</div>
+        `;
+    }
+
+    function submitReference() {
+        const ref = document.getElementById('ref-number').value;
+        if (!ref) { alert("Please enter a reference number."); return; }
+        const message = encodeURIComponent("Hi JMCY Support, I have paid the commission for Booking. My Reference Number: " + ref);
+        window.open("https://wa.me/639091297422?text=" + message, "_blank");
+    }
+
+    loadPayment();
+</script>
+</body>
+</html>
