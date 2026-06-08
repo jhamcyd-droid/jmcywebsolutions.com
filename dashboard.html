@@ -35,7 +35,6 @@
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
         .date-emph { color: var(--secondary); font-weight: 800; }
 
-        /* Animation for refresh */
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .pulsing { animation: pulse 1s infinite; }
     </style>
@@ -62,8 +61,14 @@
         </h2>
         <div class="scroll-wrapper">
             <table class="ledger-table">
-                <thead><tr><th>Action</th><th>ID</th><th>Date</th><th>Name</th><th>Service</th><th>Hrs</th><th>City</th><th>Address</th><th>Price</th></tr></thead>
-                <tbody id="pendingBody"><tr><td colspan="9">Loading...</td></tr></tbody>
+                <thead>
+                    <tr>
+                        <th>Action</th><th>ID</th><th>Date</th><th>Time</th><th>Name</th>
+                        <th>Gender</th><th>People</th><th>Service</th><th>Hrs</th>
+                        <th>City</th><th>Address</th><th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="pendingBody"><tr><td colspan="12">Loading...</td></tr></tbody>
             </table>
         </div>
         <div class="pagination">
@@ -150,13 +155,16 @@
                 <td><button class="btn-accept" onclick="updateBookingStatus('${b.id}')">Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td class="date-emph">${formatDate(b.appointment_date)}</td>
+                <td>${b.appointment_time || 'N/A'}</td>
                 <td>${b.full_name}</td>
+                <td>${b.therapist_gender || 'Any'}</td>
+                <td>${b.num_people || '1'}</td>
                 <td>${b.services}</td>
                 <td>${b.total_duration_hours || '0'}</td>
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="12">No pending bookings.</td></tr>';
 
         document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
         document.getElementById('prevBtn').disabled = currentPage === 1;
