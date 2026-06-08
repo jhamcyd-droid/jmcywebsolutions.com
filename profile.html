@@ -16,6 +16,12 @@
         .label { font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
         .edit-field { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; }
         
+        /* Table Styles from Dashboard */
+        .scroll-wrapper { width: 100%; overflow-x: auto; max-height: 300px; overflow-y: auto; border: 1px solid var(--border); }
+        .ledger-table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 12px; }
+        .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .ledger-table th { background: #f7fafc; color: var(--primary); position: sticky; top: 0; }
+
         .avatar-box { width: 80px; height: 80px; background: #eee; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border: 2px solid var(--border); }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
         
@@ -23,7 +29,7 @@
         .modality-item { background: #f7fafc; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; cursor: pointer; font-size: 12px; }
         .modality-item input:checked + span { color: var(--accent); font-weight: bold; }
 
-        .action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); }
+        .action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); z-index: 100; }
         .save-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
@@ -63,6 +69,16 @@
                 <label class="modality-item"><input type="checkbox" name="modalities" value="combination"> <span>Combination Massage</span></label>
             </div>
         </section>
+
+        <section class="fixed-mobile-card">
+            <h2 class="card-title">Transaction History</h2>
+            <div class="scroll-wrapper">
+                <table class="ledger-table">
+                    <thead><tr><th>ID</th><th>Date</th><th>Service</th><th>Price</th></tr></thead>
+                    <tbody id="historyBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <div class="action-bar">
@@ -70,7 +86,6 @@
     </div>
 
     <script>
-        // Use exact same config as login.html
         window.supabaseClient = supabase.createClient(
             'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08',
@@ -78,50 +93,42 @@
         );
 
         let avatarBase64 = "";
+        let profileName = "";
 
         async function init() {
-            // Use getSession for immediate check of storage
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             if (!session) { window.location.href = "login.html"; return; }
             
-            const { data: profile } = await window.supabaseClient
-                .from('therapist_applications')
-                .select('*')
-                .eq('auth_id', session.user.id)
-                .single();
-            
+            const { data: profile } = await window.supabaseClient.from('therapist_applications').select('*').eq('auth_id', session.user.id).single();
             if (profile) {
-                document.getElementById('prof-fullname').innerText = profile.full_name || '';
+                profileName = profile.full_name;
+                document.getElementById('prof-fullname').innerText = profileName;
                 document.getElementById('input-phone').value = profile.phone || '';
                 document.getElementById('input-address').value = profile.address || '';
+                document.getElementById('input-zones').value = Array.isArray(profile.locations) ? profile.locations.join(', ') : (profile.locations || '');
                 
-                document.getElementById('input-zones').value = Array.isArray(profile.locations) 
-                    ? profile.locations.join(', ') 
-                    : (profile.locations || '');
-                
-                if(profile.avatar_url) {
-                    document.getElementById('avatar-preview').src = profile.avatar_url;
-                    document.getElementById('avatar-preview').style.display = 'block';
-                    document.getElementById('avatar-placeholder').style.display = 'none';
-                }
-
+                // Load specialties
                 if (profile.specialties) {
-                    let savedSpecialties = typeof profile.specialties === 'string' 
-                        ? JSON.parse(profile.specialties) 
-                        : profile.specialties;
-                    
+                    let saved = typeof profile.specialties === 'string' ? JSON.parse(profile.specialties) : profile.specialties;
                     document.querySelectorAll('input[name="modalities"]').forEach(cb => {
-                        const labelText = cb.nextElementSibling.innerText.trim().toLowerCase();
-                        const checkboxValue = cb.value.toLowerCase();
-                        
-                        const isMatch = savedSpecialties.some(s => 
-                            s.toLowerCase() === checkboxValue || 
-                            s.toLowerCase() === labelText
-                        );
-                        if(isMatch) cb.checked = true;
+                        if(saved.includes(cb.value)) cb.checked = true;
                     });
                 }
             }
+            fetchHistory();
+        }
+
+        async function fetchHistory() {
+            const { data: bookings } = await window.supabaseClient.from('bookings').select('*').eq('therapist_name', profileName);
+            const history = bookings.filter(b => b.status === 'accepted');
+            
+            document.getElementById('historyBody').innerHTML = history.length ? history.map(b => `
+                <tr>
+                    <td>${b.booking_id}</td>
+                    <td>${new Date(b.appointment_date).toLocaleDateString()}</td>
+                    <td>${b.services}</td>
+                    <td>₱${b.total_price}</td>
+                </tr>`).join('') : '<tr><td colspan="4">No records found.</td></tr>';
         }
 
         function handleImage(input) {
@@ -137,27 +144,16 @@
 
         async function saveProfileChanges() {
             const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session) return;
-            
             const rawLocs = document.getElementById('input-zones').value;
-            const locationsArray = rawLocs ? rawLocs.split(',').map(s => s.trim()) : [];
-            
-            const checkedModalities = Array.from(document.querySelectorAll('input[name="modalities"]:checked'))
-                .map(cb => cb.value);
-
             const updateData = {
                 phone: document.getElementById('input-phone').value,
                 address: document.getElementById('input-address').value,
-                locations: locationsArray, 
-                specialties: checkedModalities
+                locations: rawLocs ? rawLocs.split(',').map(s => s.trim()) : [],
+                specialties: Array.from(document.querySelectorAll('input[name="modalities"]:checked')).map(cb => cb.value)
             };
             if (avatarBase64) updateData.avatar_url = avatarBase64;
 
-            const { error } = await window.supabaseClient
-                .from('therapist_applications')
-                .update(updateData)
-                .eq('auth_id', session.user.id);
-                
+            const { error } = await window.supabaseClient.from('therapist_applications').update(updateData).eq('auth_id', session.user.id);
             alert(error ? "Error: " + error.message : "✅ Saved!");
         }
 
