@@ -64,7 +64,7 @@
                 <thead>
                     <tr>
                         <th>Action</th><th>ID</th><th>Date</th><th>Time</th><th>Name</th>
-                        <th>Gender</th><th>People</th><th>Service</th><th>Hrs</th>
+                        <th>Preferred Therapist</th><th>People</th><th>Service</th><th>Hrs</th>
                         <th>City</th><th>Address</th><th>Price</th>
                     </tr>
                 </thead>
@@ -105,6 +105,15 @@
         if (!dateStr) return 'N/A';
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    function formatTime(timeStr) {
+        if (!timeStr) return 'N/A';
+        const [hours, minutes] = timeStr.split(':');
+        let h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${minutes} ${ampm}`;
     }
 
     function copyText(text) { navigator.clipboard.writeText(text); alert("Copied to clipboard: " + text); }
@@ -155,7 +164,7 @@
                 <td><button class="btn-accept" onclick="updateBookingStatus('${b.id}')">Accept</button></td>
                 <td>${b.booking_id}</td>
                 <td class="date-emph">${formatDate(b.appointment_date)}</td>
-                <td>${b.appointment_time || 'N/A'}</td>
+                <td>${formatTime(b.appointment_time)}</td>
                 <td>${b.full_name}</td>
                 <td>${b.therapist_gender || 'Any'}</td>
                 <td>${b.num_people || '1'}</td>
