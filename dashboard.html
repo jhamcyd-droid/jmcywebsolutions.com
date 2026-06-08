@@ -27,7 +27,7 @@
         .btn-nav, .btn-refresh { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: var(--secondary); color: white; font-weight: bold; }
         .btn-nav:disabled { background: #cbd5e0; cursor: not-allowed; }
         
-        .btn-accept, .btn-view, .btn-payment { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; margin-right: 4px; }
+        .btn-accept, .btn-view, .btn-payment { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
         .btn-payment { background: var(--warning); }
@@ -81,9 +81,13 @@
     <div class="fixed-mobile-card">
         <h2 class="card-title">Accepted Bookings</h2>
         <div class="scroll-wrapper">
-            <table class="ledger-table">
-                <thead><tr><th>Action</th><th>ID</th><th>Service</th><th>Price</th><th>Comm. (20%)</th></tr></thead>
-                <tbody id="acceptedBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+            <table class="ledger-table" style="min-width: 800px;">
+                <thead>
+                    <tr>
+                        <th>#</th><th>20% Comm.</th><th>Booking ID</th><th>Date</th><th>Time</th><th>Total Price</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="acceptedBody"><tr><td colspan="7">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -140,17 +144,21 @@
         
         renderPending();
         
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map((b, index) => `
             <tr>
-                <td>
-                    <button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button>
-                    <button class="btn-payment" onclick="window.location.href='payment.html?id=${b.id}'">PAYMENT</button>
-                </td>
-                <td>${b.booking_id}</td>
-                <td>${b.services}</td>
-                <td>₱${b.total_price}</td>
+                <td>${index + 1}</td>
                 <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.20).toFixed(2)}</td>
-            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
+                <td>${b.booking_id}</td>
+                <td>${formatDate(b.appointment_date)}</td>
+                <td>${formatTime(b.appointment_time)}</td>
+                <td>₱${b.total_price}</td>
+                <td>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button>
+                        <button class="btn-payment" onclick="window.location.href='payment.html?id=${b.id}'">PAYMENT</button>
+                    </div>
+                </td>
+            </tr>`).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
         
         setTimeout(() => pBody.classList.remove('pulsing'), 500);
     }
