@@ -32,8 +32,15 @@
         .admin-table td { padding: 16px 12px; border-bottom: 1px solid #f7fafc; font-size: 0.9rem; white-space: nowrap; }
         
         .btn-paid { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-receipt { background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-left: 5px; }
         .btn-logout { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-logout:hover { background: var(--danger); color: white; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; }
+        .modal-content { background: white; margin: 5% auto; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; position: relative; }
+        .modal-img { max-height: 400px; width: 100%; object-fit: contain; border-radius: 4px; border: 1px solid #ddd; display: block; margin-top: 10px; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #718096; }
     </style>
 </head>
 <body>
@@ -93,6 +100,14 @@
     </main>
 </div>
 
+<div id="receiptModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="document.getElementById('receiptModal').style.display='none'">&times;</span>
+        <h3 style="margin-top:0;">Payment Receipt</h3>
+        <div id="receiptBody">Loading details...</div>
+    </div>
+</div>
+
 <script>
     const supabaseClient = supabase.createClient(
         'https://ovzcjjekmekgxtjcxjbf.supabase.co', 
@@ -117,6 +132,32 @@
         if (error) { alert("Error: " + error.message); return; }
         await supabaseClient.from('bookings').update({ status: 'completed' }).eq('id', booking.id); 
         fetchData();
+    }
+
+    async function showReceipt(booking_id) {
+        const modal = document.getElementById('receiptModal');
+        const receiptBody = document.getElementById('receiptBody');
+        modal.style.display = 'block';
+        receiptBody.innerHTML = 'Fetching payment data...';
+
+        const { data, error } = await supabaseClient
+            .from('payments')
+            .select('*')
+            .eq('booking_id', booking_id)
+            .single();
+
+        if (error || !data) {
+            receiptBody.innerHTML = 'No payment record found for this booking.';
+            return;
+        }
+
+        receiptBody.innerHTML = `
+            <p><strong>Therapist:</strong> ${data.therapist_name || 'N/A'}</p>
+            <p><strong>Amount:</strong> ₱${parseFloat(data.amount || 0).toLocaleString()}</p>
+            <p><strong>Ref #:</strong> ${data.ref_number || 'N/A'}</p>
+            <p><strong>Proof of Payment:</strong></p>
+            <img src="${data.photo_url}" class="modal-img" alt="Receipt">
+        `;
     }
 
     async function fetchData() {
@@ -145,7 +186,10 @@
 
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
-                <td><button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b).replace(/'/g, "&apos;")})'>Paid</button></td>
+                <td>
+                    <button class="btn-paid" onclick='markAsPaid(${JSON.stringify(b).replace(/'/g, "&apos;")})'>Paid</button>
+                    <button class="btn-receipt" onclick="showReceipt('${b.booking_id}')">Receipt</button>
+                </td>
                 <td style="font-weight:bold; color:var(--accent);">₱${(b.total_price * 0.20).toFixed(2)}</td>
                 <td>${b.booking_id || 'N/A'}</td>
                 <td>${formatDate(b.appointment_date)}</td>
@@ -154,7 +198,6 @@
             </tr>
         `).join('') : '<tr><td colspan="6">No active assignments.</td></tr>';
 
-        // Updated History logic
         document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => {
             const originalBooking = bookings.find(b => b.booking_id === h.booking_id) || {};
             return `
