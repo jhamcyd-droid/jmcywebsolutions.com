@@ -53,7 +53,7 @@
             return;
         }
 
-        const commission = (data.total_price * 0.15).toFixed(2);
+        const commission = (data.total_price * 0.20).toFixed(2);
         document.getElementById('payment-details').innerHTML = `
             <div class="label">Booking ID</div><div class="value">${data.booking_id}</div>
             <div class="label">Commission Amount Due</div><div class="value">₱${commission}</div>
