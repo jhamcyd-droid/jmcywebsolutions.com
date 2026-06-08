@@ -16,7 +16,6 @@
         .label { font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
         .edit-field { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; }
         
-        /* Table Styles from Dashboard */
         .scroll-wrapper { width: 100%; overflow-x: auto; max-height: 300px; overflow-y: auto; border: 1px solid var(--border); }
         .ledger-table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 12px; }
         .ledger-table th, .ledger-table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -107,12 +106,21 @@
                 document.getElementById('input-address').value = profile.address || '';
                 document.getElementById('input-zones').value = Array.isArray(profile.locations) ? profile.locations.join(', ') : (profile.locations || '');
                 
-                // Load specialties
+                // Robust Specialty Loading
                 if (profile.specialties) {
-                    let saved = typeof profile.specialties === 'string' ? JSON.parse(profile.specialties) : profile.specialties;
-                    document.querySelectorAll('input[name="modalities"]').forEach(cb => {
-                        if(saved.includes(cb.value)) cb.checked = true;
-                    });
+                    let saved = profile.specialties;
+                    if (typeof saved === 'string') {
+                        try {
+                            saved = JSON.parse(saved);
+                        } catch (e) {
+                            saved = saved.split(',').map(s => s.trim().replace(/['"\[\]]/g, ''));
+                        }
+                    }
+                    if (Array.isArray(saved)) {
+                        document.querySelectorAll('input[name="modalities"]').forEach(cb => {
+                            if (saved.includes(cb.value)) cb.checked = true;
+                        });
+                    }
                 }
             }
             fetchHistory();
@@ -120,7 +128,7 @@
 
         async function fetchHistory() {
             const { data: bookings } = await window.supabaseClient.from('bookings').select('*').eq('therapist_name', profileName);
-            const history = bookings.filter(b => b.status === 'accepted');
+            const history = bookings ? bookings.filter(b => b.status === 'accepted') : [];
             
             document.getElementById('historyBody').innerHTML = history.length ? history.map(b => `
                 <tr>
