@@ -86,7 +86,7 @@
         <h3>Transaction History</h3>
         <div class="table-container">
             <table class="admin-table">
-                <thead><tr><th>Booking ID</th><th>Service</th><th>Commission Paid</th><th>Date</th></tr></thead>
+                <thead><tr><th>Booking ID</th><th>Date</th><th>Therapist</th><th>Status</th></tr></thead>
                 <tbody id="historyBody"><tr><td colspan="4">Loading...</td></tr></tbody>
             </table>
         </div>
@@ -100,12 +100,10 @@
         { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
     );
 
-    // Formats date string to: Jan. 01, 2026
     function formatDate(dateString) {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
-        const options = { month: 'short', day: '2-digit', year: 'numeric' };
-        return date.toLocaleDateString('en-US', options).replace(',', '.');
+        return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '.');
     }
 
     async function logout() { await supabaseClient.auth.signOut(); window.location.href = "index.html"; }
@@ -156,9 +154,18 @@
             </tr>
         `).join('') : '<tr><td colspan="6">No active assignments.</td></tr>';
 
-        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `
-            <tr><td>${h.booking_id}</td><td>${h.service}</td><td>₱${h.commission_paid}</td><td>${formatDate(h.created_at)}</td></tr>
-        `).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
+        // Updated History logic
+        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => {
+            const originalBooking = bookings.find(b => b.booking_id === h.booking_id) || {};
+            return `
+                <tr>
+                    <td>${h.booking_id}</td>
+                    <td>${formatDate(originalBooking.appointment_date || h.created_at)}</td>
+                    <td>${originalBooking.therapist_name || 'N/A'}</td>
+                    <td>${originalBooking.status || 'Completed'}</td>
+                </tr>
+            `;
+        }).join('') : '<tr><td colspan="4">No history records yet.</td></tr>';
     }
 
     fetchData();

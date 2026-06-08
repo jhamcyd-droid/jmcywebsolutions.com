@@ -73,7 +73,7 @@
             <h2 class="card-title">Transaction History</h2>
             <div class="scroll-wrapper">
                 <table class="ledger-table">
-                    <thead><tr><th>ID</th><th>Date</th><th>Service</th><th>Price</th></tr></thead>
+                    <thead><tr><th>Booking ID</th><th>Date</th><th>Therapist</th><th>Status</th></tr></thead>
                     <tbody id="historyBody"><tr><td colspan="4">Loading...</td></tr></tbody>
                 </table>
             </div>
@@ -91,6 +91,12 @@
             { auth: { storage: window.sessionStorage, autoRefreshToken: true, persistSession: true } }
         );
 
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).replace(',', '.');
+        }
+
         let avatarBase64 = "";
         let profileName = "";
 
@@ -106,15 +112,10 @@
                 document.getElementById('input-address').value = profile.address || '';
                 document.getElementById('input-zones').value = Array.isArray(profile.locations) ? profile.locations.join(', ') : (profile.locations || '');
                 
-                // Robust Specialty Loading
                 if (profile.specialties) {
                     let saved = profile.specialties;
                     if (typeof saved === 'string') {
-                        try {
-                            saved = JSON.parse(saved);
-                        } catch (e) {
-                            saved = saved.split(',').map(s => s.trim().replace(/['"\[\]]/g, ''));
-                        }
+                        try { saved = JSON.parse(saved); } catch (e) { saved = saved.split(',').map(s => s.trim().replace(/['"\[\]]/g, '')); }
                     }
                     if (Array.isArray(saved)) {
                         document.querySelectorAll('input[name="modalities"]').forEach(cb => {
@@ -127,16 +128,25 @@
         }
 
         async function fetchHistory() {
-            const { data: bookings } = await window.supabaseClient.from('bookings').select('*').eq('therapist_name', profileName);
-            const history = bookings ? bookings.filter(b => b.status === 'accepted') : [];
+            const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
+            const { data: history } = await window.supabaseClient.from('transaction_history').select('*');
             
-            document.getElementById('historyBody').innerHTML = history.length ? history.map(b => `
-                <tr>
-                    <td>${b.booking_id}</td>
-                    <td>${new Date(b.appointment_date).toLocaleDateString()}</td>
-                    <td>${b.services}</td>
-                    <td>₱${b.total_price}</td>
-                </tr>`).join('') : '<tr><td colspan="4">No records found.</td></tr>';
+            // Filter history records relevant to this therapist
+            const myHistory = history.filter(h => {
+                const b = bookings.find(bk => bk.booking_id === h.booking_id);
+                return b && b.therapist_name === profileName;
+            });
+            
+            document.getElementById('historyBody').innerHTML = myHistory.length ? myHistory.map(h => {
+                const b = bookings.find(bk => bk.booking_id === h.booking_id) || {};
+                return `
+                    <tr>
+                        <td>${h.booking_id}</td>
+                        <td>${formatDate(b.appointment_date || h.created_at)}</td>
+                        <td>${b.therapist_name || 'N/A'}</td>
+                        <td style="font-weight:600; color:var(--accent);">Paid</td>
+                    </tr>`;
+            }).join('') : '<tr><td colspan="4">No records found.</td></tr>';
         }
 
         function handleImage(input) {
