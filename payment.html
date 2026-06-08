@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Payment</title>
+    <title>Process Payment - JMCY</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; background: #edf2f7; padding: 20px; color: #2d3748; }
@@ -11,9 +11,11 @@
         h2 { color: #1a365d; margin-top: 0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; text-align: center; }
         .label { font-weight: 800; color: #4a5568; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
         .value { font-size: 1.2rem; color: #2c5282; margin-bottom: 15px; font-weight: bold; }
-        .btn-submit { width: 100%; padding: 12px; background: #2c5282; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .notice { background: #fffaf0; border: 1px solid #fbd38d; color: #744210; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 15px; }
+        .btn-submit { width: 100%; padding: 12px; background: #2f855a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-back { width: 100%; padding: 12px; background: #718096; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .gcash-box { background: #f7fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; border: 1px dashed #cbd5e0; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -27,8 +29,17 @@
         <div style="font-size: 1.5rem; font-weight: bold; color: #2f855a;">09310410733</div>
     </div>
 
-    <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:10px; box-sizing:border-box; border: 1px solid #cbd5e0; border-radius: 4px;">
-    <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
+    <div class="notice">
+        <strong>⚠️ Required:</strong> Please provide <strong>both</strong> the GCash Reference Number and a screenshot/photo of the transaction to complete your submission.
+    </div>
+
+    <div class="label">GCash Reference Number</div>
+    <input type="text" id="ref-number" placeholder="Enter Reference Number">
+    
+    <div class="label">Upload Receipt Photo</div>
+    <input type="file" id="receipt-photo" accept="image/*">
+    
+    <button class="btn-submit" onclick="submitPayment()">SUBMIT PAYMENT</button>
     <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
 </div>
 
@@ -38,33 +49,82 @@
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
     );
 
+    let commissionAmount = 0;
+
     async function loadPayment() {
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
         
         const { data, error } = await supabaseClient
             .from('bookings')
-            .select('booking_id, total_price')
+            .select('id, booking_id, total_price')
             .eq('id', bookingId)
             .single();
 
         if (error || !data) {
-            document.getElementById('payment-details').innerHTML = "Error loading booking.";
+            document.getElementById('payment-details').innerHTML = "Error loading booking details.";
             return;
         }
 
-        const commission = (data.total_price * 0.20).toFixed(2);
+        commissionAmount = (data.total_price * 0.20).toFixed(2);
         document.getElementById('payment-details').innerHTML = `
             <div class="label">Booking ID</div><div class="value">${data.booking_id}</div>
-            <div class="label">Commission Amount Due</div><div class="value">₱${commission}</div>
+            <div class="label">Commission Amount Due</div><div class="value">₱${commissionAmount}</div>
         `;
     }
 
-    function submitReference() {
-        const ref = document.getElementById('ref-number').value;
-        if (!ref) { alert("Please enter a reference number."); return; }
-        const message = encodeURIComponent("Hi JMCY Support, I have paid the commission for Booking. My Reference Number: " + ref);
-        window.open("https://wa.me/639091297422?text=" + message, "_blank");
+    async function submitPayment() {
+        const ref = document.getElementById('ref-number').value.trim();
+        const fileInput = document.getElementById('receipt-photo');
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('id');
+
+        if (!ref || fileInput.files.length === 0) {
+            alert("Submission Incomplete: Both the GCash Reference Number and the Receipt Photo are required.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const fileName = `${Date.now()}_${file.name}`;
+
+        // 1. Upload file to storage
+        const { error: uploadError } = await supabaseClient.storage
+            .from('payment-receipts')
+            .upload(fileName, file);
+
+        if (uploadError) { alert("Upload failed: " + uploadError.message); return; }
+
+        // 2. Get Public URL
+        const { data: { publicUrl } } = supabaseClient.storage
+            .from('payment-receipts')
+            .getPublicUrl(fileName);
+
+        // 3. Get Therapist Info
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const { data: profile } = await supabaseClient
+            .from('therapist_applications')
+            .select('full_name')
+            .eq('auth_id', user.id)
+            .single();
+
+        // 4. Save record to 'payments' table
+        const { error: dbError } = await supabaseClient
+            .from('payments')
+            .insert([{ 
+                booking_id: bookingId,
+                therapist_auth_id: user.id,
+                therapist_name: profile.full_name,
+                amount: commissionAmount,
+                ref_number: ref,
+                photo_url: publicUrl,
+                status: 'pending'
+            }]);
+
+        if (dbError) { alert("Database error: " + dbError.message); }
+        else {
+            alert("Payment submitted for verification!");
+            window.location.href = 'dashboard.html';
+        }
     }
 
     loadPayment();
