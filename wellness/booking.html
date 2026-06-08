@@ -60,7 +60,9 @@
         .form-group { margin-bottom: 22px; }
         label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary); font-size: 0.95rem; }
         
-        input[type="text"], input[type="tel"], input[type="date"], select, textarea {
+        .datetime-row { display: flex; gap: 15px; }
+        
+        input[type="text"], input[type="tel"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
             width: 100%; padding: 12px; border: 1px solid rgba(26, 54, 93, 0.2); border-radius: 6px; font-family: inherit; font-size: 0.95rem; color: var(--dark); background-color: rgba(255, 255, 255, 0.85); box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
         }
 
@@ -83,7 +85,6 @@
         .added-service-details { font-size: 0.95rem; }
         .added-service-name { font-weight: 600; color: var(--dark); }
         .added-service-duration { color: #4a5568; font-size: 0.85rem; margin-left: 6px; }
-        .added-service-promo-label { font-size: 0.75rem; color: var(--accent); background-color: #e6fffa; border: 1px solid #b2f5ea; padding: 1px 5px; border-radius: 3px; margin-left: 5px; font-weight: 600; }
         .added-service-meta { display: flex; align-items: center; gap: 15px; }
         .added-service-price { font-weight: 700; color: var(--accent); }
         .delete-item-btn { background: none; border: none; color: var(--danger); font-size: 1.3rem; cursor: pointer; line-height: 1; padding: 0 4px; }
@@ -126,6 +127,26 @@
                 <input type="tel" id="mobileNumber" required placeholder="e.g., 09091297422">
             </div>
 
+            <div class="form-group">
+                <label for="numPeople">Number of People</label>
+                <input type="number" id="numPeople" value="1" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Therapist Gender</label>
+                <div style="display: flex; gap: 20px; align-items: center; margin-top: 5px;">
+                    <label style="font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                        <input type="radio" name="therapistGender" value="Male" required> Male
+                    </label>
+                    <label style="font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                        <input type="radio" name="therapistGender" value="Female" required> Female
+                    </label>
+                    <label style="font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                        <input type="radio" name="therapistGender" value="Any" required> Any
+                    </label>
+                </div>
+            </div>
+
             <div class="services-section">
                 <div class="services-section-title">Requested Menu Services</div>
                 
@@ -148,9 +169,16 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="dateOnly">Appointment Date</label>
-                <input type="date" id="dateOnly" required>
+            <div class="datetime-row">
+                <div class="form-group" style="flex: 1;">
+                    <label for="dateOnly">Appointment Date</label>
+                    <input type="date" id="dateOnly" required>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label for="appointmentTime">Appointment Time</label>
+                    <input type="time" id="appointmentTime" required>
+                </div>
             </div>
 
             <div class="form-group">
@@ -192,6 +220,7 @@
 
             const modalityPicker = document.getElementById('modalityPicker');
             const durationPicker = document.getElementById('durationPicker');
+            const numPeopleInput = document.getElementById('numPeople');
             const addServiceActionBtn = document.getElementById('addServiceActionBtn');
             const selectedServicesList = document.getElementById('selectedServicesList');
             const emptyStateNotice = document.getElementById('emptyStateNotice');
@@ -199,14 +228,15 @@
             const form = document.getElementById('intakeForm');
             const submitBtn = document.getElementById('submitBtn');
 
+            // Registry updated with 4-hour pricing
             const serviceRegistry = [
-                { name: "Swedish Massage", p1: 500, p2: 950, p3: 1400 },
-                { name: "Shiatsu Massage", p1: 555, p2: 1050, p3: 1550 },
-                { name: "Thai Massage", p1: 550, p2: 1050, p3: 1550 },
-                { name: "Reflexology / Foot", p1: 500, p2: 950, p3: 1400 },
-                { name: "Aromatherapy", p1: 650, p2: 1250, p3: 1850 },
-                { name: "Deep Tissue Massage", p1: 700, p2: 1350, p3: 2000 },
-                { name: "Combination Massage", p1: 600, p2: 1150, p3: 1700 }
+                { name: "Swedish Massage", p2: 1000, p3: 1400, p4: 1800 },
+                { name: "Shiatsu Massage", p2: 1100, p3: 1550, p4: 2000 },
+                { name: "Thai Massage", p2: 1100, p3: 1550, p4: 2000 },
+                { name: "Reflexology / Foot", p2: 1200, p3: 1700, p4: 2200 },
+                { name: "Aromatherapy", p2: 1300, p3: 1850, p4: 2400 },
+                { name: "Deep Tissue Massage", p2: 1200, p3: 1700, p4: 2200 },
+                { name: "Combination Massage", p2: 1000, p3: 1400, p4: 1800 }
             ];
 
             let addedServicesArray = [];
@@ -218,28 +248,46 @@
                 modalityPicker.appendChild(opt);
             });
 
+            function calculateAndDisplayPrice() {
+                const numPeople = parseInt(numPeopleInput.value) || 1;
+                let cumulativeFormTotal = addedServicesArray.reduce((acc, item) => acc + item.price, 0);
+                const finalTotal = cumulativeFormTotal * numPeople;
+                priceDisplay.textContent = `₱${finalTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            }
+
+            numPeopleInput.addEventListener('input', calculateAndDisplayPrice);
+
             modalityPicker.addEventListener('change', () => {
                 const match = serviceRegistry.find(s => s.name === modalityPicker.value);
                 durationPicker.innerHTML = "";
                 durationPicker.disabled = false;
 
+                // Discount logic relative to 2-hour base hourly rate
+                const getDiscountLabel = (price, hours) => {
+                    const hourlyBase = match.p2 / 2;
+                    const targetHourly = price / hours;
+                    const discount = ((1 - (targetHourly / hourlyBase)) * 100).toFixed(0);
+                    return discount > 0 ? ` (${discount}% OFF)` : "";
+                };
+
                 const durationOptions = [
-                    { value: "1 Hour", text: `1 Hour - ₱${match.p1}`, promo: "" },
-                    { value: "2 Hours", text: `2 Hours - ₱${match.p2}`, promo: "" },
-                    { value: "3 Hours", text: `3 Hours - ₱${match.p3}`, promo: "" }
+                    { value: "2 Hours", text: `2 Hours - ₱${match.p2}`, price: match.p2 },
+                    { value: "3 Hours", text: `3 Hours - ₱${match.p3}${getDiscountLabel(match.p3, 3)}`, price: match.p3 },
+                    { value: "4 Hours", text: `4 Hours - ₱${match.p4}${getDiscountLabel(match.p4, 4)}`, price: match.p4 }
                 ];
 
                 const placeholderOpt = document.createElement('option');
                 placeholderOpt.value = "";
                 placeholderOpt.disabled = true;
                 placeholderOpt.selected = true;
-                placeholderOpt.textContent = "⏱️ Choose Hours Duration...";
+                placeholderOpt.textContent = "⏱️ Choose Duration (2hr+)...";
                 durationPicker.appendChild(placeholderOpt);
 
                 durationOptions.forEach(optData => {
                     const opt = document.createElement('option');
                     opt.value = optData.value;
                     opt.textContent = optData.text;
+                    opt.dataset.price = optData.price;
                     durationPicker.appendChild(opt);
                 });
             });
@@ -247,28 +295,15 @@
             addServiceActionBtn.addEventListener('click', () => {
                 const chosenModality = modalityPicker.value;
                 const chosenDuration = durationPicker.value;
+                const price = parseInt(durationPicker.options[durationPicker.selectedIndex].dataset.price);
 
                 if (!chosenModality || !chosenDuration) {
                     alert("Please select both a Massage Modality and an Hours Duration!");
                     return;
                 }
 
-                const match = serviceRegistry.find(s => s.name === chosenModality);
-                let itemCalculatedPrice = 0;
-
-                if (match) {
-                    if (chosenDuration === "1 Hour") itemCalculatedPrice = match.p1;
-                    else if (chosenDuration === "2 Hours") itemCalculatedPrice = match.p2;
-                    else if (chosenDuration === "3 Hours") itemCalculatedPrice = match.p3;
-                }
-
                 const uniqueId = Date.now() + Math.random().toString(36).substr(2, 4);
-                addedServicesArray.push({
-                    id: uniqueId,
-                    name: chosenModality,
-                    duration: chosenDuration,
-                    price: itemCalculatedPrice
-                });
+                addedServicesArray.push({ id: uniqueId, name: chosenModality, duration: chosenDuration, price: price });
 
                 modalityPicker.selectedIndex = 0;
                 durationPicker.innerHTML = '<option value="" disabled selected>⏱️ Select Modality First...</option>';
@@ -282,7 +317,7 @@
                     emptyStateNotice.style.display = "block";
                     const rows = selectedServicesList.querySelectorAll('.added-service-item');
                     rows.forEach(r => r.remove());
-                    priceDisplay.textContent = "₱0.00";
+                    calculateAndDisplayPrice();
                     return;
                 }
 
@@ -290,13 +325,9 @@
                 const existingRows = selectedServicesList.querySelectorAll('.added-service-item');
                 existingRows.forEach(r => r.remove());
 
-                let cumulativeFormTotal = 0;
-
                 addedServicesArray.forEach(item => {
-                    cumulativeFormTotal += item.price;
                     const wrapperNode = document.createElement('div');
                     wrapperNode.className = 'added-service-item';
-
                     wrapperNode.innerHTML = `
                         <div class="added-service-details">
                             <span class="added-service-name">${item.name}</span>
@@ -315,33 +346,27 @@
                     });
                     selectedServicesList.appendChild(wrapperNode);
                 });
-                priceDisplay.textContent = `₱${cumulativeFormTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                calculateAndDisplayPrice();
             }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
                 if (addedServicesArray.length === 0) {
                     alert("Please add at least one service.");
                     return;
                 }
-
                 submitBtn.disabled = true;
                 submitBtn.textContent = "Saving...";
-
-                // Logic: Combine services into a single string and sum the total hours
-                const serviceNames = addedServicesArray.map(s => s.name).join(', ');
-                const totalHours = addedServicesArray.reduce((acc, curr) => {
-                    const hrs = parseInt(curr.duration) || 0;
-                    return acc + hrs;
-                }, 0);
 
                 const { error } = await supabase.from('bookings').insert([{
                     full_name: document.getElementById('fullName').value,
                     mobile_number: document.getElementById('mobileNumber').value,
-                    services: serviceNames,
-                    total_duration_hours: totalHours,
+                    num_people: parseInt(numPeopleInput.value),
+                    therapist_gender: document.querySelector('input[name="therapistGender"]:checked').value,
+                    services: addedServicesArray.map(s => s.name).join(', '),
+                    total_duration_hours: addedServicesArray.reduce((acc, curr) => acc + parseInt(curr.duration), 0),
                     appointment_date: document.getElementById('dateOnly').value,
+                    appointment_time: document.getElementById('appointmentTime').value,
                     city: document.getElementById('locationCity').value,
                     address: document.getElementById('address').value,
                     total_price: parseFloat(priceDisplay.textContent.replace(/[₱,]/g, ''))
