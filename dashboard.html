@@ -10,7 +10,6 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 18px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
-        .gcash-number { font-size: 24px; font-weight: bold; color: var(--secondary); text-align: center; margin: 10px 0; display: block; }
         .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
@@ -32,10 +31,8 @@
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
         .btn-payment { background: var(--warning); }
-        .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         .copy-hint { cursor: pointer; border-bottom: 1px dashed #cbd5e0; }
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
-        .payment-steps { font-size: 12px; color: #4a5568; padding-left: 20px; margin: 10px 0; }
         .date-emph { color: var(--secondary); font-weight: 800; }
     </style>
 </head>
@@ -67,18 +64,6 @@
             <span id="pageInfo" style="font-size: 14px; font-weight: bold;">Page 1</span>
             <button class="btn-nav" id="nextBtn" onclick="changePage(1)">Next</button>
         </div>
-    </div>
-    
-    <div class="fixed-mobile-card" id="payment-card">
-        <h2 class="card-title">Payment Instructions (GCash)</h2>
-        <span class="gcash-number" onclick="copyText('09310410733')">09310410733</span>
-        <ol class="payment-steps">
-            <li>Copy and paste the mobile number to your Gcash to pay your commission.</li>
-            <li>Check the amount of the commission on Accepted Bookings.</li>
-            <li>Upon sending the payment, enter your GCash Reference number below and click "Submit".</li>
-        </ol>
-        <input type="text" id="ref-number" placeholder="Enter GCash Reference Number" style="width:100%; padding:8px; margin-top:10px; box-sizing:border-box;">
-        <button class="btn-submit" onclick="submitReference()">SUBMIT REFERENCE</button>
     </div>
 
     <div class="fixed-mobile-card">
@@ -113,23 +98,12 @@
     function copyText(text) { navigator.clipboard.writeText(text); alert("Copied to clipboard: " + text); }
     async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
-    // Helper to scroll to payment section
-    function scrollToPayment() {
-        document.getElementById('payment-card').scrollIntoView({ behavior: 'smooth' });
-        document.getElementById('ref-number').focus();
-    }
-
     async function init() {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         if (!session) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-            const { data: { session: retrySession } } = await window.supabaseClient.auth.getSession();
-            if (!retrySession) { window.location.href = "login.html"; return; }
+            window.location.href = "login.html"; return;
         }
-        const user = session ? session.user : (await window.supabaseClient.auth.getUser()).data.user;
-        if (!user) { window.location.href = "login.html"; return; }
-
-        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
+        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', session.user.id).single();
         if (profile) {
             currentUserProfileName = profile.full_name;
             document.getElementById('display-name').innerText = profile.full_name;
@@ -148,7 +122,7 @@
             <tr>
                 <td>
                     <button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button>
-                    <button class="btn-payment" onclick="scrollToPayment()">PAYMENT</button>
+                    <button class="btn-payment" onclick="window.location.href='payment.html?id=${b.id}'">PAYMENT</button>
                 </td>
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
@@ -190,15 +164,8 @@
             .update({ status: 'accepted', therapist_name: currentUserProfileName })
             .eq('id', id);
 
-        if (error) { console.error("Error updating status:", error); alert("Failed to accept booking."); return; }
+        if (error) { alert("Failed to accept booking."); return; }
         fetchBookings();
-    }
-
-    function submitReference() {
-        const ref = document.getElementById('ref-number').value;
-        if (!ref) { alert("Please enter a reference number."); return; }
-        const message = encodeURIComponent("Hi JMCY Support, I have sent the commission payment. Here is my GCash Reference Number: " + ref);
-        window.open("https://wa.me/639091297422?text=" + message, "_blank");
     }
 
     init();
