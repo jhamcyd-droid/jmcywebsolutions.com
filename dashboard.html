@@ -35,6 +35,11 @@
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
         .date-emph { color: var(--secondary); font-weight: 800; }
 
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-box { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
+        .btn-close { background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 15px; }
+
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .pulsing { animation: pulse 1s infinite; }
     </style>
@@ -90,6 +95,14 @@
                 <tbody id="acceptedBody"><tr><td colspan="7">Loading...</td></tr></tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<div id="alertModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 id="modalTitle">Notice</h3>
+        <p id="modalMessage"></p>
+        <button class="btn-close" onclick="document.getElementById('alertModal').style.display='none'">Close</button>
     </div>
 </div>
 
@@ -163,6 +176,45 @@
         setTimeout(() => pBody.classList.remove('pulsing'), 500);
     }
 
+    async function updateBookingStatus(id) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const { data: bookings } = await window.supabaseClient
+            .from('bookings')
+            .select('*')
+            .eq('status', 'accepted')
+            .eq('therapist_name', currentUserProfileName);
+
+        // Check for unpaid past/today bookings
+        const needsPayment = bookings.some(b => new Date(b.appointment_date) <= today);
+        if (needsPayment) {
+            showModal("Payment Required", "You have pending commission payments for past or today's bookings. Please settle them first.");
+            return;
+        }
+
+        // Check future limit
+        const futureBookingsCount = bookings.filter(b => new Date(b.appointment_date) > today).length;
+        if (futureBookingsCount >= 2) {
+            showModal("Limit Reached", "You already have 2 future bookings accepted. Please complete existing bookings before accepting more.");
+            return;
+        }
+
+        const { error } = await window.supabaseClient
+            .from('bookings')
+            .update({ status: 'accepted', therapist_name: currentUserProfileName })
+            .eq('id', id);
+
+        if (error) { alert("Failed to accept booking."); return; }
+        fetchBookings();
+    }
+
+    function showModal(title, message) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalMessage').innerText = message;
+        document.getElementById('alertModal').style.display = 'flex';
+    }
+
     function renderPending() {
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = allPendingBookings.slice(start, start + rowsPerPage);
@@ -191,16 +243,6 @@
     function changePage(dir) {
         currentPage += dir;
         renderPending();
-    }
-
-    async function updateBookingStatus(id) {
-        const { error } = await window.supabaseClient
-            .from('bookings')
-            .update({ status: 'accepted', therapist_name: currentUserProfileName })
-            .eq('id', id);
-
-        if (error) { alert("Failed to accept booking."); return; }
-        fetchBookings();
     }
 
     init();
