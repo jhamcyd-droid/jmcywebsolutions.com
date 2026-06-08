@@ -34,11 +34,19 @@
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92emNqamVrbWVrZ3h0amN4amJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3Njc2MzEsImV4cCI6MjA5NTM0MzYzMX0.7Ym0iTU4FD6vplSTDvw1cF5sEtdJQF6Ie1u8fxegs08'
     );
 
-    // Helper to format date as Jan. 01, 2026
     function formatDate(dateStr) {
         if (!dateStr) return 'N/A';
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    function formatTime(timeStr) {
+        if (!timeStr) return 'N/A';
+        const [hours, minutes] = timeStr.split(':');
+        let h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${minutes} ${ampm}`;
     }
 
     async function fetchBookingDetails() {
@@ -69,8 +77,11 @@
             <div class="notice"><strong>Action Required:</strong> Please call or text the client at the number below to confirm the appointment acceptance.</div>
             <div class="detail-group"><span class="label">Booking ID</span><div class="value">${data.booking_id || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Date</span><div class="value">${formatDate(data.appointment_date)}</div></div>
+            <div class="detail-group"><span class="label">Time</span><div class="value">${formatTime(data.appointment_time)}</div></div>
             <div class="detail-group"><span class="label">Client Name</span><div class="value">${data.full_name || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Mobile Number</span><div class="value">${data.mobile_number || 'N/A'}</div></div>
+            <div class="detail-group"><span class="label">Preferred Therapist</span><div class="value">${data.therapist_gender || 'Any'}</div></div>
+            <div class="detail-group"><span class="label">Number of People</span><div class="value">${data.num_people || '1'}</div></div>
             <div class="detail-group"><span class="label">Services</span><div class="value">${data.services || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Duration</span><div class="value">${data.total_duration_hours || '0'} hours</div></div>
             <div class="detail-group"><span class="label">City</span><div class="value">${data.city || 'N/A'}</div></div>
