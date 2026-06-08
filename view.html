@@ -71,7 +71,7 @@
             return;
         }
 
-        const commission = (data.total_price * 0.15).toFixed(2);
+        const commission = (data.total_price * 0.20).toFixed(2);
 
         container.innerHTML = `
             <div class="notice"><strong>Action Required:</strong> Please call or text the client at the number below to confirm the appointment acceptance.</div>
@@ -87,7 +87,7 @@
             <div class="detail-group"><span class="label">City</span><div class="value">${data.city || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Address</span><div class="value">${data.address || 'N/A'}</div></div>
             <div class="detail-group"><span class="label">Total Price</span><div class="value">₱${data.total_price || '0'}</div></div>
-            <div class="detail-group"><span class="label">Commission (15%)</span><div class="value" style="color:#2f855a; font-weight:bold;">₱${commission}</div></div>
+            <div class="detail-group"><span class="label">Commission (20%)</span><div class="value" style="color:#2f855a; font-weight:bold;">₱${commission}</div></div>
         `;
 
         if (data.mobile_number) {
