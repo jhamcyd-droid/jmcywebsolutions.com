@@ -84,7 +84,7 @@
             <table class="ledger-table" style="min-width: 800px;">
                 <thead>
                     <tr>
-                        <th>#</th><th>20% Comm.</th><th>Booking ID</th><th>Date</th><th>Time</th><th>Total Price</th><th>Action</th>
+                        <th>#</th><th>Action</th><th>20% Comm.</th><th>Booking ID</th><th>Date</th><th>Time</th><th>Total Price</th>
                     </tr>
                 </thead>
                 <tbody id="acceptedBody"><tr><td colspan="7">Loading...</td></tr></tbody>
@@ -147,17 +147,17 @@
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map((b, index) => `
             <tr>
                 <td>${index + 1}</td>
-                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.20).toFixed(2)}</td>
-                <td>${b.booking_id}</td>
-                <td>${formatDate(b.appointment_date)}</td>
-                <td>${formatTime(b.appointment_time)}</td>
-                <td>₱${b.total_price}</td>
                 <td>
                     <div style="display: flex; gap: 5px;">
                         <button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button>
                         <button class="btn-payment" onclick="window.location.href='payment.html?id=${b.id}'">PAYMENT</button>
                     </div>
                 </td>
+                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.20).toFixed(2)}</td>
+                <td>${b.booking_id}</td>
+                <td>${formatDate(b.appointment_date)}</td>
+                <td>${formatTime(b.appointment_time)}</td>
+                <td>₱${b.total_price}</td>
             </tr>`).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
         
         setTimeout(() => pBody.classList.remove('pulsing'), 500);
