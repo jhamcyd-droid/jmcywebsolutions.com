@@ -81,16 +81,6 @@
             </table>
         </div>
     </div>
-    
-    <div class="fixed-mobile-card">
-        <h2 class="card-title">Transaction History</h2>
-        <div class="scroll-wrapper">
-            <table class="ledger-table">
-                <thead><tr><th>ID</th><th>Service</th><th>Paid</th><th>Date</th></tr></thead>
-                <tbody id="historyBody"><tr><td colspan="4">No history yet.</td></tr></tbody>
-            </table>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -119,18 +109,13 @@
 
     async function init() {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
-        
-        // Resilience: wait a moment if session is missing to allow storage sync
         if (!session) {
             await new Promise(resolve => setTimeout(resolve, 500));
             const { data: { session: retrySession } } = await window.supabaseClient.auth.getSession();
             if (!retrySession) { window.location.href = "login.html"; return; }
         }
-
         const user = session ? session.user : (await window.supabaseClient.auth.getUser()).data.user;
-        
         if (!user) { window.location.href = "login.html"; return; }
-
         const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', user.id).single();
         if (profile) {
             currentUserProfileName = profile.full_name;
@@ -141,8 +126,6 @@
 
     async function fetchBookings() {
         const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
-        const { data: history } = await window.supabaseClient.from('transaction_history').select('*').order('created_at', { ascending: false });
-        
         const pending = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
 
@@ -158,56 +141,17 @@
         document.getElementById('pendingBody').innerHTML = pending.length ? pending.map(b => {
             const apptDate = new Date(b.appointment_date);
             apptDate.setHours(0, 0, 0, 0);
-            
             const isDateValid = apptDate >= today;
-            let onClickAction = "";
+            let onClickAction = needsSettlement ? "alert('You have an existing booking due today or in the past that needs commission settlement first.')" : (!isDateValid ? "alert('You can only accept bookings scheduled for today or in the future.')" : "updateBookingStatus('" + b.id + "')");
 
-            if (needsSettlement) {
-                onClickAction = "alert('You have an existing booking due today or in the past that needs commission settlement first.')";
-            } else if (!isDateValid) {
-                onClickAction = "alert('You can only accept bookings scheduled for today or in the future.')";
-            } else {
-                onClickAction = "updateBookingStatus('" + b.id + "')";
-            }
-
-            return `
-            <tr>
-                <td><button class="btn-accept" onclick="${onClickAction}">Accept</button></td>
-                <td>${b.booking_id}</td>
-                <td class="date-emph">${formatDate(b.appointment_date)}</td>
-                <td>${b.full_name}</td>
-                <td>${b.services}</td>
-                <td>${b.total_duration_hours || '0'}</td>
-                <td>${b.city || 'N/A'}</td>
-                <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
-                <td>₱${b.total_price}</td>
-            </tr>`;
+            return `<tr><td><button class="btn-accept" onclick="${onClickAction}">Accept</button></td><td>${b.booking_id}</td><td class="date-emph">${formatDate(b.appointment_date)}</td><td>${b.full_name}</td><td>${b.services}</td><td>${b.total_duration_hours || '0'}</td><td>${b.city || 'N/A'}</td><td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td><td>₱${b.total_price}</td></tr>`;
         }).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
         
-        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
-            <tr>
-                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
-                <td>${b.booking_id}</td>
-                <td>${b.services}</td>
-                <td>₱${b.total_price}</td>
-                <td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td>
-            </tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
-        
-        document.getElementById('historyBody').innerHTML = history && history.length ? history.map(h => `
-            <tr>
-                <td>${h.booking_id}</td>
-                <td>${h.service}</td>
-                <td>₱${h.commission_paid}</td>
-                <td>${formatDate(h.created_at)}</td>
-            </tr>`).join('') : '<tr><td colspan="4">No history yet.</td></tr>';
+        document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `<tr><td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td><td>${b.booking_id}</td><td>${b.services}</td><td>₱${b.total_price}</td><td style="color:var(--accent); font-weight:bold;">₱${(b.total_price * 0.15).toFixed(2)}</td></tr>`).join('') : '<tr><td colspan="5">No accepted bookings.</td></tr>';
     }
 
     async function updateBookingStatus(id) {
-        const { error } = await window.supabaseClient
-            .from('bookings')
-            .update({ status: 'accepted', therapist_name: currentUserProfileName })
-            .eq('id', id);
-
+        const { error } = await window.supabaseClient.from('bookings').update({ status: 'accepted', therapist_name: currentUserProfileName }).eq('id', id);
         if (error) { console.error("Error updating status:", error); alert("Failed to accept booking."); return; }
         fetchBookings();
     }
