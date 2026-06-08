@@ -6,7 +6,7 @@
     <title>JMCY Dispatch & Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --accent: #2f855a; --danger: #e53e3e; }
+        :root { --primary: #1a365d; --secondary: #2c5282; --border: #e2e8f0; --accent: #2f855a; --danger: #e53e3e; --warning: #d69e2e; }
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 18px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; }
@@ -19,7 +19,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Updated scroll wrappers with vertical scrolling */
         .scroll-wrapper { width: 100%; overflow-x: auto; max-height: 450px; overflow-y: auto; border: 1px solid var(--border); }
         .ledger-table { width: 100%; min-width: 1400px; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
         .ledger-table th, .ledger-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -29,9 +28,10 @@
         .btn-nav { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: var(--secondary); color: white; font-weight: bold; }
         .btn-nav:disabled { background: #cbd5e0; cursor: not-allowed; }
         
-        .btn-accept, .btn-view { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
+        .btn-accept, .btn-view, .btn-payment { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; margin-right: 4px; }
         .btn-accept { background: var(--accent); }
         .btn-view { background: var(--secondary); }
+        .btn-payment { background: var(--warning); }
         .btn-submit { background: var(--secondary); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         .copy-hint { cursor: pointer; border-bottom: 1px dashed #cbd5e0; }
         .float-support { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px; border-radius: 50px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px; z-index: 1000; }
@@ -69,7 +69,7 @@
         </div>
     </div>
     
-    <div class="fixed-mobile-card">
+    <div class="fixed-mobile-card" id="payment-card">
         <h2 class="card-title">Payment Instructions (GCash)</h2>
         <span class="gcash-number" onclick="copyText('09310410733')">09310410733</span>
         <ol class="payment-steps">
@@ -113,6 +113,12 @@
     function copyText(text) { navigator.clipboard.writeText(text); alert("Copied to clipboard: " + text); }
     async function logout() { await window.supabaseClient.auth.signOut(); window.location.href = "index.html"; }
 
+    // Helper to scroll to payment section
+    function scrollToPayment() {
+        document.getElementById('payment-card').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('ref-number').focus();
+    }
+
     async function init() {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         if (!session) {
@@ -140,7 +146,10 @@
         
         document.getElementById('acceptedBody').innerHTML = accepted.length ? accepted.map(b => `
             <tr>
-                <td><button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button></td>
+                <td>
+                    <button class="btn-view" onclick="window.location.href='view.html?id=${b.id}'">VIEW</button>
+                    <button class="btn-payment" onclick="scrollToPayment()">PAYMENT</button>
+                </td>
                 <td>${b.booking_id}</td>
                 <td>${b.services}</td>
                 <td>₱${b.total_price}</td>
@@ -152,10 +161,7 @@
         const start = (currentPage - 1) * rowsPerPage;
         const pageData = allPendingBookings.slice(start, start + rowsPerPage);
         
-        const today = new Date(); today.setHours(0,0,0,0);
-        
-        document.getElementById('pendingBody').innerHTML = pageData.length ? pageData.map(b => {
-            return `
+        document.getElementById('pendingBody').innerHTML = pageData.length ? pageData.map(b => `
             <tr>
                 <td><button class="btn-accept" onclick="updateBookingStatus('${b.id}')">Accept</button></td>
                 <td>${b.booking_id}</td>
@@ -166,8 +172,7 @@
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`;
-        }).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="9">No pending bookings.</td></tr>';
 
         document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
         document.getElementById('prevBtn').disabled = currentPage === 1;
