@@ -177,35 +177,80 @@
     }
 
     async function updateBookingStatus(id) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const now = new Date();
 
-        const { data: bookings } = await window.supabaseClient
+        // Fetch all currently accepted bookings for this therapist to check business constraints
+        const { data: bookings, error: fetchError } = await window.supabaseClient
             .from('bookings')
             .select('*')
             .eq('status', 'accepted')
             .eq('therapist_name', currentUserProfileName);
 
-        // Check for unpaid past/today bookings
-        const needsPayment = bookings.some(b => new Date(b.appointment_date) <= today);
+        if (fetchError) {
+            alert("Error verifying booking restrictions.");
+            return;
+        }
+
+        // 1. CHECK FOR UNPAID COMPLETED SESSIONS (With 24/7 Night-Shift Grace Period)
+        const needsPayment = bookings.some(b => {
+            if (!b.appointment_date || !b.appointment_time) return false;
+
+            // Safely piece together the database Date (YYYY-MM-DD) and Time (HH:MM) strings into a single system Date Object
+            const appointmentDateTime = new Date(`${b.appointment_date}T${b.appointment_time}`);
+            const durationHours = parseFloat(b.total_duration_hours || 1);
+            
+            // Compute the exact moment the active massage session concludes
+            const sessionEndDateTime = new Date(appointmentDateTime.getTime() + (durationHours * 60 * 60 * 1000));
+
+            // Case A: If the therapist is still performing the session, they do not owe commission yet
+            if (now < sessionEndDateTime) {
+                return false;
+            }
+
+            // Case B: The session is completely finished. Check if it is the middle of the night
+            const currentHour = now.getHours();
+            const isAdminAsleep = (currentHour >= 22 || currentHour < 9); // Admin asleep between 10:00 PM and 9:00 AM
+
+            // If the massage concluded late-night/early-morning AND the admin dashboard operations are closed,
+            // BYPASS the block and let them keep working until normal morning clearance hours begin.
+            const endedLateOrEarly = (sessionEndDateTime.getHours() >= 22 || sessionEndDateTime.getHours() < 6);
+            if (endedLateOrEarly && isAdminAsleep) {
+                return false; 
+            }
+
+            // Case C: The session finished during broad daylight, or it is an old transaction from yesterday. Enforce a lockout.
+            return true;
+        });
+
         if (needsPayment) {
-            showModal("Payment Required", "You have pending commission payments for past or today's bookings. Please settle them first.");
+            showModal("Clearance Required", "You have outstanding completed sessions. Please remit your 20% commission to JMCY Admin to unlock your dashboard.");
             return;
         }
 
-        // Check future limit
-        const futureBookingsCount = bookings.filter(b => new Date(b.appointment_date) > today).length;
+        // 2. CHECK FUTURE ADVANCED BOOKING CAPACITY (Maximum cap of 2 advanced bookings)
+        const futureBookingsCount = bookings.filter(b => {
+            if (!b.appointment_date || !b.appointment_time) return false;
+            const appointmentDateTime = new Date(`${b.appointment_date}T${b.appointment_time}`);
+            return appointmentDateTime > now;
+        }).length;
+
         if (futureBookingsCount >= 2) {
-            showModal("Limit Reached", "You already have 2 future bookings accepted. Please complete existing bookings before accepting more.");
+            showModal("Limit Reached", "You already have 2 advanced bookings accepted. Please complete your current commitments before claiming more dispatches.");
             return;
         }
 
-        const { error } = await window.supabaseClient
+        // 3. EXECUTE THE RECORD TRANSACTION TRANSFER ON SUPABASE
+        const { error: updateError } = await window.supabaseClient
             .from('bookings')
             .update({ status: 'accepted', therapist_name: currentUserProfileName })
             .eq('id', id);
 
-        if (error) { alert("Failed to accept booking."); return; }
+        if (updateError) { 
+            alert("Failed to accept booking. It may have been claimed by another therapist."); 
+            return; 
+        }
+
+        // Dynamic view state update
         fetchBookings();
     }
 
