@@ -14,7 +14,14 @@
         .notice { background: #fffaf0; border: 1px solid #fbd38d; color: #744210; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 15px; }
         .btn-submit { width: 100%; padding: 12px; background: #2f855a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-back { width: 100%; padding: 12px; background: #718096; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .gcash-box { background: #f7fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; border: 1px dashed #cbd5e0; }
+        
+        /* Payment Method Selector */
+        .method-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .method-btn { flex: 1; padding: 10px; border: 2px solid #cbd5e0; border-radius: 8px; cursor: pointer; font-weight: bold; background: white; text-align: center; font-size: 0.9rem; transition: all 0.2s ease; }
+        .method-btn.active-gcash { border-color: #007dfe; background: #e6f2ff; color: #007dfe; }
+        .method-btn.active-maya { border-color: #55ba47; background: #eef8ec; color: #55ba47; }
+        
+        .info-box { background: #f7fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; border: 1px dashed #cbd5e0; }
         input[type="text"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 4px; }
     </style>
 </head>
@@ -24,17 +31,23 @@
     <h2>Commission Payment</h2>
     <div id="payment-details">Loading...</div>
     
-    <div class="gcash-box">
-        <div class="label">Send GCash To:</div>
-        <div style="font-size: 1.5rem; font-weight: bold; color: #2f855a;">09310410733</div>
+    <div class="label">Select Payment Method</div>
+    <div class="method-selector">
+        <div id="btn-gcash" class="method-btn active-gcash" onclick="setPaymentMethod('GCash')">GCash</div>
+        <div id="btn-maya" class="method-btn" onclick="setPaymentMethod('Maya')">Maya</div>
     </div>
 
-    <div class="notice">
+    <div class="info-box">
+        <div id="account-label" class="label">Send GCash To:</div>
+        <div id="account-number" style="font-size: 1.5rem; font-weight: bold; color: #007dfe;">09310410733</div>
+    </div>
+
+    <div id="notice-text" class="notice">
         <strong>⚠️ Required:</strong> Please provide <strong>both</strong> the GCash Reference Number and a screenshot/photo of the transaction to complete your submission.
     </div>
 
-    <div class="label">GCash Reference Number</div>
-    <input type="text" id="ref-number" placeholder="Enter Reference Number">
+    <div id="ref-label" class="label">GCash Reference Number</div>
+    <input type="text" id="ref-number" placeholder="Enter GCash Reference Number">
     
     <div class="label">Upload Receipt Photo</div>
     <input type="file" id="receipt-photo" accept="image/*">
@@ -50,7 +63,53 @@
     );
 
     let commissionAmount = 0;
-    let displayBookingId = ""; // Store string version
+    let displayBookingId = ""; 
+    let currentMethod = "GCash";
+
+    // Configuration for the payment channels
+    const paymentConfigs = {
+        GCash: {
+            sendToLabel: "Send GCash To:",
+            number: "09310410733",
+            color: "#007dfe",
+            refLabel: "GCash Reference Number",
+            placeholder: "Enter GCash Reference Number"
+        },
+        Maya: {
+            sendToLabel: "Send Maya To:",
+            number: "09091297422",
+            color: "#55ba47",
+            refLabel: "Maya Reference Number",
+            placeholder: "Enter Maya Reference Number"
+        }
+    };
+
+    function setPaymentMethod(method) {
+        currentMethod = method;
+        const config = paymentConfigs[method];
+        
+        const gcashBtn = document.getElementById('btn-gcash');
+        const mayaBtn = document.getElementById('btn-maya');
+        
+        // UI Toggling
+        if (method === 'GCash') {
+            gcashBtn.className = "method-btn active-gcash";
+            mayaBtn.className = "method-btn";
+        } else {
+            gcashBtn.className = "method-btn";
+            mayaBtn.className = "method-btn active-maya";
+        }
+
+        // Update Text Context
+        document.getElementById('account-label').innerText = config.sendToLabel;
+        const numDiv = document.getElementById('account-number');
+        numDiv.innerText = config.number;
+        numDiv.style.color = config.color;
+        
+        document.getElementById('notice-text').innerHTML = `<strong>⚠️ Required:</strong> Please provide <strong>both</strong> the ${method} Reference Number and a screenshot/photo of the transaction to complete your submission.`;
+        document.getElementById('ref-label').innerText = config.refLabel;
+        document.getElementById('ref-number').placeholder = config.placeholder;
+    }
 
     async function loadPayment() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -68,7 +127,7 @@
         }
 
         commissionAmount = (data.total_price * 0.20).toFixed(2);
-        displayBookingId = data.booking_id; // Capture the string ID
+        displayBookingId = data.booking_id; 
         document.getElementById('payment-details').innerHTML = `
             <div class="label">Booking ID</div><div class="value">${displayBookingId}</div>
             <div class="label">Commission Amount Due</div><div class="value">₱${commissionAmount}</div>
@@ -80,7 +139,7 @@
         const fileInput = document.getElementById('receipt-photo');
 
         if (!ref || fileInput.files.length === 0) {
-            alert("Submission Incomplete: Both the GCash Reference Number and the Receipt Photo are required.");
+            alert(`Submission Incomplete: Both the ${currentMethod} Reference Number and the Receipt Photo are required.`);
             return;
         }
 
@@ -104,7 +163,6 @@
             .eq('auth_id', user.id)
             .single();
 
-        // Using displayBookingId (string) instead of internal ID
         const { error: dbError } = await supabaseClient
             .from('payments')
             .insert([{ 
@@ -114,7 +172,8 @@
                 amount: commissionAmount,
                 ref_number: ref,
                 photo_url: publicUrl,
-                status: 'pending'
+                status: 'pending',
+                payment_method: currentMethod
             }]);
 
         if (dbError) { alert("Database error: " + dbError.message); }
