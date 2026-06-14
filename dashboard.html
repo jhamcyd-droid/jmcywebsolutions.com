@@ -74,10 +74,10 @@
                     <tr>
                         <th>Action</th><th>ID</th><th>Date</th><th>Time</th><th>Name</th>
                         <th>Preferred Therapist</th><th>People</th><th>Service</th><th>Hrs</th>
-                        <th>City</th><th>Address</th><th>Price</th>
+                        <th>City</th><th>Address</th><th>Payment Method</th><th>Price</th>
                     </tr>
                 </thead>
-                <tbody id="pendingBody"><tr><td colspan="12">Loading...</td></tr></tbody>
+                <tbody id="pendingBody"><tr><td colspan="13">Loading...</td></tr></tbody>
             </table>
         </div>
         <div class="pagination">
@@ -93,10 +93,10 @@
             <table class="ledger-table" style="min-width: 800px;">
                 <thead>
                     <tr>
-                        <th>#</th><th>Action</th><th>20% Comm.</th><th>Booking ID</th><th>Date</th><th>Time</th><th>Total Price</th>
+                        <th>#</th><th>Action</th><th>20% Comm.</th><th>Booking ID</th><th>Date</th><th>Time</th><th>Payment Method</th><th>Total Price</th>
                     </tr>
                 </thead>
-                <tbody id="acceptedBody"><tr><td colspan="7">Loading...</td></tr></tbody>
+                <tbody id="acceptedBody"><tr><td colspan="8">Loading...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -189,8 +189,8 @@
         } else {
             // Safety fallback block case scenario: if they have no locations assigned, return empty arrays safely
             allPendingBookings = [];
-            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="12">No territory locations assigned to your profile yet.</td></tr>';
-            document.getElementById('acceptedBody').innerHTML = '<tr><td colspan="7">No accepted bookings.</td></tr>';
+            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="13">No territory locations assigned to your profile yet.</td></tr>';
+            document.getElementById('acceptedBody').innerHTML = '<tr><td colspan="8">No accepted bookings.</td></tr>';
             pBody.classList.remove('pulsing');
             return;
         }
@@ -199,7 +199,7 @@
         
         if (fetchErr || !bookings) {
             allPendingBookings = [];
-            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="12">Error loading dispatch sequence feeds.</td></tr>';
+            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="13">Error loading dispatch sequence feeds.</td></tr>';
             pBody.classList.remove('pulsing');
             return;
         }
@@ -222,8 +222,9 @@
                 <td>${b.booking_id}</td>
                 <td>${formatDate(b.appointment_date)}</td>
                 <td>${formatTime(b.appointment_time)}</td>
+                <td style="font-weight: 600; color: var(--secondary);">${b.payment_method || 'Cash'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`).join('') : '<tr><td colspan="7">No accepted bookings.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="8">No accepted bookings.</td></tr>';
         
         setTimeout(() => pBody.classList.remove('pulsing'), 500);
     }
@@ -318,8 +319,9 @@
                 <td>${b.total_duration_hours || '0'}</td>
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
+                <td style="font-weight: 600; color: var(--secondary);">${b.payment_method || 'Cash'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`).join('') : '<tr><td colspan="12">No pending dispatches match your assigned operational zones.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="13">No pending dispatches match your assigned operational zones.</td></tr>';
 
         document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
         document.getElementById('prevBtn').disabled = currentPage === 1;
