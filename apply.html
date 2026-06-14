@@ -26,7 +26,8 @@
         .file-input-wrapper { display: flex; align-items: center; gap: 10px; }
         .delete-btn { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
-        .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; background: rgba(255,255,255,0.4); padding: 15px; border-radius: 8px; max-height: 300px; overflow-y: auto; }
+        .location-heading { font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: var(--primary); margin-top: 10px; margin-bottom: 2px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 2px; }
         .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #4a5568; cursor: pointer; }
         
         .submit-btn { background: var(--accent); color: white; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 25px; }
@@ -63,6 +64,7 @@
         <div class="form-group">
             <label>Preferred Locations (Select 1-3)</label>
             <div class="checkbox-group">
+                <div class="location-heading">Metro Manila</div>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Quezon City"> Quezon City</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Manila"> Manila</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="San Juan"> San Juan</label>
@@ -71,8 +73,27 @@
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Makati"> Makati</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Taguig"> Taguig</label>
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Parañaque"> Parañaque</label>
-                <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Las Piñas"> Las Piñas</label>            
                 <label class="checkbox-item"><input type="checkbox" name="location" value="Muntinlupa"> Muntinlupa</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Marikina"> Marikina</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Pasay"> Pasay</label>
+
+                <div class="location-heading">Luzon Hubs</div>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Tagaytay City"> Tagaytay City</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Palawan (El Nido)"> Palawan (El Nido)</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Palawan (Coron)"> Palawan (Coron)</label>
+
+                <div class="location-heading">Visayas Hubs</div>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Mactan Island"> Mactan Island</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Cebu IT Park"> Cebu IT Park</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Moalboal"> Moalboal</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Badian"> Badian</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Bantayan Island"> Bantayan Island</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Boracay (White Beach)"> Boracay (White Beach)</label>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Boracay (Bulabog Beach)"> Boracay (Bulabog Beach)</label>
+
+                <div class="location-heading">Mindanao Hubs</div>
+                <label class="checkbox-item"><input type="checkbox" name="location" value="Siargao Island"> Siargao Island</label>
             </div>
         </div>
 

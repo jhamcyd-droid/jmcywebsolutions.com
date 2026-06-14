@@ -10,7 +10,8 @@
         body { font-family: sans-serif; background: #edf2f7; padding: 10px; }
         .fixed-mobile-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .card-title { font-size: 18px; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 8px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+        .user-banner { background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; text-align: center; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        @media (min-width: 480px) { .user-banner { flex-direction: row; justify-content: space-between; text-align: left; } }
         .btn-logout { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .tab-nav { display: flex; gap: 5px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 10px; border: none; background: #cbd5e0; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; }
@@ -49,7 +50,10 @@
 <a href="https://wa.me/639091297422" class="float-support" target="_blank">JMCY Support</a>
 
 <div class="user-banner">
-    <span>Welcome, <span id="display-name" style="font-weight: bold;">Authenticating...</span></span>
+    <div>
+        Welcome, <span id="display-name" style="font-weight: bold;">Authenticating...</span>
+        <div id="display-locations" style="font-size: 0.75rem; color: #a0aec0; margin-top: 2px;">Hubs: Loading...</div>
+    </div>
     <button class="btn-logout" onclick="logout()">LOGOUT</button>
 </div>
 
@@ -108,6 +112,7 @@
 
 <script>
     let currentUserProfileName = "";
+    let therapistAssignedLocations = []; // Holds user preference array ['Manila', 'Makati']
     let allPendingBookings = [];
     let currentPage = 1;
     const rowsPerPage = 10;
@@ -139,10 +144,20 @@
     async function init() {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         if (!session) { window.location.href = "login.html"; return; }
-        const { data: profile } = await window.supabaseClient.from('therapist_applications').select('full_name').eq('auth_id', session.user.id).single();
+        
+        // Pull full name and the designated location arrays assigned to this profile record
+        const { data: profile } = await window.supabaseClient
+            .from('therapist_applications')
+            .select('full_name, locations')
+            .eq('auth_id', session.user.id)
+            .single();
+            
         if (profile) {
             currentUserProfileName = profile.full_name;
+            therapistAssignedLocations = Array.isArray(profile.locations) ? profile.locations : [];
+            
             document.getElementById('display-name').innerText = profile.full_name;
+            document.getElementById('display-locations').innerText = `Hubs: ${therapistAssignedLocations.join(', ') || 'None Allocated'}`;
         }
         fetchBookings();
     }
@@ -151,25 +166,44 @@
         const pBody = document.getElementById('pendingBody');
         pBody.classList.add('pulsing');
         
-        // Calculate cutoff threshold for exactly 2 days ago relative to local time
         const now = new Date();
         const cutOffDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2);
         const year = cutOffDate.getFullYear();
         const month = String(cutOffDate.getMonth() + 1).padStart(2, '0');
         const day = String(cutOffDate.getDate()).padStart(2, '0');
-        const cutOffString = `${year}-${month}-${day}`; // Formats to safe database format: 'YYYY-MM-DD'
+        const cutOffString = `${year}-${month}-${day}`; 
 
         // --- AUTOMATIC DATABASE PURGE ---
-        // Permanently deletes rows from the Supabase table that are 'pending' and older than the 2-day threshold
         await window.supabaseClient
             .from('bookings')
             .delete()
             .eq('status', 'pending')
             .lt('appointment_date', cutOffString);
 
-        // Fetch remaining clean record structures
-        const { data: bookings } = await window.supabaseClient.from('bookings').select('*');
+        // Fetch remaining records matching the therapist's assigned locations
+        let bookingsQuery = window.supabaseClient.from('bookings').select('*');
         
+        // If the array has entries, apply the server side .in optimization targeting matches
+        if (therapistAssignedLocations.length > 0) {
+            bookingsQuery = bookingsQuery.in('city', therapistAssignedLocations);
+        } else {
+            // Safety fallback block case scenario: if they have no locations assigned, return empty arrays safely
+            allPendingBookings = [];
+            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="12">No territory locations assigned to your profile yet.</td></tr>';
+            document.getElementById('acceptedBody').innerHTML = '<tr><td colspan="7">No accepted bookings.</td></tr>';
+            pBody.classList.remove('pulsing');
+            return;
+        }
+
+        const { data: bookings, error: fetchErr } = await bookingsQuery;
+        
+        if (fetchErr || !bookings) {
+            allPendingBookings = [];
+            document.getElementById('pendingBody').innerHTML = '<tr><td colspan="12">Error loading dispatch sequence feeds.</td></tr>';
+            pBody.classList.remove('pulsing');
+            return;
+        }
+
         allPendingBookings = bookings.filter(b => b.status === 'pending');
         const accepted = bookings.filter(b => b.status === 'accepted' && b.therapist_name === currentUserProfileName);
         
@@ -197,7 +231,6 @@
     async function updateBookingStatus(id) {
         const now = new Date();
 
-        // Fetch all currently accepted bookings for this therapist
         const { data: bookings, error: fetchError } = await window.supabaseClient
             .from('bookings')
             .select('*')
@@ -209,42 +242,25 @@
             return;
         }
 
-        // 1. CHECK FOR UNPAID COMPLETED SESSIONS (With strict Past-Date enforcement)
+        // 1. CHECK FOR UNPAID COMPLETED SESSIONS
         const needsPayment = bookings.some(b => {
             if (!b.appointment_date || !b.appointment_time) return false;
-
-            // Combine database Date (YYYY-MM-DD) and Time (HH:MM) strings safely into a local system Date Object
             const appointmentDateTime = new Date(`${b.appointment_date}T${b.appointment_time}`);
             const durationHours = parseFloat(b.total_duration_hours || 1);
-            
-            // Compute exactly when the active session concludes
             const sessionEndDateTime = new Date(appointmentDateTime.getTime() + (durationHours * 60 * 60 * 1000));
 
-            // Case A: If the session hasn't finished yet, they do not owe anything right now
-            if (now < sessionEndDateTime) {
-                return false;
-            }
+            if (now < sessionEndDateTime) return false;
 
-            // Is the booking from a past calendar date (yesterday or older)?
             const sessionDateOnly = new Date(sessionEndDateTime.getFullYear(), sessionEndDateTime.getMonth(), sessionEndDateTime.getDate());
             const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
-            if (sessionDateOnly < nowDateOnly) {
-                return true; // Instantly lock them out! It's from a past date, no night shift exemption.
-            }
+            if (sessionDateOnly < nowDateOnly) return true; 
 
-            // Case B: The session finished TODAY. Check if it is currently middle of the night
             const currentHour = now.getHours();
-            const isAdminAsleep = (currentHour >= 22 || currentHour < 9); // Admin asleep between 10:00 PM and 9:00 AM
-
-            // If it finished TODAY during late-night/early-morning shifts, and admins are offline,
-            // let them bypass the lock so they can keep working through the night.
+            const isAdminAsleep = (currentHour >= 22 || currentHour < 9);
             const endedLateOrEarly = (sessionEndDateTime.getHours() >= 22 || sessionEndDateTime.getHours() < 6);
-            if (endedLateOrEarly && isAdminAsleep) {
-                return false; 
-            }
+            if (endedLateOrEarly && isAdminAsleep) return false; 
 
-            // Case C: The session finished earlier today during normal daylight hours, but they haven't paid yet. Block them.
             return true;
         });
 
@@ -253,7 +269,7 @@
             return;
         }
 
-        // 2. CHECK FUTURE ADVANCED BOOKING CAPACITY (Maximum cap of 2 advanced bookings)
+        // 2. CHECK FUTURE ADVANCED BOOKING CAPACITY
         const futureBookingsCount = bookings.filter(b => {
             if (!b.appointment_date || !b.appointment_time) return false;
             const appointmentDateTime = new Date(`${b.appointment_date}T${b.appointment_time}`);
@@ -265,7 +281,7 @@
             return;
         }
 
-        // 3. EXECUTE THE RECORD TRANSACTION TRANSFER ON SUPABASE
+        // 3. EXECUTE THE RECORD TRANSACTION TRANSFER
         const { error: updateError } = await window.supabaseClient
             .from('bookings')
             .update({ status: 'accepted', therapist_name: currentUserProfileName })
@@ -276,7 +292,6 @@
             return; 
         }
 
-        // Dynamic view state update
         fetchBookings();
     }
 
@@ -304,7 +319,7 @@
                 <td>${b.city || 'N/A'}</td>
                 <td class="copy-hint" ondblclick="copyText('${b.address}')">${b.address || 'N/A'}</td>
                 <td>₱${b.total_price}</td>
-            </tr>`).join('') : '<tr><td colspan="12">No pending bookings.</td></tr>';
+            </tr>`).join('') : '<tr><td colspan="12">No pending dispatches match your assigned operational zones.</td></tr>';
 
         document.getElementById('pageInfo').innerText = `Page ${currentPage}`;
         document.getElementById('prevBtn').disabled = currentPage === 1;
