@@ -12,16 +12,25 @@
         .label { font-weight: 800; color: #4a5568; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
         .value { font-size: 1.2rem; color: #2c5282; margin-bottom: 15px; font-weight: bold; }
         .notice { background: #fffaf0; border: 1px solid #fbd38d; color: #744210; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 15px; }
+        .notice.digital-info { background: #e6f4ea; border-color: #34a853; color: #137333; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; }
         .btn-submit { width: 100%; padding: 12px; background: #2f855a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-back { width: 100%; padding: 12px; background: #718096; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         
-        /* Payment Method Selector */
-        .method-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        /* Workflow / Channel Selectors */
+        .type-selector, .method-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .type-btn { flex: 1; padding: 12px; border: 2px solid #cbd5e0; border-radius: 8px; cursor: pointer; font-weight: bold; background: #f7fafc; text-align: center; font-size: 0.95rem; transition: all 0.2s ease; }
+        .type-btn.active-type { background: #1a365d; border-color: #1a365d; color: white; }
+        
         .method-btn { flex: 1; padding: 10px; border: 2px solid #cbd5e0; border-radius: 8px; cursor: pointer; font-weight: bold; background: white; text-align: center; font-size: 0.9rem; transition: all 0.2s ease; }
         .method-btn.active-gcash { border-color: #007dfe; background: #e6f2ff; color: #007dfe; }
         .method-btn.active-maya { border-color: #55ba47; background: #eef8ec; color: #55ba47; }
         
         .info-box { background: #f7fafc; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; border: 1px dashed #cbd5e0; }
+        
+        /* QR Code Container Styles */
+        .qr-container { background: #ffffff; padding: 15px; border: 2px dashed #cbd5e0; border-radius: 8px; text-align: center; margin: 15px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .qr-image-display { width: 200px; height: 200px; object-fit: contain; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px; background: white; }
+        
         input[type="text"], input[type="file"] { width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 4px; }
     </style>
 </head>
@@ -31,28 +40,61 @@
     <h2>Commission Payment</h2>
     <div id="payment-details">Loading...</div>
     
-    <div class="label">Select Payment Method</div>
-    <div class="method-selector">
-        <div id="btn-gcash" class="method-btn active-gcash" onclick="setPaymentMethod('GCash')">GCash</div>
-        <div id="btn-maya" class="method-btn" onclick="setPaymentMethod('Maya')">Maya</div>
+    <div class="label">Select Collection Type</div>
+    <div class="type-selector">
+        <div id="type-cash" class="type-btn active-type" onclick="togglePaymentType('Cash')">💵 Cash Payment</div>
+        <div id="type-online" class="type-btn" onclick="togglePaymentType('Online')">📱 Online Payment</div>
     </div>
 
-    <div class="info-box">
-        <div id="account-label" class="label">Send GCash To:</div>
-        <div id="account-number" style="font-size: 1.5rem; font-weight: bold; color: #007dfe;">09310410733</div>
+    <div id="cash-remittance-block">
+        <div class="label">Select Your Remittance Wallet</div>
+        <div class="method-selector">
+            <div id="btn-gcash-cash" class="method-btn active-gcash" onclick="setRemittanceChannel('GCash')">GCash</div>
+            <div id="btn-maya-cash" class="method-btn" onclick="setRemittanceChannel('Maya')">Maya</div>
+        </div>
+
+        <div class="info-box">
+            <div id="account-label-cash" class="label">Send GCash To:</div>
+            <div id="account-number-cash" style="font-size: 1.5rem; font-weight: bold; color: #007dfe;">09310410733</div>
+        </div>
+
+        <div id="notice-text-cash" class="notice">
+            <strong>⚠️ Required:</strong> Please provide <strong>both</strong> the GCash Reference Number and a screenshot/photo of the transaction to complete your submission.
+        </div>
+
+        <div id="ref-label-cash" class="label">GCash Reference Number</div>
+        <input type="text" id="ref-number-cash" placeholder="Enter GCash Reference Number">
+        
+        <div class="label">Upload Receipt Photo</div>
+        <input type="file" id="receipt-photo-cash" accept="image/*">
+        
+        <button class="btn-submit" onclick="submitCashPayment()">SUBMIT REMITTANCE</button>
     </div>
 
-    <div id="notice-text" class="notice">
-        <strong>⚠️ Required:</strong> Please provide <strong>both</strong> the GCash Reference Number and a screenshot/photo of the transaction to complete your submission.
+    <div id="online-qr-block" style="display: none;">
+        <div class="notice digital-info">
+            <strong>📢 Present QR Code to Client:</strong> Please instruct your client to scan the active QR profile code down below using their phone app to fulfill their complete booking balance.
+        </div>
+
+        <div class="label">Select Client QR Platform</div>
+        <div class="method-selector">
+            <div id="btn-gcash-qr" class="method-btn active-gcash" onclick="setOnlineQRChannel('GCash')">GCash QR</div>
+            <div id="btn-maya-qr" class="method-btn" onclick="setOnlineQRChannel('Maya')">Maya QR</div>
+        </div>
+
+        <div class="qr-container">
+            <div id="qr-title-label" class="label" style="color: #007dfe; font-size: 0.9rem;">JMCY GCash Merchant QR</div>
+            
+            <img id="qr-graphic-box" src="gcash-qr.jpg" alt="Merchant QR Code" class="qr-image-display" onerror="handleImageError(this)">
+            
+            <div id="qr-subtext-number" style="font-size: 1.1rem; font-weight: bold; margin-top: 10px; color: #4a5568;">09310410733</div>
+        </div>
+        
+        <div class="notice" style="background: #edf2f7; border-color: #cbd5e0; color: #4a5568;">
+            💡 Once scanned and payment is received by the system, JMCY administrators will process your direct earnings payout distribution to your digital wallet profile automatically.
+        </div>
     </div>
 
-    <div id="ref-label" class="label">GCash Reference Number</div>
-    <input type="text" id="ref-number" placeholder="Enter GCash Reference Number">
-    
-    <div class="label">Upload Receipt Photo</div>
-    <input type="file" id="receipt-photo" accept="image/*">
-    
-    <button class="btn-submit" onclick="submitPayment()">SUBMIT PAYMENT</button>
     <button class="btn-back" onclick="window.location.href='dashboard.html'">BACK TO DASHBOARD</button>
 </div>
 
@@ -64,51 +106,96 @@
 
     let commissionAmount = 0;
     let displayBookingId = ""; 
-    let currentMethod = "GCash";
+    let currentRemittanceMethod = "GCash";
+    let currentQRMethod = "GCash";
+    let selectedWorkflowType = "Cash";
 
-    // Configuration for the payment channels
-    const paymentConfigs = {
-        GCash: {
-            sendToLabel: "Send GCash To:",
-            number: "09310410733",
-            color: "#007dfe",
-            refLabel: "GCash Reference Number",
-            placeholder: "Enter GCash Reference Number"
-        },
-        Maya: {
-            sendToLabel: "Send Maya To:",
-            number: "09091297422",
-            color: "#55ba47",
-            refLabel: "Maya Reference Number",
-            placeholder: "Enter Maya Reference Number"
-        }
+    // Data matrices for both operations
+    const cashRemitConfigs = {
+        GCash: { label: "Send GCash To:", number: "09310410733", color: "#007dfe", ref: "GCash Reference Number", hint: "Enter GCash Reference Number" },
+        Maya: { label: "Send Maya To:", number: "09091297422", color: "#55ba47", ref: "Maya Reference Number", hint: "Enter Maya Reference Number" }
     };
 
-    function setPaymentMethod(method) {
-        currentMethod = method;
-        const config = paymentConfigs[method];
-        
-        const gcashBtn = document.getElementById('btn-gcash');
-        const mayaBtn = document.getElementById('btn-maya');
-        
-        // UI Toggling
-        if (method === 'GCash') {
-            gcashBtn.className = "method-btn active-gcash";
-            mayaBtn.className = "method-btn";
+    // Updated configuration matching file extensions
+    const onlineQRConfigs = {
+        GCash: { title: "JMCY GCash Merchant QR", number: "09310410733", color: "#007dfe", imgUrl: "gcash-qr.png" },
+        Maya: { title: "JMCY Maya Merchant QR", number: "09091297422", color: "#55ba47", imgUrl: "maya-qr.png" } // Update to .jpg if your Maya code is also a jpeg screenshot
+    };
+
+    function togglePaymentType(type) {
+        selectedWorkflowType = type;
+        const btnCash = document.getElementById('type-cash');
+        const btnOnline = document.getElementById('type-online');
+        const blockCash = document.getElementById('cash-remittance-block');
+        const blockOnline = document.getElementById('online-qr-block');
+
+        if (type === 'Cash') {
+            btnCash.className = "type-btn active-type";
+            btnOnline.className = "type-btn";
+            blockCash.style.display = "block";
+            blockOnline.style.display = "none";
         } else {
-            gcashBtn.className = "method-btn";
-            mayaBtn.className = "method-btn active-maya";
+            btnCash.className = "type-btn";
+            btnOnline.className = "type-btn active-type";
+            blockCash.style.display = "none";
+            blockOnline.style.display = "block";
+        }
+    }
+
+    function setRemittanceChannel(method) {
+        currentRemittanceMethod = method;
+        const config = cashRemitConfigs[method];
+        
+        const btnG = document.getElementById('btn-gcash-cash');
+        const btnM = document.getElementById('btn-maya-cash');
+        
+        if (method === 'GCash') {
+            btnG.className = "method-btn active-gcash";
+            btnM.className = "method-btn";
+        } else {
+            btnG.className = "method-btn";
+            btnM.className = "method-btn active-maya";
         }
 
-        // Update Text Context
-        document.getElementById('account-label').innerText = config.sendToLabel;
-        const numDiv = document.getElementById('account-number');
-        numDiv.innerText = config.number;
-        numDiv.style.color = config.color;
+        document.getElementById('account-label-cash').innerText = config.label;
+        const numText = document.getElementById('account-number-cash');
+        numText.innerText = config.number;
+        numText.style.color = config.color;
         
-        document.getElementById('notice-text').innerHTML = `<strong>⚠️ Required:</strong> Please provide <strong>both</strong> the ${method} Reference Number and a screenshot/photo of the transaction to complete your submission.`;
-        document.getElementById('ref-label').innerText = config.refLabel;
-        document.getElementById('ref-number').placeholder = config.placeholder;
+        document.getElementById('notice-text-cash').innerHTML = `<strong>⚠️ Required:</strong> Please provide <strong>both</strong> the ${method} Reference Number and a screenshot/photo of the transaction to complete your submission.`;
+        document.getElementById('ref-label-cash').innerText = config.ref;
+        document.getElementById('ref-number-cash').placeholder = config.hint;
+    }
+
+    function setOnlineQRChannel(method) {
+        currentQRMethod = method;
+        const config = onlineQRConfigs[method];
+        
+        const btnG = document.getElementById('btn-gcash-qr');
+        const btnM = document.getElementById('btn-maya-qr');
+        
+        if (method === 'GCash') {
+            btnG.className = "method-btn active-gcash";
+            btnM.className = "method-btn";
+        } else {
+            btnG.className = "method-btn";
+            btnM.className = "method-btn active-maya";
+        }
+
+        const labelTitle = document.getElementById('qr-title-label');
+        labelTitle.innerText = config.title;
+        labelTitle.style.color = config.color;
+
+        const qrImg = document.getElementById('qr-graphic-box');
+        qrImg.src = config.imgUrl;
+        qrImg.style.display = "block";
+        
+        document.getElementById('qr-subtext-number').innerText = config.number;
+    }
+
+    function handleImageError(imgElement) {
+        imgElement.style.display = "none";
+        alert("Notice: QR Code image (" + imgElement.src.split('/').pop() + ") not found in directory. Please verify file placement.");
     }
 
     async function loadPayment() {
@@ -117,7 +204,7 @@
         
         const { data, error } = await supabaseClient
             .from('bookings')
-            .select('id, booking_id, total_price')
+            .select('id, booking_id, total_price, payment_method')
             .eq('id', bookingId)
             .single();
 
@@ -128,18 +215,27 @@
 
         commissionAmount = (data.total_price * 0.20).toFixed(2);
         displayBookingId = data.booking_id; 
+        
         document.getElementById('payment-details').innerHTML = `
             <div class="label">Booking ID</div><div class="value">${displayBookingId}</div>
             <div class="label">Commission Amount Due</div><div class="value">₱${commissionAmount}</div>
         `;
+
+        if (data.payment_method === 'GCash' || data.payment_method === 'Maya') {
+            togglePaymentType('Online');
+            setOnlineQRChannel(data.payment_method);
+        } else {
+            togglePaymentType('Cash');
+            setRemittanceChannel('GCash');
+        }
     }
 
-    async function submitPayment() {
-        const ref = document.getElementById('ref-number').value.trim();
-        const fileInput = document.getElementById('receipt-photo');
+    async function submitCashPayment() {
+        const ref = document.getElementById('ref-number-cash').value.trim();
+        const fileInput = document.getElementById('receipt-photo-cash');
 
         if (!ref || fileInput.files.length === 0) {
-            alert(`Submission Incomplete: Both the ${currentMethod} Reference Number and the Receipt Photo are required.`);
+            alert(`Submission Incomplete: Both the ${currentRemittanceMethod} Reference Number and the Receipt Photo are required.`);
             return;
         }
 
@@ -173,7 +269,7 @@
                 ref_number: ref,
                 photo_url: publicUrl,
                 status: 'pending',
-                payment_method: currentMethod
+                payment_method: currentRemittanceMethod
             }]);
 
         if (dbError) { alert("Database error: " + dbError.message); }
