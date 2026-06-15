@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24/7 Premium On-Demand Massage | Home, Hotel, & Condo | JMCY Wellness Network</title>
+    <title>Join the JMCY Wellness Network | Professional Massage Therapists</title>
     <style>
         :root { 
             --primary: #1a365d; 
@@ -25,8 +25,48 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
+
+        /* ==========================================================================
+           PROMOTIONAL HIRING TOP BAR NOTICE
+           ========================================================================= */
+        .promo-hiring-bar {
+            background-color: var(--primary);
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .promo-badge {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .promo-link {
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+        .promo-link:hover {
+            color: #cbd5e0;
+        }
         
-        /* Navigation */
+        /* ==========================================================================
+           DESKTOP STRUCTURE & NAVIGATION
+           ========================================================================== */
         header {
             display: flex;
             justify-content: space-between;
@@ -38,19 +78,29 @@
             z-index: 100;
         }
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-decoration: none; }
-        .logo span { color: var(--accent); font-size: 0.8rem; vertical-align: super; margin-left: 4px; border: 1px solid var(--accent); padding: 1px 4px; border-radius: 3px; font-weight: 700; }
-        .nav-actions { display: flex; align-items: center; gap: 20px; }
-        .nav-link { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
-        .nav-link:hover { color: var(--secondary); }
+        
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        
+        .nav-portal-btn { 
+            background-color: var(--accent); 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; border-radius: 4px; 
+            font-size: 0.9rem; font-weight: 600; 
+            text-decoration: none; display: inline-block; 
+            transition: background-color 0.2s, transform 0.2s; 
+            letter-spacing: 0.5px;
+        }
+        .nav-portal-btn:hover { background-color: #276749; transform: translateY(-1px); }
 
         .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 5px; flex-direction: column; gap: 5px; z-index: 110; }
         .hamburger span { display: block; width: 25px; height: 3px; background-color: var(--primary); border-radius: 3px; transition: all 0.3s ease-in-out; }
 
-        /* Sliding Hero */
+        /* Sliding Hero Engine */
         .hero-slider {
             position: relative;
             width: 100%;
-            height: 450px; 
+            height: 440px; 
             overflow: hidden;
             background-color: #111;
         }
@@ -70,7 +120,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(26, 54, 93, 0.94), rgba(42, 67, 101, 0.4));
+            background: linear-gradient(to right, rgba(26, 54, 93, 0.95), rgba(42, 67, 101, 0.5));
             z-index: 1;
         }
         .hero-content { 
@@ -81,8 +131,10 @@
             max-width: 800px;
             margin-right: auto;
         }
-        .hero-content h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
-        .hero-content p { font-size: 1.2rem; margin: 0 0 30px 0; opacity: 0.9; font-weight: 300; max-width: 600px; }
+        .hero-content h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; line-height: 1.2; }
+        .hero-content p { font-size: 1.1rem; margin: 0 0 30px 0; opacity: 0.9; font-weight: 300; max-width: 600px; }
+        
+        .hero-btn-group { display: flex; gap: 15px; flex-wrap: wrap; }
 
         .cta-btn { 
             background-color: var(--accent); 
@@ -95,167 +147,302 @@
             letter-spacing: 0.5px;
         }
         .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
+        
+        .cta-btn-dark { background-color: transparent; border: 2px solid white; }
+        .cta-btn-dark:hover { background-color: white; color: var(--primary); }
 
-        section { padding: 80px 10%; transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Structural Page Sections */
+        section { 
+            padding: 80px 10%; 
+            transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 10px; font-weight: 700; }
-        section p.section-intro { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-size: 1.05rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .section-desc { text-align: center; color: var(--text-muted); max-width: 700px; margin: 0 auto 40px auto; font-size: 1.05rem; }
         .bg-light { background-color: var(--light); }
 
-        /* Values Grid Layout */
-        .grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        /* Translation Toggle Controls */
+        .lang-control-wrapper { max-width: 1200px; margin: 0 auto 30px auto; display: flex; justify-content: flex-end; }
+        .lang-toggle-btn { background: #ffffff; border: 1px solid var(--border); padding: 8px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: 4px; color: var(--secondary); transition: all 0.2s; }
+        .lang-toggle-btn:hover { border-color: var(--secondary); background: var(--light); }
+        .lang-toggle-btn.active { background-color: var(--secondary); color: white; border-color: var(--secondary); }
+
+        /* Advantages Grid Layout */
+        .grid { display: flex; justify-content: center; gap: 30px; }
         .card { 
-            flex: 1; min-width: 280px; max-width: 340px; background: #ffffff; padding: 40px 30px; 
+            flex: 1; max-width: 340px; background: #ffffff; padding: 40px 30px; 
             border-radius: 6px; border: 1px solid var(--border);
-            transition: box-shadow 0.3s, transform 0.3s;
+            transition: box-shadow 0.3s, transform 0.3s, margin 0.4s ease;
         }
         .card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
         .card h3 { color: var(--secondary); margin-top: 0; font-size: 1.25rem; margin-bottom: 15px; }
         .card p { color: #4a5568; font-size: 0.95rem; margin: 0; }
 
-        /* Location Hubs Section */
-        .location-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
-        .location-zone { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .location-zone h3 { font-size: 1.1rem; color: var(--primary); margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-        .location-zone ul { list-style: none; padding: 0; margin: 0; }
-        .location-zone li { font-size: 0.9rem; color: #4a5568; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
-        .location-zone li::before { content: '•'; color: var(--accent); font-weight: bold; }
-
-        /* Premium Menu & Pricing Matrix Slider Styles */
-        .matrix-slider-container {
-            position: relative;
-            max-width: 1100px;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            user-select: none;
-        }
-        .matrix-track {
+        /* ==========================================================================
+           LOCATION MODULE - TARGET BOOKING REGIONS
+           ========================================================================== */
+        .location-tabs {
             display: flex;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform;
-            cursor: grab;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
-        .matrix-track:active {
-            cursor: grabbing;
+        .loc-tab-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
         }
-        .matrix-slide {
-            min-width: 100%;
-            box-sizing: border-box;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            padding: 50px 80px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            min-height: 520px;
+        .loc-tab-btn:hover {
+            border-color: var(--secondary);
+            background-color: var(--light);
         }
-        .matrix-slide::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(26, 54, 93, 0.94) 0%, rgba(44, 82, 130, 0.8) 100%);
-            z-index: 1;
-        }
-        .matrix-card-content {
-            position: relative;
-            z-index: 2;
+        .loc-tab-btn.active {
+            background-color: var(--primary);
             color: #ffffff;
-            width: 100%;
-            max-width: 650px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(26, 54, 93, 0.15);
         }
-        .matrix-slide h3 {
-            margin: 0 0 15px 0;
-            font-size: 1.8rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 8px;
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .location-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .location-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+            border-color: var(--secondary);
+        }
+        .location-card h4 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+            font-size: 1.1rem;
             font-weight: 700;
         }
-        
-        .regional-pricing-split { display: flex; gap: 20px; margin-top: 10px; }
-        .price-column { flex: 1; background: rgba(255,255,255,0.06); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
-        .price-column h4 { margin: 0 0 10px 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; color: #ebf8ff; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 4px; }
-        
-        .tier-block { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 4px; }
-        .tier-block:last-child { margin-bottom: 0; }
-        
-        .duration-label { font-size: 0.85rem; color: #e2e8f0; font-weight: 600; }
-        .metric-val { font-weight: 800; color: #63e2b7; font-size: 1.1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-
-        /* Slider Controls */
-        .matrix-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            color: white;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.2s;
+        .location-card p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
-        .matrix-arrow:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-50%) scale(1.05); }
-        .matrix-arrow.prev { left: 20px; }
-        .matrix-arrow.next { right: 20px; }
-        
-        .matrix-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
-        .matrix-dot { width: 12px; height: 12px; background-color: #cbd5e0; border-radius: 50%; cursor: pointer; transition: background-color 0.3s, transform 0.3s; }
-        .matrix-dot.active { background-color: var(--primary); transform: scale(1.2); }
+        .location-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            background-color: #e6fffa;
+            color: var(--accent);
+            border-radius: 4px;
+            margin-top: 12px;
+            width: fit-content;
+        }
+        .location-tag.tourist {
+            background-color: #feebc8;
+            color: #dd6b20;
+        }
 
-        /* Split Blocks */
+        /* Rates & Earnings Matrix Style Block */
+        .rates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .rate-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        }
+        .rate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+        }
+        .rate-card h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        .duration-badge {
+            font-size: 0.8rem;
+            color: var(--primary);
+            background-color: #ebf8ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 8px;
+            border: 1px solid #bee3f8;
+        }
+        .rate-metrics {
+            background-color: var(--light);
+            border-radius: 6px;
+            padding: 12px 15px;
+        }
+        .gradient-highlight {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border: 1px solid #b2f5ea;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .metric-row:last-child {
+            margin-bottom: 0;
+            padding-top: 6px;
+            border-top: 1px dashed var(--border);
+        }
+        .metric-label { color: #4a5568; }
+        .metric-val { font-weight: 600; color: var(--dark); }
+        .metric-row.earnings-highlight {
+            font-size: 1rem;
+        }
+        .metric-row.earnings-highlight .metric-label {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .metric-row.earnings-highlight .metric-val {
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        /* About Us Split Block */
         .about-split { display: flex; align-items: center; gap: 60px; }
         .about-text { flex: 1; }
         .about-text h2 { text-align: left; margin-bottom: 25px; }
         .about-text p { color: #4a5568; font-size: 1.05rem; margin-bottom: 20px; }
-        .about-image { flex: 1; height: 350px; background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center; border-radius: 8px; border: 1px solid var(--border); }
+        .about-image { flex: 1; height: 350px; background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center; border-radius: 8px; border: 1px solid var(--border); }
 
-        /* Booking Steps Carousel */
-        .pipeline-wrapper { max-width: 550px; margin: 0 auto; position: relative; overflow: hidden; padding: 10px 0; }
-        .steps-slider-track { display: flex; width: 300%; transition: transform 0.8s cubic-bezier(0.45, 0, 0.15, 1); will-change: transform; }
-        .step-node { width: 33.333%; flex: 1; text-align: center; box-sizing: border-box; padding: 20px 40px; }
+        /* Recruitment Pipeline 1-By-1 Slideshow Carousel */
+        .pipeline-wrapper {
+            max-width: 550px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            padding: 10px 0;
+        }
+        .steps-slider-track {
+            display: flex;
+            width: 300%; 
+            transition: transform 0.8s cubic-bezier(0.45, 0, 0.15, 1);
+            will-change: transform;
+        }
+        .step-node {
+            width: 33.333%;
+            flex: 1;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 20px 40px;
+        }
         .step-number { 
-            width: 55px; height: 55px; background-color: var(--primary); color: white; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; 
-            font-weight: 700; font-size: 1.3rem; box-shadow: 0 4px 10px rgba(26, 54, 147, 0.15);
+            width: 55px; 
+            height: 55px; 
+            background-color: var(--primary); 
+            color: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 20px auto; 
+            font-weight: 700; 
+            font-size: 1.3rem; 
+            box-shadow: 0 4px 10px rgba(26, 54, 147, 0.15);
         }
         .step-node h4 { font-size: 1.3rem; color: var(--primary); margin: 0 0 12px 0; }
         .step-node p { color: #4a5568; font-size: 1rem; margin: 0; line-height: 1.6; }
 
-        .pipeline-dots { display: flex; justify-content: center; gap: 10px; margin-top: 25px; }
-        .dot { width: 10px; height: 10px; background-color: #cbd5e0; border-radius: 50%; cursor: pointer; transition: background-color 0.3s, transform 0.3s; }
-        .dot.active { background-color: var(--primary); transform: scale(1.2); }
+        .pipeline-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #cbd5e0;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .dot.active {
+            background-color: var(--primary);
+            transform: scale(1.2);
+        }
 
-        /* Accordion FAQs */
+        /* Structured FAQ Elements */
         .faq-max { max-width: 800px; margin: 0 auto; }
-        .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; cursor: pointer; }
+        .faq-item { 
+            border-bottom: 1px solid var(--border); 
+            padding: 20px 0; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease, padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .faq-question { font-size: 1.15rem; font-weight: 600; color: var(--primary); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
         .faq-answer { 
-            max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s; 
-            color: #4a5568; font-size: 0.95rem; margin-top: 0; opacity: 0;
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.4s ease; 
+            color: #4a5568; 
+            font-size: 0.95rem; 
+            margin-top: 0;
+            opacity: 0;
         }
-        .faq-item.open .faq-answer { max-height: 350px; margin-top: 14px; opacity: 1; }
-        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); }
+        .faq-item.open .faq-answer { 
+            max-height: 350px; 
+            margin-top: 14px; 
+            opacity: 1;
+        }
+        .faq-icon::after { content: '+'; font-size: 1.3rem; font-weight: bold; color: var(--secondary); transition: transform 0.3s ease; }
         .faq-item.open .faq-icon::after { content: '−'; }
+
+        /* Legal Terms Block Layout */
+        .terms-box { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            border: 1px solid var(--border); 
+            border-left: 4px solid var(--primary); 
+            padding: 30px; 
+            border-radius: 4px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .terms-box h3 { margin-top: 0; color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; }
+        .terms-box p { color: #4a5568; font-size: 0.95rem; margin-bottom: 12px; }
+        .terms-box ul { margin: 0; padding-left: 20px; color: #4a5568; font-size: 0.95rem; }
+        .terms-box li { margin-bottom: 8px; }
 
         footer { background: #1a202c; color: #a0aec0; text-align: center; padding: 40px 20px; font-size: 14px; border-top: 1px solid #2d3748; }
 
-        /* Floating Action Buttons */
+        /* Floating WhatsApp Icon Action Button */
         .whatsapp-container {
             position: fixed;
             bottom: 25px;
@@ -268,16 +455,26 @@
             text-decoration: none;
         }
         .whatsapp-float {
-            background-color: var(--secondary); color: #ffffff; border-radius: 50%;
-            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); transition: transform 0.2s, background-color 0.2s;
+            background-color: var(--whatsapp-green);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease;
             position: relative;
         }
-        .whatsapp-container:hover .whatsapp-float { transform: scale(1.08); background-color: var(--primary); }
-        .whatsapp-float svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .whatsapp-container:hover .whatsapp-float {
+            transform: scale(1.08);
+            background-color: #128C7E;
+        }
+        .whatsapp-float svg { width: 34px; height: 34px; fill: currentColor; }
         .whatsapp-float::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--secondary); border-radius: 50%; z-index: -1; opacity: 0.4;
+            background-color: var(--whatsapp-green); border-radius: 50%; z-index: -1; opacity: 0.4;
             animation: whatsapp-pulse 2s infinite;
         }
         @keyframes whatsapp-pulse {
@@ -287,23 +484,34 @@
         .whatsapp-label {
             font-size: 0.78rem; font-weight: 700; color: var(--dark); background-color: rgba(255, 255, 255, 0.95);
             padding: 3px 8px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border);
+            text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border); transition: color 0.2s ease;
         }
+        .whatsapp-container:hover .whatsapp-label { color: #128C7E; }
 
-        .animate-up { opacity: 0; transform: translateY(40px) scale(0.98); transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); will-change: transform, opacity; }
+        /* Scroll Reveal Upward Animation styling */
+        .animate-up {
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform, opacity;
+        }
         .animate-up.active { opacity: 1; transform: translateY(0) scale(1); }
 
         @media (max-width: 768px) {
-            header { padding: 15px 5%; }
+            .promo-hiring-bar { font-size: 0.82rem; padding: 8px 12px; gap: 6px; }
+            .promo-badge { font-size: 0.65rem; padding: 1px 6px; }
+
+            header { padding: 15px 5%; flex-direction: row; justify-content: space-between; text-align: left; }
             .logo { font-size: 20px; }
             .hamburger { display: flex; }
+            
             .nav-actions { 
-                position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; 
-                background: #ffffff; flex-direction: column; align-items: flex-start; 
-                justify-content: flex-start; padding: 100px 40px 40px 40px; box-sizing: border-box; 
-                gap: 25px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease-in-out; z-index: 105; 
+                position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; background: #ffffff; 
+                flex-direction: column; align-items: flex-start; justify-content: flex-start; 
+                padding: 100px 40px 40px 40px; box-sizing: border-box; gap: 25px; 
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease-in-out; z-index: 105; 
             }
-            .nav-link { font-size: 1.15rem; width: 100%; padding: 5px 0; display: block; }
+            .nav-portal-btn { width: 100%; box-sizing: border-box; text-align: center; }
             .cta-btn { width: 100%; box-sizing: border-box; text-align: center; }
             .nav-actions.open { right: 0; }
             .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
@@ -311,329 +519,240 @@
             .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
             section { padding: 50px 5%; }
-            section h2 { font-size: 1.65rem; margin-bottom: 10px; }
-            .hero-slider { height: 350px; }
-            .hero-content h1 { font-size: 1.8rem; }
-            .hero-content p { font-size: 1rem; }
-            .grid, .about-split { flex-direction: column; gap: 30px; }
-            .about-image { display: none; }
-            .about-text h2 { text-align: center; }
-            .whatsapp-container { bottom: 15px; right: 20px; }
-            .whatsapp-float { width: 52px; height: 52px; }
+            section h2 { font-size: 1.65rem; }
+            .section-desc { font-size: 0.95rem; margin-bottom: 25px; }
             
-            .matrix-slide { padding: 30px 20px; min-height: 560px; }
-            .regional-pricing-split { flex-direction: column; gap: 15px; }
-            .matrix-arrow { display: none; }
+            .hero-slider { height: 360px; }
+            .slide::before { background: linear-gradient(to bottom, rgba(26, 54, 93, 0.95), rgba(42, 67, 101, 0.8)); }
+            .hero-content { padding: 0 5%; text-align: center; }
+            .hero-content h1 { font-size: 1.6rem; }
+            .hero-content p { font-size: 0.95rem; }
+            .hero-btn-group { justify-content: center; gap: 10px; }
+
+            .grid, .about-split { flex-direction: column; gap: 30px; }
+            .card { max-width: 100%; width: 100%; box-sizing: border-box; }
+            .about-text h2 { text-align: center; }
+            .about-image { display: none; }
+            .terms-box { padding: 20px; }
+            .lang-control-wrapper { justify-content: center; margin-bottom: 20px; }
+
+            .pipeline-wrapper { max-width: 100%; }
+            .step-node { padding: 10px 15px; }
+            .whatsapp-container { bottom: 15px; right: 20px; gap: 4px; }
+            .whatsapp-float { width: 52px; height: 52px; }
+            .whatsapp-float svg { width: 28px; height: 28px; }
+            .whatsapp-label { font-size: 0.7rem; padding: 2px 6px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="logo">JMCY WELLNESS <span>24/7</span></a>
-        
-        <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+    <div class="promo-hiring-bar">
+        <span class="promo-badge" id="promo-tag">We Are Hiring</span>
+        <span id="promo-msg"> JMCY Wellness is expanding! We are looking for professional, certified FREELANCE MASSAGE THERAPISTS.</span>
+        <a href="apply.html" class="promo-link" id="promo-action">Apply Now &rarr;</a>
+    </div>
 
+    <header>
+        <a href="#" class="logo">JMCY WELLNESS</a>
+        <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
+            <span></span><span></span><span></span>
+        </button>
         <div class="nav-actions" id="nav-actions-container">
-            <a href="#services" class="nav-link">Our Services</a>
-            <a href="#rates" class="nav-link">Pricing Matrix</a>
-            <a href="#locations" class="nav-link">Coverage Areas</a>
-            <a href="/wellness/booking.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Fill Up Form</a>
+            <a href="login.html" class="nav-portal-btn">Login Portal</a>
+            <a href="apply.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Apply Now</a>
         </div>
     </header>
 
     <section class="hero-slider" style="padding: 0;">
         <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
-                <h1>24/7 Premium Home, Hotel, & Condo Massage</h1>
-                <p>Restorative, spa-quality bodywork therapies delivered straight to your room 24 hours a day, 7 days a week by background-verified specialists.</p>
-                <a href="/wellness/booking.html" class="cta-btn">Book Your 24/7 Session</a>
+                <h1>Maximize Your Revenue as a Licensed Massage Therapist</h1>
+                <p>Join the JMCY Wellness Network. Receive direct client payments via GCash, Maya, or Cash and enjoy unmatched operational freelance flexibility.</p>
+                <div class="hero-btn-group">
+                    <a href="apply.html" class="cta-btn">Submit Application</a>
+                    <a href="login.html" class="cta-btn cta-btn-dark">Login Portal</a>
+                </div>
             </div>
         </div>
-        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80');">
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
-                <h1>Total Relaxation, Any Time You Need It</h1>
-                <p>No travel friction, no closed spa doors. Choose your treatment style and exact duration night or day. Settle securely via Cash, GCash, or Maya upon provider arrival.</p>
-                <a href="/wellness/booking.html" class="cta-btn">Fill Up Form Now</a>
+                <h1>Flexible Scheduling. Total Control.</h1>
+                <p>Manage your own hours and choose your localized coverage zones. Our smart backend logic routes appointments dynamically to match your availability.</p>
+                <div class="hero-btn-group">
+                    <a href="apply.html" class="cta-btn">Begin Registration</a>
+                    <a href="login.html" class="cta-btn cta-btn-dark">Login Portal</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="about-us animate-up" id="services">
+    <section class="about-us animate-up">
         <div class="about-split">
             <div class="about-text">
-                <h2>The JMCY Wellness Standard</h2>
-                <p>JMCY Wellness operates an elite, 24/7 on-demand structural framework designed to link clients with certified, top-tier independent massage professionals around the clock.</p>
-                <p>Whether you require a late-night stress release in your residential home, a post-travel recovery massage inside your hotel suite, or weekend relaxation at your condominium complex, our dynamic dispatch system ensures prompt, highly secure therapeutic care right to your door.</p>
+                <h2>About the JMCY Network</h2>
+                <p>JMCY Wellness functions as a premier technical intermediary framework designed to support independent, highly trained massage therapists throughout the Philippines.</p>
+                <p>We do not operate as a traditional spa house. Instead, we run a sophisticated routing ecosystem that bridges the structural gap between consumer demand platforms and localized, certified wellness professionals looking to manage independent client rosters.</p>
             </div>
             <div class="about-image"></div>
         </div>
     </section>
 
     <section class="benefits bg-light animate-up">
-        <h2>Why Choose JMCY Network?</h2>
+        <h2>The Core Network Advantages</h2>
         <div class="grid">
             <div class="card">
-                <h3>Continuous 24/7 Dispatch</h3>
-                <p>Never look at the clock again. Our network registry functions dynamically all night and day to secure active specialists for immediate dispatch.</p>
+                <h3>Direct Client Collection</h3>
+                <p>Get paid on the spot. Customers pay your professional service fee directly to you using cash, personal GCash numbers, or Maya accounts instantly at the appointment locale.</p>
             </div>
             <div class="card">
-                <h3>Strict Safety Screening</h3>
-                <p>Your absolute peace of mind is our priority. Every independent therapist registered within our system undergoes rigid identity validation, dynamic criminal record background checks, and practical massage mastery audits.</p>
+                <h3>Automated Dispatch</h3>
+                <p>Eliminate manual bidding. Our centralized logistics system instantly assigns localized therapeutic bookings straight to your dashboard portal device.</p>
             </div>
             <div class="card">
-                <h3>Direct On-Site Settlement</h3>
-                <p>Transparent billing structures. Hand your professional provider the session fee directly via standard Cash, GCash, or Maya upon arrival.</p>
+                <h3>Keep 80% of Your Rates</h3>
+                <p>Retain the overwhelming majority of your professional work rate value. Partners only owe a simple 20% platform fee balance per completed appointment.</p>
             </div>
         </div>
     </section>
 
-    <section class="massage-rates animate-up" id="rates">
-        <h2>Premium Service Menu & Pricing Matrix</h2>
-        <p class="section-intro">Swipe or navigate through our customized therapeutic selections below. Transparent pricing tier breakdowns for both major city lines and luxury provincial resort hubs.</p>
-
-        <div class="matrix-slider-container">
-            <button class="matrix-arrow prev" id="matrixPrevBtn" aria-label="Previous Slide">&#10094;</button>
-            <button class="matrix-arrow next" id="matrixNextBtn" aria-label="Next Slide">&#10095;</button>
-            
-            <div class="matrix-track" id="matrixSliderTrack">
-                <!-- Swedish -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Swedish Massage</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,000</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,400</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱1,800</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,500</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,000</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,500</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shiatsu -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Shiatsu Massage</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,100</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,550</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,000</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,600</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,150</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,700</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Thai -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Thai Massage</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,100</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,550</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,000</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,600</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,150</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,700</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reflexology -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Reflexology / Foot</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,200</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,700</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,200</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,700</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,300</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,900</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aromatherapy -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Aromatherapy</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,300</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,850</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,400</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,800</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,450</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱3,100</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Deep Tissue -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Deep Tissue Massage</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,200</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,700</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,200</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,700</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,300</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,900</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Combination -->
-                <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519824206182-3cf22d2f3b75?auto=format&fit=crop&w=1200&q=80');">
-                    <div class="matrix-card-content">
-                        <h3>Combination Massage</h3>
-                        <div class="regional-pricing-split">
-                            <div class="price-column">
-                                <h4>Metro Manila (NCR)</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,000</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,400</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱1,800</span></div>
-                            </div>
-                            <div class="price-column">
-                                <h4>Tourist Hubs</h4>
-                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,500</span></div>
-                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,000</span></div>
-                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,500</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <section class="service-locations animate-up" id="locations-section">
+        <h2 id="loc-title">High-Demand Service Locations</h2>
+        <div class="section-desc" id="loc-desc">Our online booking platform matches customer demand with local freelance therapists across major cities and high-traffic tourist zones. Choose your coverage zones below:</div>
         
-        <div class="matrix-dots" id="matrixSliderDots"></div>
+        <div class="location-tabs">
+            <button class="loc-tab-btn active" onclick="filterLocations('all', this)" id="tab-all">All Regions</button>
+            <button class="loc-tab-btn" onclick="filterLocations('ncr', this)" id="tab-ncr">Metro Manila (NCR)</button>
+            <button class="loc-tab-btn" onclick="filterLocations('cebu', this)" id="tab-cebu">Cebu Island</button>
+            <button class="loc-tab-btn" onclick="filterLocations('boracay', this)" id="tab-boracay">Boracay Island</button>
+            <button class="loc-tab-btn" onclick="filterLocations('tagaytay', this)" id="tab-tagaytay">Tagaytay</button>
+            <button class="loc-tab-btn" onclick="filterLocations('siargao', this)" id="tab-siargao">Siargao</button>
+            <button class="loc-tab-btn" onclick="filterLocations('palawan', this)" id="tab-palawan">Palawan</button>
+        </div>
+
+        <div class="location-grid" id="locations-container">
+            </div>
     </section>
 
-    <!-- High-Demand Locations -->
-    <section class="high-demand-locations bg-light animate-up" id="locations">
-        <h2>Active Premium Service Coverage Areas</h2>
-        <p class="section-intro">JMCY Dispatch maintains continuous, active routing networks across major business centers and tourist travel zones to fulfill prompt resort, condo, or residential setups 24/7.</p>
+    <section class="massage-rates bg-light animate-up">
+        <h2 id="rates-section-title">Standard Service Rates & Therapist Earnings</h2>
+        <div class="section-desc" id="rates-section-desc">View our structured regional commission breakdowns. Select your preferred reading language layout below:</div>
         
-        <div class="location-grid">
-            <div class="location-zone">
-                <h3>Metro Manila (NCR)</h3>
-                <ul>
-                    <li>Manila & Makati City</li>
-                    <li>Quezon City & Pasig</li>
-                    <li>Taguig (BGC) & Mandaluyong</li>
-                    <li>San Juan & Pasay City</li>
-                    <li>Parañaque & Las Piñas</li>
-                    <li>Muntinlupa & Marikina</li>
-                </ul>
+        <div class="lang-control-wrapper">
+            <button class="lang-toggle-btn active" id="lang-en" onclick="changeLanguage('en')">English</button>
+            <button class="lang-toggle-btn" id="lang-tl" onclick="changeLanguage('tl')" style="margin-left: 8px;">Tagalog</button>
+        </div>
+
+        <div class="location-tabs" style="margin-bottom: 40px; transform: scale(0.95);">
+            <button class="loc-tab-btn active" onclick="switchRateView('ncr', this)" id="rate-tab-ncr">Metro Manila (NCR) Rates</button>
+            <button class="loc-tab-btn" onclick="switchRateView('tourist', this)" id="rate-tab-tourist">Tourist & Resort Zone Rates</button>
+        </div>
+
+        <div class="rates-grid" id="rates-matrix-container">
+            <div class="rate-card">
+                <h3 id="rate-t1">Swedish Massage</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t1-c">₱1,000.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t1-f">₱200.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t1-t">₱800.00</span></div>
+                    </div>
+                </div>
             </div>
-            <div class="location-zone">
-                <h3>Luzon Hubs</h3>
-                <ul>
-                    <li>Tagaytay City Central</li>
-                    <li>Palawan (El Nido Town)</li>
-                    <li>Palawan (Coron Core)</li>
-                </ul>
+
+            <div class="rate-card">
+                <h3 id="rate-t2">Shiatsu Massage</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t2-c">₱1,100.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t2-f">₱220.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t2-t">₱880.00</span></div>
+                    </div>
+                </div>
             </div>
-            <div class="location-zone">
-                <h3>Visayas Hubs</h3>
-                <ul>
-                    <li>Mactan Island Resorts</li>
-                    <li>Cebu IT Park Districts</li>
-                    <li>Moalboal Shorelines</li>
-                    <li>Badian Region</li>
-                    <li>Bantayan Island</li>
-                    <li>Boracay (White Beach)</li>
-                    <li>Boracay (Bulabog Beach)</li>
-                </ul>
+
+            <div class="rate-card">
+                <h3 id="rate-t3">Thai Massage</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics gradient-highlight">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t3-c">₱1,100.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t3-f">₱220.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t3-t">₱880.00</span></div>
+                    </div>
+                </div>
             </div>
-            <div class="location-zone">
-                <h3>Mindanao Hubs</h3>
-                <ul>
-                    <li>Siargao Island Hubs</li>
-                </ul>
+
+            <div class="rate-card">
+                <h3 id="rate-t7">Combination Massage</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t7-c">₱1,000.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t7-f">₱200.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t7-t">₱800.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3 id="rate-t6">Deep Tissue Massage</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t6-c">₱1,300.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t6-f">₱260.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t6-t">₱1,040.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3 id="rate-t4">Reflexology / Foot</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t4-c">₱1,200.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t4-f">₱240.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t4-t">₱960.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rate-card">
+                <h3 id="rate-t5">Aromatherapy</h3>
+                <div class="tier-block">
+                    <span class="duration-badge d-2h">2 Hours</span>
+                    <div class="rate-metrics">
+                        <div class="metric-row"><span class="metric-label lbl-customer">Customer Pays:</span><span class="metric-val" id="val-t5-c">₱1,400.00</span></div>
+                        <div class="metric-row"><span class="metric-label lbl-fee">JMCY Fee (20%):</span><span class="metric-val" id="val-t5-f">₱280.00</span></div>
+                        <div class="metric-row earnings-highlight"><span class="metric-label lbl-takehome">Your Take-Home:</span><span class="metric-val" id="val-t5-t">₱1,120.00</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Logistics Advisory Notice Section -->
-    <section class="logistics-notice animate-up" style="background-color: #fff; border-top: 1px solid var(--border); padding-top: 40px; padding-bottom: 40px;">
-        <div style="max-width: 800px; margin: 0 auto; background: rgba(44, 82, 130, 0.05); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
-            <h3 style="color: var(--primary); margin-top: 0; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                ℹ️ Hotel & Condominium Guest Policy
-            </h3>
-            <p style="color: #4a5568; font-size: 0.95rem; margin-bottom: 15px;">
-                To ensure seamless dispatch and avoid room arrival delays, please review our standard accommodation guidelines:
-            </p>
-            <ul style="padding-left: 20px; color: #4a5568; font-size: 0.95rem; line-height: 1.8; margin: 0;">
-                <li><strong>Hotel Guests:</strong> Kindly notify your front desk reception that you are expecting an outside personal wellness provider to pass through security straight to your room.</li>
-                <li><strong>Condo Residents:</strong> Please register your assigned therapist's name with your lobby guard/admin management desk once booking confirmation details are sent to you.</li>
-                <li><strong>Incidental Expenses:</strong> Any mandatory guest parking costs or hotel visitor registration fees are settled directly by the client.</li>
-            </ul>
-        </div>
-    </section>
-
-    <section class="steps bg-light">
-        <h2>Simple 3-Step Process</h2>
+    <section class="steps">
+        <h2>Onboarding Pipeline</h2>
         <div class="pipeline-wrapper">
             <div class="steps-slider-track" id="pipelineTrack">
                 <div class="step-node">
                     <div class="step-number">1</div>
-                    <h4>Submit Details Form</h4>
-                    <p>Click our intake links to open the structure profile form. Provide your address location parameters and session structural criteria layout.</p>
+                    <h4>Online Registration</h4>
+                    <p>Submit your professional credentials, target locations, and primary skill qualifications via our secure portal form.</p>
                 </div>
                 <div class="step-node">
                     <div class="step-number">2</div>
-                    <h4>Provider Matching</h4>
-                    <p>Our digital intermediary network instantly logs the request item and routes it to verified available therapists across your town.</p>
+                    <h4>Verification Review</h4>
+                    <p>Our internal operations panel evaluates your background checks, practical competencies, and government identification profiles.</p>
                 </div>
                 <div class="step-node">
                     <div class="step-number">3</div>
-                    <h4>Enjoy & Pay Direct</h4>
-                    <p>Your therapist arrives equipped with professional-grade linens and pristine massage oils. Please prepare two fresh towels and clear a comfortable space inside your room layout before arrival.</p>
+                    <h4>Collect & Remit</h4>
+                    <p id="step3-p">Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash/Maya payment, then send the 20% commission slice to JMCY.</p>
                 </div>
             </div>
             <div class="pipeline-dots">
@@ -644,62 +763,68 @@
         </div>
     </section>
 
-    <section class="faq animate-up">
-        <h2>Frequently Asked Questions</h2>
+    <section class="faq bg-light animate-up">
+        <h2 id="faq-title">Frequently Asked Questions</h2>
+        
+        <div class="lang-control-wrapper">
+            <button class="lang-toggle-btn active" id="lang-en-faq" onclick="changeLanguage('en')">English</button>
+            <button class="lang-toggle-btn" id="lang-tl-faq" onclick="changeLanguage('tl')" style="margin-left: 8px;">Tagalog</button>
+        </div>
 
         <div class="faq-max">
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">What are your hours of operation? <span class="faq-icon"></span></div>
-                <div class="faq-answer">JMCY Wellness functions completely 24 hours a day, 7 days a week. You can file a dispatch intake sheet at any hour of the night or day for prompt routing.</div>
+                <div class="faq-question" id="q1">How do freelancers receive a client booking? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a1">When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Can I book a session if I am staying in a hotel or condominium? <span class="faq-icon"></span></div>
-                <div class="faq-answer">Yes, our logistics system specializes in delivering services directly to private homes, secure condominium complexes, and luxury hotels across all active regional coverage centers.</div>
+                <div class="faq-question" id="q2">What is required to return to active status and receive new bookings after a session? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a2">Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 20% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Are there any hidden platform charges or separate transactional fees? <span class="faq-icon"></span></div>
-                <div class="faq-answer">No, JMCY Wellness utilizes a direct billing transparency framework. The flat figures showcased across our menus match the total amount you hand over to your localized partner on-site. No separate application fees are calculated for consumers.</div>
+                <div class="faq-question" id="q3">What are the core requirements to join the platform? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a3">Applicants must present a valid government-issued ID and valid proof of massage therapy training or certification.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">How do customers pay for the session? <span class="faq-icon"></span></div>
-                <div class="faq-answer">All transactions resolve directly inside your destination room locale. You can settle the entire flat service fee using physical Cash or send the exact figure directly to the assigned professional's individual GCash or Maya mobile accounts safely.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">What is your policy on cancellations or sudden address updates? <span class="faq-icon"></span></div>
-                <div class="faq-answer">Because our independent partners are dispatched immediately after matching and incur direct late-night transit fares, cancellation modifications requested after a therapist is already traveling on the road may carry a localized travel friction fee to respect the provider's fuel/transit investments.</div>
+                <div class="faq-question" id="q4">How does the payout mechanism distribute earnings? <span class="faq-icon"></span></div>
+                <div class="faq-answer" id="a4">There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash, GCash, or Maya upon arrival or service completion. Afterwards, you remit the 20% network commission allocation to JMCY in accordance with terms.</div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p style="font-size: 11px; max-width: 900px; margin: 0 auto 20px auto; color: #718096; line-height: 1.5; text-align: center;">
-            <strong>Disclaimer & Legal Framework:</strong> JMCY Wellness Network operates strictly as an independent matching intermediary utility. Therapists registered under this network framework are autonomous service practitioners. Services are provided strictly for professional, therapeutic wellness purposes. Inappropriate behavior, requests, or misconduct will trigger an immediate termination of the session with a full fee forfeit and permanent blocklisting across our legal network registry.
-        </p>
-        <div style="border-top: 1px solid #2d3748; padding-top: 20px;">
-            &copy; 2026 JMCY Wellness Network. Premium 24/7 Intermediary Technical Dispatch Framework. All Rights Reserved.
+    <section class="terms animate-up">
+        <h2 id="terms-title">Platform Operations & Commission Policy</h2>
+        <div class="terms-box">
+            <h3 id="terms-subtitle">Revenue Split Framework</h3>
+            <p id="terms-p1">By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:</p>
+            <ul id="terms-list">
+                <li><strong>Direct Client Remittance:</strong> All customer payments are sent directly to the assigned therapist via GCash, Maya, or standard physical Cash at the point of service delivery.</li>
+                <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 20% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
+                <li><strong>System Maintenances:</strong> This 20% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
+                <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 20% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+            </ul>
         </div>
+    </section>
+
+    <footer>
+        &copy; 2026 JMCY Wellness Network. Compliance & Intermediary Technical Framework. All Rights Reserved.
     </footer>
 
-    <a href="/wellness/booking.html" 
-       class="whatsapp-container" 
-       title="Inquire about a Session">
+    <a href="https://wa.me/639091297422?text=Hello%20JMCY%20Support,%20I%20have%20an%20inquiry%20about%20the%20therapist%20network%20onboarding%20process." 
+       class="whatsapp-container" target="_blank" rel="noopener noreferrer" title="Contact JMCY Support on WhatsApp">
         <div class="whatsapp-float">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
+            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
         </div>
-        <span class="whatsapp-label">Inquiries</span>
+        <span class="whatsapp-label">jmcy support</span>
     </a>
 
     <script>
+        // Hamburger Drawer Toggles
         const hamburgerBtn = document.getElementById('hamburger-toggle');
         const navActions = document.getElementById('nav-actions-container');
-
         hamburgerBtn.addEventListener('click', () => {
             hamburgerBtn.classList.toggle('open');
             navActions.classList.toggle('open');
         });
-
         window.addEventListener('scroll', () => {
             if (navActions.classList.contains('open')) {
                 hamburgerBtn.classList.remove('open');
@@ -707,7 +832,7 @@
             }
         });
 
-        // Hero Images Rotation
+        // Hero Carousel
         const slides = document.querySelectorAll('.slide');
         let currentSlide = 0;
         setInterval(() => {
@@ -716,140 +841,171 @@
             slides[currentSlide].classList.add('active');
         }, 5000);
 
+        // FAQ Toggles
         function toggleFaq(element) {
             const listItems = document.querySelectorAll('.faq-item');
-            listItems.forEach(item => {
-                if(item !== element) item.classList.remove('open');
-            });
+            listItems.forEach(item => { if(item !== element) item.classList.remove('open'); });
             element.classList.toggle('open');
         }
 
-        // Booking Slider
+        // Onboarding Pipeline Carousel
         let activeStep = 0;
         const track = document.getElementById('pipelineTrack');
         const dots = document.querySelectorAll('.pipeline-dots .dot');
-        const totalSteps = 3;
-
         function updatePipelineSlider() {
-            const offset = -(activeStep * 33.333);
-            track.style.transform = `translateX(${offset}%)`;
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === activeStep);
+            track.style.transform = `translateX(-${activeStep * 33.333}%)`;
+            dots.forEach((dot, idx) => dot.classList.toggle('active', idx === activeStep));
+        }
+        function goToStep(idx) { activeStep = idx; updatePipelineSlider(); clearInterval(pipelineInterval); }
+        let pipelineInterval = setInterval(() => { activeStep = (activeStep + 1) % 3; updatePipelineSlider(); }, 4500);
+
+        // ==========================================================================
+        // SYSTEM REGIONAL TARGET LOCATIONS MATRIX
+        // ==========================================================================
+        const targetLocations = [
+            // NCR Locations
+            { id: "loc1", region: "ncr", tagKey: "urban", en: { name: "Makati", desc: "Central Business District, Rockwell, Salcedo, & Legazpi" }, tl: { name: "Makati", desc: "Central Business District, Rockwell, Salcedo, at Legazpi" } },
+            { id: "loc2", region: "ncr", tagKey: "urban", en: { name: "Taguig", desc: "Bonifacio Global City (BGC) & McKinley Hill clusters" }, tl: { name: "Taguig", desc: "Bonifacio Global City (BGC) at McKinley Hill clusters" } },
+            { id: "loc3", region: "ncr", tagKey: "urban", en: { name: "Quezon City", desc: "High-volume structural residential booking requests" }, tl: { name: "Quezon City", desc: "Mataas na volume ng mga residential booking request" } },
+            { id: "loc4", region: "ncr", tagKey: "urban", en: { name: "Manila", desc: "Historical districts, residential estates, and hotels" }, tl: { name: "Manila", desc: "Mga makasaysayang distrito, residential estate, at hotel" } },
+            { id: "loc5", region: "ncr", tagKey: "urban", en: { name: "San Juan", desc: "Greenhills zone residential custom booking demands" }, tl: { name: "San Juan", desc: "Mga booking demand sa tirahan sa paligid ng Greenhills" } },
+            { id: "loc6", region: "ncr", tagKey: "urban", en: { name: "Mandaluyong", desc: "Ortigas residential condos and major highway corridors" }, tl: { name: "Mandaluyong", desc: "Mga condo sa Ortigas at tinitirahang mga komunidad" } },
+            { id: "loc7", region: "ncr", tagKey: "urban", en: { name: "Parañaque", desc: "Entertainment City hotel developments and subdivision hubs" }, tl: { name: "Parañaque", desc: "Mga hotel sa Entertainment City at mga subdivision hub" } },
+            { id: "loc8", region: "ncr", tagKey: "urban", en: { name: "Las Piñas", desc: "BF Homes clusters and south highway access limits" }, tl: { name: "Las Piñas", desc: "Mga komunidad ng BF Homes at mga katabing subdivision" } },
+            { id: "loc9", region: "ncr", tagKey: "urban", en: { name: "Muntinlupa", desc: "Alabang investment estates and gated high-end villas" }, tl: { name: "Muntinlupa", desc: "Mga subdivision sa Alabang at mga high-end na villa" } },
+            { id: "loc10", region: "ncr", tagKey: "urban", en: { name: "Pasig", desc: "Ortigas Center business towers and private residences" }, tl: { name: "Pasig", desc: "Mga business tower sa Ortigas Center at pribadong tirahan" } },
+            { id: "loc11", region: "ncr", tagKey: "urban", en: { name: "Marikina", desc: "East Metro urban valleys and neighborhood communities" }, tl: { name: "Marikina", desc: "Mga urban valley at komunidad sa silangan ng Metro" } },
+            { id: "loc12", region: "ncr", tagKey: "urban", en: { name: "Pasay", desc: "Bay Area hotel rooms, casinos, and condo residences" }, tl: { name: "Pasay", desc: "Mga hotel sa Bay Area, casino, at condo residence" } },
+            
+            // Cebu Locations
+            { id: "loc13", region: "cebu", tagKey: "tourist", en: { name: "Mactan Island", desc: "Luxury beach resorts, international hotels, & beach condos" }, tl: { name: "Mactan Island", desc: "Mga luxury beach resort, hotel, at beachfront condo" } },
+            { id: "loc14", region: "cebu", tagKey: "urban", en: { name: "Cebu IT & Business Park", desc: "High-density premium city condos and late-night BPO sectors" }, tl: { name: "Cebu IT & Business Park", desc: "Mga high-rise condo sa lungsod at mga late-night BPO worker" } },
+            { id: "loc15", region: "cebu", tagKey: "tourist", en: { name: "Moalboal & Badian", desc: "High-fatigue adventure zones (Diving & Canyoneering)" }, tl: { name: "Moalboal & Badian", desc: "Mga sikat na spot para sa diving at canyoneering" } },
+            { id: "loc16", region: "cebu", tagKey: "tourist", en: { name: "Bantayan Island", desc: "White-sand island resorts and tourist transient spaces" }, tl: { name: "Bantayan Island", desc: "Mga white-sand island resort at tinutuluyan ng turista" } },
+            
+            // Boracay Locations
+            { id: "loc17", region: "boracay", tagKey: "tourist", en: { name: "White Beach Stations 1-3", desc: "High-end luxury resort bookings and active nightlife beachfronts" }, tl: { name: "White Beach Stations 1-3", desc: "Mga luxury resort at mataong beachfront accommodation" } },
+            { id: "loc18", region: "boracay", tagKey: "tourist", en: { name: "Bulabog Beach", desc: "Water-sports hub; tourists needing physical sports therapies" }, tl: { name: "Bulabog Beach", desc: "Sikat sa water-sports; mga karatig-resort na kailangan ng hilot" } },
+            { id: "loc19", region: "boracay", tagKey: "tourist", en: { name: "Boracay Newcoast", desc: "Modern upscale integrated resort hotels and private condos" }, tl: { name: "Boracay Newcoast", desc: "Mga modernong integrated resort hotel at pribadong condo" } },
+
+            // Tagaytay Tracks
+            { id: "loc20", region: "tagaytay", tagKey: "tourist", en: { name: "Tagaytay City Central", desc: "Cool climate staycations, holiday rentals, and ridge hotels" }, tl: { name: "Tagaytay City Central", desc: "Mga rental house at hotel sa malamig na klima malapit sa Tagaytay ridge" } },
+            { id: "loc21", region: "tagaytay", tagKey: "tourist", en: { name: "Airbnb Condotels", desc: "High-density transient structures along Aguinaldo Highway" }, tl: { name: "Airbnb Condotels", desc: "Mga transient condo at residential tower sa Aguinaldo Highway" } },
+
+            // Siargao Tracks
+            { id: "loc22", region: "siargao", tagKey: "tourist", en: { name: "General Luna", desc: "Surfing capitals, active lifestyle resorts, and beachfront hostels" }, tl: { name: "General Luna", desc: "Sentro ng surfing community, mga aktibong beachfront hostel, at resort" } },
+            { id: "loc23", region: "siargao", tagKey: "tourist", en: { name: "Cloud 9 Area", desc: "High-fatigue sports therapeutic requirements for athletes and travelers" }, tl: { name: "Cloud 9 Area", desc: "Pangangailangang pang-therapist para sa mga surfer at turista" } },
+
+            // Palawan Tracks
+            { id: "loc24", region: "palawan", tagKey: "tourist", en: { name: "El Nido Town & Corong-Corong", desc: "Island-hopping endpoints, beach resorts, and cliffside suites" }, tl: { name: "El Nido Town & Corong-Corong", desc: "Tinutuluyan ng turista pagkatapos ng island tour at mga cliffside suite" } },
+            { id: "loc25", region: "palawan", tagKey: "tourist", en: { name: "Coron Town Proper", desc: "Diving hotel hubs, transient villas, and town coastal homestays" }, tl: { name: "Coron Town Proper", desc: "Mga diving hotel hub, transient villa, at homestay malapit sa pantalan" } }
+        ];
+
+        let selectedLanguage = "en";
+        let activeFilter = "all";
+        let currentRateRegion = "ncr"; 
+
+        // ==========================================================================
+        // SYSTEM REGIONAL RATES VALUE MATRIX (NCR VS TOURIST PROFILES)
+        // ==========================================================================
+        const platformRateMatrix = {
+            ncr: {
+                t1C: "₱1,000.00", t1F: "₱200.00", t1T: "₱800.00",
+                t2C: "₱1,100.00", t2F: "₱220.00", t2T: "₱880.00",
+                t3C: "₱1,100.00", t3F: "₱220.00", t3T: "₱880.00",
+                t7C: "₱1,000.00", t7F: "₱200.00", t7T: "₱800.00",
+                t6C: "₱1,300.00", t6F: "₱260.00", t6T: "₱1,040.00",
+                t4C: "₱1,200.00", t4F: "₱240.00", t4T: "₱960.00",
+                t5C: "₱1,400.00", t5F: "₱280.00", t5T: "₱1,120.00"
+            },
+            tourist: {
+                t1C: "₱1,600.00", t1F: "₱320.00", t1T: "₱1,280.00",
+                t2C: "₱1,800.00", t2F: "₱360.00", t2T: "₱1,440.00",
+                t3C: "₱1,800.00", t3F: "₱360.00", t3T: "₱1,440.00",
+                t7C: "₱1,700.00", t7F: "₱340.00", t7T: "₱1,360.00",
+                t6C: "₱2,000.00", t6F: "₱400.00", t6T: "₱1,600.00",
+                t4C: "₱1,600.00", t4F: "₱320.00", t4T: "₱1,280.00",
+                t5C: "₱2,200.00", t5F: "₱440.00", t5T: "₱1,760.00"
+            }
+        };
+
+        function renderLocations() {
+            const container = document.getElementById('locations-container');
+            container.innerHTML = '';
+            
+            const filtered = targetLocations.filter(loc => activeFilter === 'all' || loc.region === activeFilter);
+            
+            filtered.forEach(loc => {
+                const card = document.createElement('div');
+                card.className = 'location-card animate-up active';
+                
+                const tagLabel = loc.tagKey === 'tourist' ? 
+                    (selectedLanguage === 'en' ? 'Tourist Hub' : 'Tourist Spot') : 
+                    (selectedLanguage === 'en' ? 'Urban Zone' : 'Urban Zone');
+                    
+                card.innerHTML = `
+                    <div>
+                        <h4>${loc[selectedLanguage].name}</h4>
+                        <p>${loc[selectedLanguage].desc}</p>
+                    </div>
+                    <span class="location-tag ${loc.tagKey === 'tourist' ? 'tourist' : ''}">${tagLabel}</span>
+                `;
+                container.appendChild(card);
             });
         }
 
-        function goToStep(index) {
-            activeStep = index;
-            updatePipelineSlider();
-            resetPipelineTimer();
+        function filterLocations(region, btn) {
+            activeFilter = region;
+            document.querySelectorAll('#locations-section .loc-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderLocations();
         }
 
-        let pipelineInterval = setInterval(() => {
-            activeStep = (activeStep + 1) % totalSteps;
-            updatePipelineSlider();
-        }, 4500);
-
-        function resetPipelineTimer() {
-            clearInterval(pipelineInterval);
-            pipelineInterval = setInterval(() => {
-                activeStep = (activeStep + 1) % totalSteps;
-                updatePipelineSlider();
-            }, 4500);
+        // Switch controller for the Rates Matrix Tab
+        function switchRateView(region, btnElement) {
+            currentRateRegion = region;
+            document.querySelectorAll('.massage-rates .loc-tab-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            updatePriceValues();
         }
 
-        /* --- PREMIUM PRICING MATRIX SWIPER LOGIC --- */
-        const matrixTrack = document.getElementById('matrixSliderTrack');
-        const matrixSlides = document.querySelectorAll('.matrix-slide');
-        const matrixDotsContainer = document.getElementById('matrixSliderDots');
-        const prevBtn = document.getElementById('matrixPrevBtn');
-        const nextBtn = document.getElementById('matrixNextBtn');
-        
-        let matrixIndex = 0;
-        const totalMatrixSlides = matrixSlides.length;
-        
-        matrixSlides.forEach((_, idx) => {
-            const dot = document.createElement('div');
-            dot.classList.add('matrix-dot');
-            if(idx === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => jumpToMatrixSlide(idx));
-            matrixDotsContainer.appendChild(dot);
-        });
-        
-        const matrixDots = document.querySelectorAll('.matrix-dot');
-
-        function updateMatrixSlider() {
-            matrixTrack.style.transform = `translateX(-${matrixIndex * 100}%)`;
-            matrixDots.forEach((dot, i) => dot.classList.toggle('active', i === matrixIndex));
+        function updatePriceValues() {
+            const dataSet = platformRateMatrix[currentRateRegion];
+            
+            document.getElementById('val-t1-c').innerText = dataSet.t1C;
+            document.getElementById('val-t1-f').innerText = dataSet.t1F;
+            document.getElementById('val-t1-t').innerText = dataSet.t1T;
+            
+            document.getElementById('val-t2-c').innerText = dataSet.t2C;
+            document.getElementById('val-t2-f').innerText = dataSet.t2F;
+            document.getElementById('val-t2-t').innerText = dataSet.t2T;
+            
+            document.getElementById('val-t3-c').innerText = dataSet.t3C;
+            document.getElementById('val-t3-f').innerText = dataSet.t3F;
+            document.getElementById('val-t3-t').innerText = dataSet.t3T;
+            
+            document.getElementById('val-t7-c').innerText = dataSet.t7C;
+            document.getElementById('val-t7-f').innerText = dataSet.t7F;
+            document.getElementById('val-t7-t').innerText = dataSet.t7T;
+            
+            document.getElementById('val-t6-c').innerText = dataSet.t6C;
+            document.getElementById('val-t6-f').innerText = dataSet.t6F;
+            document.getElementById('val-t6-t').innerText = dataSet.t6T;
+            
+            document.getElementById('val-t4-c').innerText = dataSet.t4C;
+            document.getElementById('val-t4-f').innerText = dataSet.t4F;
+            document.getElementById('val-t4-t').innerText = dataSet.t4T;
+            
+            document.getElementById('val-t5-c').innerText = dataSet.t5C;
+            document.getElementById('val-t5-f').innerText = dataSet.t5F;
+            document.getElementById('val-t5-t').innerText = dataSet.t5T;
         }
 
-        function jumpToMatrixSlide(idx) {
-            matrixIndex = idx;
-            updateMatrixSlider();
-        }
+        // Initialize Display
+        renderLocations();
+        updatePriceValues();
 
-        nextBtn.addEventListener('click', () => {
-            matrixIndex = (matrixIndex + 1) % totalMatrixSlides;
-            updateMatrixSlider();
-        });
-
-        prevBtn.addEventListener('click', () => {
-            matrixIndex = (matrixIndex - 1 + totalMatrixSlides) % totalMatrixSlides;
-            updateMatrixSlider();
-        });
-
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-        let dragThreshold = 60;
-
-        matrixTrack.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-        }, { passive: true });
-
-        matrixTrack.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            currentX = e.touches[0].clientX;
-        }, { passive: true });
-
-        matrixTrack.addEventListener('touchend', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            handleDragRelease();
-        });
-
-        matrixTrack.addEventListener('mousedown', (e) => {
-            startX = e.clientX;
-            isDragging = true;
-            matrixTrack.style.transition = 'none';
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            currentX = e.clientX;
-        });
-
-        window.addEventListener('mouseup', () => {
-            if (!isDragging) return;
-            isDragging = false;
-            matrixTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-            handleDragRelease();
-        });
-
-        function handleDragRelease() {
-            let shift = startX - currentX;
-            if(currentX === 0) return; 
-
-            if (shift > dragThreshold) {
-                matrixIndex = (matrixIndex + 1) % totalMatrixSlides;
-            } else if (shift < -dragThreshold) {
-                matrixIndex = (matrixIndex - 1 + totalMatrixSlides) % totalMatrixSlides;
-            }
-            updateMatrixSlider();
-            startX = 0;
-            currentX = 0;
-        }
-
+        // Reveal animations trigger logic
         document.addEventListener("DOMContentLoaded", function () {
             const animatedElements = document.querySelectorAll('.animate-up');
             const observerOptions = { root: null, rootMargin: '0px', threshold: 0.12 };
@@ -857,12 +1013,150 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        scrollObserver.unobserve(entry.target);
+                        observer.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
             animatedElements.forEach(el => scrollObserver.observe(el));
         });
+
+        // ==========================================================================
+        // TRANSLATION ENGINE MATRIX
+        // ==========================================================================
+        const translations = {
+            en: {
+                promoTag: "We Are Hiring",
+                promoMsg: " JMCY Wellness is expanding! We are looking for professional, certified freelance massage therapists.",
+                promoAction: "Apply Now &rarr;",
+                locTitle: "High-Demand Service Locations",
+                locDesc: "Our online booking platform matches customer demand with local freelance therapists across major cities and high-traffic tourist zones. Choose your coverage zones below:",
+                tabAll: "All Regions", tabNcr: "Metro Manila (NCR)", tabCebu: "Cebu Island", tabBoracay: "Boracay Island", 
+                tabTagaytay: "Tagaytay", tabSiargao: "Siargao", tabPalawan: "Palawan",
+                ratesTitle: "Standard Service Rates & Therapist Earnings",
+                ratesDesc: "View our structured regional commission breakdowns. Select your preferred reading language layout below:",
+                rateTabNcr: "Metro Manila (NCR) Rates", rateTabTourist: "Tourist & Resort Zone Rates",
+                lblCustomer: "Customer Pays:", lblFee: "JMCY Fee (20%):", lblTakeHome: "Your Take-Home:", h2: "2 Hours",
+                titleT3: "Thai Massage", titleT7: "Combination Massage",
+                step3Msg: "Receive live dispatch book alerts, take 100% of the client's direct Cash/GCash/Maya payment, then send the 20% commission slice to JMCY.",
+                faqTitle: "Frequently Asked Questions",
+                q1: "How do freelancers receive a client booking? <span class='faq-icon'></span>",
+                a1: "When a consumer maps a request on our connected booking channels, the JMCY matching log algorithms cross-reference available therapists in the vicinity. Selected professionals instantly receive a push notification alert on their network web dashboard containing the date, schedule time, and targeted city area.",
+                q2: "What is required to return to active status and receive new bookings after a session? <span class='faq-icon'></span>",
+                a2: "Upon fulfilling a massage treatment, log into your freelancer portal board and select the 'Mark Service as Completed' button. This closes out the current booking trail, prompts the system to log the 20% platform fee remittance due, and automatically re-flags your system profile as 'Available' to receive fresh incoming local dispatches.",
+                q3: "What are the core requirements to join the platform? <span class='faq-icon'></span>",
+                a3: "Applicants must present a valid government-issued ID and proof of massage therapy training or certification.",
+                q4: "How does the payout mechanism distribute earnings? <span class='faq-icon'></span>",
+                a4: "There is no platform waiting period or delay. The consumer pays your entire session fee directly to you via Cash, GCash, or Maya upon arrival or service completion. Afterwards, you remit the 20% network commission allocation to JMCY in accordance with terms.",
+                termsTitle: "Platform Operations & Commission Policy",
+                termsSubtitle: "Revenue Split Framework",
+                termsP1: "By registering on the JMCY Freelance Network, independent contractors agree to our unified operational transaction framework:",
+                termsList: `
+                    <li><strong>Direct Client Remittance:</strong> All customer payments are sent directly to the assigned therapist via GCash, Maya, or standard physical Cash at the point of service delivery.</li>
+                    <li><strong>Commission Parameters:</strong> Independent therapists agree to send a fixed 20% platform commission of each successful booking to JMCY in accordance with our system terms and conditions.</li>
+                    <li><strong>System Maintenances:</strong> This 20% network share powers ongoing digital infrastructure maintenance, marketplace server upkeep, administrative operations, and continuous brand lead-generation campaigns.</li>
+                    <li><strong>Transparency Pledge:</strong> The complete monetary split breakdown showing your exact 20% commission remittance requirement is displayed openly on your portal dashboard before you confirm and accept any incoming service request item.</li>
+                `
+            },
+            tl: {
+                promoTag: "Pooling Kami Ngayon",
+                promoMsg: " Lumalaki ang JMCY Wellness! Naghahanap kami ng mga propesyonal at sertipikadong freelance massage therapist.",
+                promoAction: "Mag-apply Ngayon &rarr;",
+                locTitle: "Mga Lokasyon na May Mataas na Demand",
+                locDesc: "Pinagsasama ng aming online booking platform ang mga customer at lokal na freelance therapist sa mga pangunahing lungsod at tourist spots. Piliin ang iyong lokasyon:",
+                tabAll: "Lahat ng Rehiyon", tabNcr: "Metro Manila (NCR)", tabCebu: "Cebu Island", tabBoracay: "Boracay Island", 
+                tabTagaytay: "Tagaytay", tabSiargao: "Siargao", tabPalawan: "Palawan",
+                ratesTitle: "Presyo ng Serbisyo at Kita ng Therapist",
+                ratesDesc: "Tingnan ang aming komisyon at hatian kada rehiyon. Piliin ang iyong wika sa ibaba:",
+                rateTabNcr: "Presyo sa Metro Manila (NCR)", rateTabTourist: "Presyo sa mga Tourist Spots",
+                lblCustomer: "Bayad ng Customer:", lblFee: "Kaltas ng JMCY (20%):", lblTakeHome: "Sariwang Kita Mo:", h2: "2 Oras",
+                titleT3: "Thai Massage", titleT7: "Combination Massage",
+                step3Msg: "Makakatanggap ka ng mga live booking alert, makukuha mo ang 100% ng direktang bayad ng kliyente via Cash, GCash, o Maya, at pagkatapos ay ipadala ang 20% na komisyon sa JMCY.",
+                faqTitle: "Mga Madalas Itanong (FAQs)",
+                q1: "Paano nakakatanggap ang mga freelancer ng booking mula sa kliyente? <span class='faq-icon'></span>",
+                a1: "Kapag nag-book ang isang customer sa aming mga channel, titingnan ng algorithm ng JMCY kung sinong mga therapist ang malapit sa lugar. Ang mga mapipiling professional ay makakatanggap agad ng push notification alert sa kanilang network web dashboard na naglalaman ng petsa, oras, at lokasyon ng booking.",
+                q2: "Ano ang kailangang gawin para maging 'Active' muli at makatanggap ng bagong booking pagkatapos ng massage session? <span class='faq-icon'></span>",
+                a2: "Pagkatapos ng massage service, mag-log in sa iyong freelancer portal at i-click the button na 'Mark Service as Completed'. Ito ang magtatala ng 20% platform fee na dapat mong i-remit, at awtomatikong magbabalik sa iyong status bilang 'Available' para makatanggap agad ng mga bagong booking.",
+                q3: "Ano ang mga pangunahing kinakailangan para sumali sa platform? <span class='faq-icon'></span>",
+                a3: "Ang mga aplikante ay kailangang magsumite ng balidong government-issued ID at sertipiko o patunay ng pagsasanay sa massage therapy.",
+                q4: "Paano ipinapadala ang kita o payout sa mga therapist? <span class='faq-icon'></span>",
+                a4: "Walang waiting period o antala sa sahod. Ang customer ay direktang magbabayad sa iyo ng buong halaga gamit ang Cash, GCash, o Maya pagdating o pagkatapos ng serbisyo. Pagkatapos nito, ipadadala o ire-remit mo ang 20% komisyon sa JMCY alinsunod sa kasunduan.",
+                termsTitle: "Operasyon ng Platform & Patakaran sa Komisyon",
+                termsSubtitle: "Kasunduan sa Paghahati ng Kita",
+                termsP1: "Sa pagpaparehistro sa JMCY Freelance Network, ang mga independent contractor ay sumasang-ayon sa aming patakaran sa transaksyon:",
+                termsList: `
+                    <li><strong>Direktang Bayad sa Therapist:</strong> Lahat ng bayad ng customer ay direktang ibinibigay sa nakatalagang therapist sa pamamagitan ng GCash, Maya, o pisikal na Cash sa oras ng serbisyo.</li>
+                    <li><strong>Kaltas o Komisyon:</strong> Ang mga independent therapist ay sumasang-ayon na magpadala ng fixed 20% platform commission ng bawat matagumpay na booking sa JMCY alinsunod sa mga tuntunin at kondisyon ng system.</li>
+                    <li><strong>Pagpapanatili ng System:</strong> Ang 20% na porsyentong ito ay ginagamit para sa pagpapanatili ng app/website, server upkeep, pamamahala sa operasyon, at patuloy na marketing para magkaroon ng mga bagong customer.</li>
+                    <li><strong>Prinsipyo ng Transparency:</strong> Makikita mo nang malinaw ang buong breakdown at ang eksaktong halaga ng 20% komisyon na dapat i-remit sa iyong dashboard bago mo tanggapin ang anumang papasok na booking.</li>
+                `
+            }
+        };
+
+        function changeLanguage(lang) {
+            selectedLanguage = lang;
+            document.getElementById('lang-en').classList.remove('active');
+            document.getElementById('lang-tl').classList.remove('active');
+            document.getElementById('lang-en-faq').classList.remove('active');
+            document.getElementById('lang-tl-faq').classList.remove('active');
+            
+            document.getElementById('lang-' + lang).classList.add('active');
+            document.getElementById('lang-' + lang + '-faq').classList.add('active');
+
+            // Header Promo updates
+            document.getElementById('promo-tag').innerText = translations[lang].promoTag;
+            document.getElementById('promo-msg').innerText = translations[lang].promoMsg;
+            document.getElementById('promo-action').innerHTML = translations[lang].promoAction;
+
+            // Location Module Header strings update
+            document.getElementById('loc-title').innerText = translations[lang].locTitle;
+            document.getElementById('loc-desc').innerText = translations[lang].locDesc;
+            document.getElementById('tab-all').innerText = translations[lang].tabAll;
+            document.getElementById('tab-ncr').innerText = translations[lang].tabNcr;
+            document.getElementById('tab-cebu').innerText = translations[lang].tabCebu;
+            document.getElementById('tab-boracay').innerText = translations[lang].tabBoracay;
+            document.getElementById('tab-tagaytay').innerText = translations[lang].tabTagaytay;
+            document.getElementById('tab-siargao').innerText = translations[lang].tabSiargao;
+            document.getElementById('tab-palawan').innerText = translations[lang].tabPalawan;
+
+            // Re-render locations with active translation map
+            renderLocations();
+
+            // Pricing layout updates
+            document.getElementById('rates-section-title').innerText = translations[lang].ratesTitle;
+            document.getElementById('rates-section-desc').innerText = translations[lang].ratesDesc;
+            document.getElementById('rate-tab-ncr').innerText = translations[lang].rateTabNcr;
+            document.getElementById('rate-tab-tourist').innerText = translations[lang].rateTabTourist;
+            
+            document.querySelectorAll('.lbl-customer').forEach(el => el.innerText = translations[lang].lblCustomer);
+            document.querySelectorAll('.lbl-fee').forEach(el => el.innerText = translations[lang].lblFee);
+            document.querySelectorAll('.lbl-takehome').forEach(el => el.innerText = translations[lang].lblTakeHome);
+            document.querySelectorAll('.d-2h').forEach(el => el.innerText = translations[lang].h2);
+            document.getElementById('step3-p').innerText = translations[lang].step3Msg;
+            document.getElementById('rate-t3').innerText = translations[lang].titleT3;
+            document.getElementById('rate-t7').innerText = translations[lang].titleT7;
+
+            // Synchronize price grid contents
+            updatePriceValues();
+
+            // FAQ Component Changes
+            document.getElementById('faq-title').innerText = translations[lang].faqTitle;
+            document.getElementById('q1').innerHTML = translations[lang].q1;
+            document.getElementById('a1').innerHTML = translations[lang].a1;
+            document.getElementById('q2').innerHTML = translations[lang].q2;
+            document.getElementById('a2').innerHTML = translations[lang].a2;
+            document.getElementById('q3').innerHTML = translations[lang].q3;
+            document.getElementById('a3').innerHTML = translations[lang].a3;
+            document.getElementById('q4').innerHTML = translations[lang].q4;
+            document.getElementById('a4').innerHTML = translations[lang].a4;
+            
+            // Legal operations update
+            document.getElementById('terms-title').innerText = translations[lang].termsTitle;
+            document.getElementById('terms-subtitle').innerText = translations[lang].termsSubtitle;
+            document.getElementById('terms-p1').innerText = translations[lang].termsP1;
+            document.getElementById('terms-list').innerHTML = translations[lang].termsList;
+
+            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+        }
     </script>
 </body>
 </html>
