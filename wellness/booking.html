@@ -89,6 +89,43 @@
         .added-service-price { font-weight: 700; color: var(--accent); }
         .delete-item-btn { background: none; border: none; color: var(--danger); font-size: 1.3rem; cursor: pointer; line-height: 1; padding: 0 4px; }
 
+        /* Payment Methods Custom Segment View Style */
+        .payment-options-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .payment-card {
+            border: 1px solid rgba(26, 54, 93, 0.2);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .payment-card input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+        .payment-card:hover {
+            border-color: var(--secondary);
+            background: #fff;
+        }
+        .payment-card.has-selected {
+            background-color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(47, 133, 90, 0.15);
+            color: var(--accent);
+        }
+
         .pricing-preview { background-color: rgba(247, 250, 252, 0.6); border: 1px dashed var(--secondary); padding: 15px 20px; border-radius: 8px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
         .pricing-label { font-weight: 700; color: var(--primary); }
         .pricing-value { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
@@ -102,6 +139,7 @@
             .form-container { margin: 20px 15px; padding: 25px 20px; }
             h2 { font-size: 1.6rem; }
             .picker-dropdowns { flex-direction: column; gap: 10px; }
+            .payment-options-container { grid-template-columns: 1fr; gap: 8px; }
         }
     </style>
 </head>
@@ -224,6 +262,22 @@
                 <textarea id="address" rows="3" required placeholder="Street number, Building name, Resort room, Landmark..."></textarea>
             </div>
 
+            <!-- Added: Payment Method Selection Interface Component -->
+            <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 20px;">
+                <label>Preferred Payment Method</label>
+                <div class="payment-options-container">
+                    <label class="payment-card has-selected" id="labelCash">
+                        <input type="radio" name="paymentMethod" value="Cash" checked required> 💵 Cash
+                    </label>
+                    <label class="payment-card" id="labelGCash">
+                        <input type="radio" name="paymentMethod" value="GCash" required> 📱 GCash
+                    </label>
+                    <label class="payment-card" id="labelMaya">
+                        <input type="radio" name="paymentMethod" value="Maya" required> 💳 Maya
+                    </label>
+                </div>
+            </div>
+
             <div class="pricing-preview">
                 <span class="pricing-label">Estimated Flat Service Rate:</span>
                 <span class="pricing-value" id="priceDisplay">₱0.00</span>
@@ -247,6 +301,9 @@
             const priceDisplay = document.getElementById('priceDisplay');
             const form = document.getElementById('intakeForm');
             const submitBtn = document.getElementById('submitBtn');
+            
+            // Payment method nodes
+            const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
 
             // Setup pricing variations for NCR vs Tourist Destinations
             const serviceRegistry = [
@@ -418,6 +475,18 @@
                 calculateAndDisplayPrice();
             }
 
+            // Interactive visual toggle logic for Payment Selection Box Buttons
+            paymentRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    paymentRadios.forEach(r => {
+                        r.parentElement.classList.remove('has-selected');
+                    });
+                    if (e.target.checked) {
+                        e.target.parentElement.classList.add('has-selected');
+                    }
+                });
+            });
+
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (addedServicesArray.length === 0) {
@@ -426,6 +495,8 @@
                 }
                 submitBtn.disabled = true;
                 submitBtn.textContent = "Saving...";
+
+                const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
                 const { error } = await supabase.from('bookings').insert([{
                     full_name: document.getElementById('fullName').value,
@@ -438,7 +509,8 @@
                     appointment_time: document.getElementById('appointmentTime').value,
                     city: locationCity.value,
                     address: document.getElementById('address').value,
-                    total_price: parseFloat(priceDisplay.textContent.replace(/[₱,]/g, ''))
+                    total_price: parseFloat(priceDisplay.textContent.replace(/[₱,]/g, '')),
+                    payment_method: selectedPaymentMethod
                 }]);
 
                 if (error) {
@@ -448,6 +520,11 @@
                 } else {
                     alert("Booking submitted successfully!");
                     form.reset();
+                    
+                    // Reset the interactive payment card highlight states back to default (Cash)
+                    paymentRadios.forEach(r => r.parentElement.classList.remove('has-selected'));
+                    document.getElementById('labelCash').classList.add('has-selected');
+                    
                     addedServicesArray = [];
                     renderActiveServiceRows();
                     submitBtn.disabled = false;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium On-Demand Massage Services | JMCY Wellness Network</title>
+    <title>24/7 Premium On-Demand Massage | Home, Hotel, & Condo | JMCY Wellness Network</title>
     <style>
         :root { 
             --primary: #1a365d; 
@@ -38,6 +38,7 @@
             z-index: 100;
         }
         .logo { font-size: 24px; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-decoration: none; }
+        .logo span { color: var(--accent); font-size: 0.8rem; vertical-align: super; margin-left: 4px; border: 1px solid var(--accent); padding: 1px 4px; border-radius: 3px; font-weight: 700; }
         .nav-actions { display: flex; align-items: center; gap: 20px; }
         .nav-link { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; }
         .nav-link:hover { color: var(--secondary); }
@@ -69,7 +70,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, rgba(26, 54, 93, 0.9), rgba(42, 67, 101, 0.4));
+            background: linear-gradient(to right, rgba(26, 54, 93, 0.94), rgba(42, 67, 101, 0.4));
             z-index: 1;
         }
         .hero-content { 
@@ -96,19 +97,28 @@
         .cta-btn:hover { background-color: #276749; transform: translateY(-1px); }
 
         section { padding: 80px 10%; transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 40px; font-weight: 700; }
+        section h2 { font-size: 2.25rem; color: var(--primary); text-align: center; margin-top: 0; margin-bottom: 10px; font-weight: 700; }
+        section p.section-intro { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-size: 1.05rem; max-width: 700px; margin-left: auto; margin-right: auto; }
         .bg-light { background-color: var(--light); }
 
         /* Values Grid Layout */
-        .grid { display: flex; justify-content: center; gap: 30px; }
+        .grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
         .card { 
-            flex: 1; max-width: 340px; background: #ffffff; padding: 40px 30px; 
+            flex: 1; min-width: 280px; max-width: 340px; background: #ffffff; padding: 40px 30px; 
             border-radius: 6px; border: 1px solid var(--border);
             transition: box-shadow 0.3s, transform 0.3s;
         }
         .card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
         .card h3 { color: var(--secondary); margin-top: 0; font-size: 1.25rem; margin-bottom: 15px; }
         .card p { color: #4a5568; font-size: 0.95rem; margin: 0; }
+
+        /* Location Hubs Section */
+        .location-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        .location-zone { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .location-zone h3 { font-size: 1.1rem; color: var(--primary); margin-top: 0; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+        .location-zone ul { list-style: none; padding: 0; margin: 0; }
+        .location-zone li { font-size: 0.9rem; color: #4a5568; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+        .location-zone li::before { content: '•'; color: var(--accent); font-weight: bold; }
 
         /* Premium Menu & Pricing Matrix Slider Styles */
         .matrix-slider-container {
@@ -135,17 +145,17 @@
             background-size: cover;
             background-position: center;
             position: relative;
-            padding: 60px 80px;
+            padding: 50px 80px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            min-height: 480px;
+            min-height: 520px;
         }
         .matrix-slide::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(26, 54, 93, 0.92) 0%, rgba(44, 82, 130, 0.75) 100%);
+            background: linear-gradient(135deg, rgba(26, 54, 93, 0.94) 0%, rgba(44, 82, 130, 0.8) 100%);
             z-index: 1;
         }
         .matrix-card-content {
@@ -153,41 +163,32 @@
             z-index: 2;
             color: #ffffff;
             width: 100%;
-            max-width: 550px;
+            max-width: 650px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            padding: 35px;
+            padding: 30px;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .matrix-slide h3 {
-            margin: 0 0 20px 0;
+            margin: 0 0 15px 0;
             font-size: 1.8rem;
             letter-spacing: 0.5px;
             border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            padding-bottom: 12px;
+            padding-bottom: 8px;
             font-weight: 700;
         }
-        .tier-block { margin-bottom: 18px; }
+        
+        .regional-pricing-split { display: flex; gap: 20px; margin-top: 10px; }
+        .price-column { flex: 1; background: rgba(255,255,255,0.06); padding: 15px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
+        .price-column h4 { margin: 0 0 10px 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; color: #ebf8ff; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 4px; }
+        
+        .tier-block { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 4px; }
         .tier-block:last-child { margin-bottom: 0; }
         
-        .duration-badge {
-            font-size: 0.8rem;
-            color: var(--primary);
-            background-color: #ebf8ff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: inline-block;
-            margin-bottom: 8px;
-            border: 1px solid #bee3f8;
-        }
-        .rate-metrics { background-color: rgba(255, 255, 255, 0.15); border-radius: 6px; padding: 12px 15px; }
-        .metric-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
-        .metric-label { color: #e2e8f0; font-weight: 500; }
-        .metric-val { font-weight: 800; color: #63e2b7; font-size: 1.2rem; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .duration-label { font-size: 0.85rem; color: #e2e8f0; font-weight: 600; }
+        .metric-val { font-weight: 800; color: #63e2b7; font-size: 1.1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
         /* Slider Controls */
         .matrix-arrow {
@@ -213,24 +214,9 @@
         .matrix-arrow.prev { left: 20px; }
         .matrix-arrow.next { right: 20px; }
         
-        .matrix-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        .matrix-dot {
-            width: 12px;
-            height: 12px;
-            background-color: #cbd5e0;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .matrix-dot.active {
-            background-color: var(--primary);
-            transform: scale(1.2);
-        }
+        .matrix-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+        .matrix-dot { width: 12px; height: 12px; background-color: #cbd5e0; border-radius: 50%; cursor: pointer; transition: background-color 0.3s, transform 0.3s; }
+        .matrix-dot.active { background-color: var(--primary); transform: scale(1.2); }
 
         /* Split Blocks */
         .about-split { display: flex; align-items: center; gap: 60px; }
@@ -325,7 +311,7 @@
             .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
             section { padding: 50px 5%; }
-            section h2 { font-size: 1.65rem; margin-bottom: 30px; }
+            section h2 { font-size: 1.65rem; margin-bottom: 10px; }
             .hero-slider { height: 350px; }
             .hero-content h1 { font-size: 1.8rem; }
             .hero-content p { font-size: 1rem; }
@@ -335,7 +321,8 @@
             .whatsapp-container { bottom: 15px; right: 20px; }
             .whatsapp-float { width: 52px; height: 52px; }
             
-            .matrix-slide { padding: 40px 30px; min-height: 440px; }
+            .matrix-slide { padding: 30px 20px; min-height: 560px; }
+            .regional-pricing-split { flex-direction: column; gap: 15px; }
             .matrix-arrow { display: none; }
         }
     </style>
@@ -343,7 +330,7 @@
 <body>
 
     <header>
-        <a href="#" class="logo">JMCY WELLNESS</a>
+        <a href="#" class="logo">JMCY WELLNESS <span>24/7</span></a>
         
         <button class="hamburger" id="hamburger-toggle" aria-label="Toggle Navigation">
             <span></span>
@@ -354,6 +341,7 @@
         <div class="nav-actions" id="nav-actions-container">
             <a href="#services" class="nav-link">Our Services</a>
             <a href="#rates" class="nav-link">Pricing Matrix</a>
+            <a href="#locations" class="nav-link">Coverage Areas</a>
             <a href="/wellness/booking.html" class="cta-btn" style="padding: 10px 20px; font-size: 0.9rem;">Fill Up Form</a>
         </div>
     </header>
@@ -361,15 +349,15 @@
     <section class="hero-slider" style="padding: 0;">
         <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
-                <h1 id="hero-title-1">Premium Home-Service Massage on Demand</h1>
-                <p id="hero-desc-1">Experience restorative bodywork therapies administered by verified, background-screened independent professionals in your area.</p>
-                <a href="/wellness/booking.html" class="cta-btn">Book via Intake Form</a>
+                <h1>24/7 Premium Home, Hotel, & Condo Massage</h1>
+                <p>Restorative, spa-quality bodywork therapies delivered straight to your room 24 hours a day, 7 days a week by background-verified specialists.</p>
+                <a href="/wellness/booking.html" class="cta-btn">Book Your 24/7 Session</a>
             </div>
         </div>
         <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80');">
             <div class="hero-content">
-                <h1 id="hero-title-2">Total Relaxation, Right at Your Doorstep</h1>
-                <p id="hero-desc-2">No travel friction, no spa crowds. Choose your treatment style, date, and runtime duration. Pay securely on-site via Cash or GCash.</p>
+                <h1>Total Relaxation, Any Time You Need It</h1>
+                <p>No travel friction, no closed spa doors. Choose your treatment style and exact duration night or day. Settle securely via Cash, GCash, or Maya upon provider arrival.</p>
                 <a href="/wellness/booking.html" class="cta-btn">Fill Up Form Now</a>
             </div>
         </div>
@@ -378,106 +366,184 @@
     <section class="about-us animate-up" id="services">
         <div class="about-split">
             <div class="about-text">
-                <h2 id="about-heading">The JMCY Wellness Standard</h2>
-                <p id="about-p1">JMCY Wellness operations serve as a specialized technical framework connecting discerning clients directly to independent, certified wellness specialists across major metropolitan centers.</p>
-                <p id="about-p2">Every therapist dispatched from our routing registry is independently certified, highly practiced, and fully evaluated for practical safety, giving you access to professional, personalized spa treatments right in your home, hotel room, or condominium suite.</p>
+                <h2>The JMCY Wellness Standard</h2>
+                <p>JMCY Wellness operates an elite, 24/7 on-demand structural framework designed to link clients with certified, top-tier independent massage professionals around the clock.</p>
+                <p>Whether you require a late-night stress release in your residential home, a post-travel recovery massage inside your hotel suite, or weekend relaxation at your condominium complex, our dynamic dispatch system ensures prompt, highly secure therapeutic care right to your door.</p>
             </div>
             <div class="about-image"></div>
         </div>
     </section>
 
     <section class="benefits bg-light animate-up">
-        <h2 id="benefits-heading">Why Choose JMCY Network?</h2>
+        <h2>Why Choose JMCY Network?</h2>
         <div class="grid">
             <div class="card">
-                <h3 id="b1-title">Verified Practitioners</h3>
-                <p id="b1-desc">Rest easy knowing that every wellness partner is thoroughly evaluated with standard background verifications and physical practical skill audits.</p>
+                <h3>Continuous 24/7 Dispatch</h3>
+                <p>Never look at the clock again. Our network registry functions dynamically all night and day to secure active specialists for immediate dispatch.</p>
             </div>
             <div class="card">
-                <h3 id="b2-title">Direct On-Site Settlement</h3>
-                <p id="b2-desc">Transparent billing structures. Hand your professional provider the session fee directly via standard Cash or GCash upon arrival.</p>
+                <h3>Strict Safety Screening</h3>
+                <p>Your absolute peace of mind is our priority. Every independent therapist registered within our system undergoes rigid identity validation, dynamic criminal record background checks, and practical massage mastery audits.</p>
             </div>
             <div class="card">
-                <h3 id="b3-title">Dynamic Route Dispatching</h3>
-                <p id="b3-desc">Say goodbye to hours of scheduling wait times. Our smart logistics systems identify active professionals nearest to your exact target coordinates.</p>
+                <h3>Direct On-Site Settlement</h3>
+                <p>Transparent billing structures. Hand your professional provider the session fee directly via standard Cash, GCash, or Maya upon arrival.</p>
             </div>
         </div>
     </section>
 
     <section class="massage-rates animate-up" id="rates">
-        <h2 id="rates-section-title">Premium Service Menu & Pricing Matrix</h2>
+        <h2>Premium Service Menu & Pricing Matrix</h2>
+        <p class="section-intro">Swipe or navigate through our customized therapeutic selections below. Transparent pricing tier breakdowns for both major city lines and luxury provincial resort hubs.</p>
 
         <div class="matrix-slider-container">
             <button class="matrix-arrow prev" id="matrixPrevBtn" aria-label="Previous Slide">&#10094;</button>
             <button class="matrix-arrow next" id="matrixNextBtn" aria-label="Next Slide">&#10095;</button>
             
             <div class="matrix-track" id="matrixSliderTrack">
+                <!-- Swedish -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t1">Swedish Massage</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,000.00</span></div></div>
+                        <h3>Swedish Massage</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,000</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,400</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱1,800</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,500</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,000</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,500</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Shiatsu -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t2">Shiatsu Massage</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,100.00</span></div></div>
+                        <h3>Shiatsu Massage</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,100</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,550</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,000</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,600</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,150</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,700</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Thai -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=800&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t3">Thai Massage</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,100.00</span></div></div>
+                        <h3>Thai Massage</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,100</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,550</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,000</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,600</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,150</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,700</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Reflexology -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t4">Reflexology / Foot</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,200.00</span></div></div>
+                        <h3>Reflexology / Foot</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,200</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,700</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,200</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,700</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,300</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,900</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Aromatherapy -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t5">Aromatherapy</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,300.00</span></div></div>
+                        <h3>Aromatherapy</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,300</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,850</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,400</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,800</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,450</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱3,100</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Deep Tissue -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t6">Deep Tissue Massage</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,200.00</span></div></div>
+                        <h3>Deep Tissue Massage</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,200</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,700</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,200</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,700</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,300</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,900</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Combination -->
                 <div class="matrix-slide" style="background-image: url('https://images.unsplash.com/photo-1519824206182-3cf22d2f3b75?auto=format&fit=crop&w=1200&q=80');">
                     <div class="matrix-card-content">
-                        <h3 id="rate-t7">Combination Massage</h3>
-                        <div class="tier-block">
-                            <span class="duration-badge d-2h">2 Hours</span>
-                            <div class="rate-metrics"><div class="metric-row"><span class="metric-label lbl-customer">Flat Rate:</span><span class="metric-val">₱1,000.00</span></div></div>
+                        <h3>Combination Massage</h3>
+                        <div class="regional-pricing-split">
+                            <div class="price-column">
+                                <h4>Metro Manila (NCR)</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,000</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱1,400</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱1,800</span></div>
+                            </div>
+                            <div class="price-column">
+                                <h4>Tourist Hubs</h4>
+                                <div class="tier-block"><span class="duration-label">2 Hours</span><span class="metric-val">₱1,500</span></div>
+                                <div class="tier-block"><span class="duration-label">3 Hours</span><span class="metric-val">₱2,000</span></div>
+                                <div class="tier-block"><span class="duration-label">4 Hours</span><span class="metric-val">₱2,500</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -487,24 +553,87 @@
         <div class="matrix-dots" id="matrixSliderDots"></div>
     </section>
 
+    <!-- High-Demand Locations -->
+    <section class="high-demand-locations bg-light animate-up" id="locations">
+        <h2>Active Premium Service Coverage Areas</h2>
+        <p class="section-intro">JMCY Dispatch maintains continuous, active routing networks across major business centers and tourist travel zones to fulfill prompt resort, condo, or residential setups 24/7.</p>
+        
+        <div class="location-grid">
+            <div class="location-zone">
+                <h3>Metro Manila (NCR)</h3>
+                <ul>
+                    <li>Manila & Makati City</li>
+                    <li>Quezon City & Pasig</li>
+                    <li>Taguig (BGC) & Mandaluyong</li>
+                    <li>San Juan & Pasay City</li>
+                    <li>Parañaque & Las Piñas</li>
+                    <li>Muntinlupa & Marikina</li>
+                </ul>
+            </div>
+            <div class="location-zone">
+                <h3>Luzon Hubs</h3>
+                <ul>
+                    <li>Tagaytay City Central</li>
+                    <li>Palawan (El Nido Town)</li>
+                    <li>Palawan (Coron Core)</li>
+                </ul>
+            </div>
+            <div class="location-zone">
+                <h3>Visayas Hubs</h3>
+                <ul>
+                    <li>Mactan Island Resorts</li>
+                    <li>Cebu IT Park Districts</li>
+                    <li>Moalboal Shorelines</li>
+                    <li>Badian Region</li>
+                    <li>Bantayan Island</li>
+                    <li>Boracay (White Beach)</li>
+                    <li>Boracay (Bulabog Beach)</li>
+                </ul>
+            </div>
+            <div class="location-zone">
+                <h3>Mindanao Hubs</h3>
+                <ul>
+                    <li>Siargao Island Hubs</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logistics Advisory Notice Section -->
+    <section class="logistics-notice animate-up" style="background-color: #fff; border-top: 1px solid var(--border); padding-top: 40px; padding-bottom: 40px;">
+        <div style="max-width: 800px; margin: 0 auto; background: rgba(44, 82, 130, 0.05); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+            <h3 style="color: var(--primary); margin-top: 0; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                ℹ️ Hotel & Condominium Guest Policy
+            </h3>
+            <p style="color: #4a5568; font-size: 0.95rem; margin-bottom: 15px;">
+                To ensure seamless dispatch and avoid room arrival delays, please review our standard accommodation guidelines:
+            </p>
+            <ul style="padding-left: 20px; color: #4a5568; font-size: 0.95rem; line-height: 1.8; margin: 0;">
+                <li><strong>Hotel Guests:</strong> Kindly notify your front desk reception that you are expecting an outside personal wellness provider to pass through security straight to your room.</li>
+                <li><strong>Condo Residents:</strong> Please register your assigned therapist's name with your lobby guard/admin management desk once booking confirmation details are sent to you.</li>
+                <li><strong>Incidental Expenses:</strong> Any mandatory guest parking costs or hotel visitor registration fees are settled directly by the client.</li>
+            </ul>
+        </div>
+    </section>
+
     <section class="steps bg-light">
-        <h2 id="pipeline-heading">Simple 3-Step Process</h2>
+        <h2>Simple 3-Step Process</h2>
         <div class="pipeline-wrapper">
             <div class="steps-slider-track" id="pipelineTrack">
                 <div class="step-node">
                     <div class="step-number">1</div>
-                    <h4 id="s1-title">Submit Details Form</h4>
-                    <p id="s1-desc">Click our intake links to open the structure profile form. Provide your address location parameters and session structural criteria layout.</p>
+                    <h4>Submit Details Form</h4>
+                    <p>Click our intake links to open the structure profile form. Provide your address location parameters and session structural criteria layout.</p>
                 </div>
                 <div class="step-node">
                     <div class="step-number">2</div>
-                    <h4 id="s2-title">Provider Matching</h4>
-                    <p id="s2-desc">Our digital intermediary network instantly logs the request item and routes it to verified available therapists across your town.</p>
+                    <h4>Provider Matching</h4>
+                    <p>Our digital intermediary network instantly logs the request item and routes it to verified available therapists across your town.</p>
                 </div>
                 <div class="step-node">
                     <div class="step-number">3</div>
-                    <h4 id="s3-title">Enjoy & Pay Direct</h4>
-                    <p id="s3-desc">Relax during your premium session treatment. Hand your full professional flat-rate payment straight to your therapist on-site.</p>
+                    <h4>Enjoy & Pay Direct</h4>
+                    <p>Your therapist arrives equipped with professional-grade linens and pristine massage oils. Please prepare two fresh towels and clear a comfortable space inside your room layout before arrival.</p>
                 </div>
             </div>
             <div class="pipeline-dots">
@@ -516,30 +645,39 @@
     </section>
 
     <section class="faq animate-up">
-        <h2 id="faq-title">Frequently Asked Questions</h2>
+        <h2>Frequently Asked Questions</h2>
 
         <div class="faq-max">
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question" id="q1">How do I submit an automated dispatch request? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a1">Simply select any form submission button or use our floating support tool to complete our quick input document. Fill in your preferred massage selection type, timeline schedule, and complete address footprint to initiate routing sequences.</div>
+                <div class="faq-question">What are your hours of operation? <span class="faq-icon"></span></div>
+                <div class="faq-answer">JMCY Wellness functions completely 24 hours a day, 7 days a week. You can file a dispatch intake sheet at any hour of the night or day for prompt routing.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question" id="q2">What locations are currently handled by the matching engine? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a2">The network matching logs map automated routing footprints dynamically across active sectors, focusing core independent therapeutic dispatches inside Manila, Quezon City, and Makati regions.</div>
+                <div class="faq-question">Can I book a session if I am staying in a hotel or condominium? <span class="faq-icon"></span></div>
+                <div class="faq-answer">Yes, our logistics system specializes in delivering services directly to private homes, secure condominium complexes, and luxury hotels across all active regional coverage centers.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question" id="q3">Are there any hidden platform charges or separate transactional fees? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a3">No, JMCY Wellness utilizes a direct billing transparency framework. The flat figures showcased across our menus match the total amount you hand over to your localized partner on-site. No separate application fees are calculated for consumers.</div>
+                <div class="faq-question">Are there any hidden platform charges or separate transactional fees? <span class="faq-icon"></span></div>
+                <div class="faq-answer">No, JMCY Wellness utilizes a direct billing transparency framework. The flat figures showcased across our menus match the total amount you hand over to your localized partner on-site. No separate application fees are calculated for consumers.</div>
             </div>
             <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question" id="q4">How do customers pay for the session? <span class="faq-icon"></span></div>
-                <div class="faq-answer" id="a4">All transactions resolve directly inside your destination room locale. You can settle the entire flat service fee using physical Cash or send the exact figure to the assigned professional's individual GCash wallet mobile accounts safely.</div>
+                <div class="faq-question">How do customers pay for the session? <span class="faq-icon"></span></div>
+                <div class="faq-answer">All transactions resolve directly inside your destination room locale. You can settle the entire flat service fee using physical Cash or send the exact figure directly to the assigned professional's individual GCash or Maya mobile accounts safely.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">What is your policy on cancellations or sudden address updates? <span class="faq-icon"></span></div>
+                <div class="faq-answer">Because our independent partners are dispatched immediately after matching and incur direct late-night transit fares, cancellation modifications requested after a therapist is already traveling on the road may carry a localized travel friction fee to respect the provider's fuel/transit investments.</div>
             </div>
         </div>
     </section>
 
     <footer>
-        &copy; 2026 JMCY Wellness Network. Premium Intermediary Technical Dispatch Framework. All Rights Reserved.
+        <p style="font-size: 11px; max-width: 900px; margin: 0 auto 20px auto; color: #718096; line-height: 1.5; text-align: center;">
+            <strong>Disclaimer & Legal Framework:</strong> JMCY Wellness Network operates strictly as an independent matching intermediary utility. Therapists registered under this network framework are autonomous service practitioners. Services are provided strictly for professional, therapeutic wellness purposes. Inappropriate behavior, requests, or misconduct will trigger an immediate termination of the session with a full fee forfeit and permanent blocklisting across our legal network registry.
+        </p>
+        <div style="border-top: 1px solid #2d3748; padding-top: 20px;">
+            &copy; 2026 JMCY Wellness Network. Premium 24/7 Intermediary Technical Dispatch Framework. All Rights Reserved.
+        </div>
     </footer>
 
     <a href="/wellness/booking.html" 
